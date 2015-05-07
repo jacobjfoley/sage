@@ -1,0 +1,23 @@
+<%= form_for([@project, @digital_object]) do |f| %>
+  <% if @digital_object.errors.any? %>
+    <div id="error_explanation" class="alert alert-danger">
+      <h2><%= pluralize(@digital_object.errors.count, "error") %> prohibited this digital_object from being saved:</h2>
+
+      <ul>
+      <% @digital_object.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :location, "Enter the Object's URL, or multiple URLs on separate lines:" %>
+    <%= f.text_area :location, class: "form-control" %>
+    <br />
+
+    <div class="actions">
+      <%= f.submit "Done", class: "btn btn-large" %>
+    </div>
+  </div>
+<% end %>

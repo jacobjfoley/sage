@@ -1,0 +1,31 @@
+<h1>Concepts</h1>
+
+<table class="table table-striped">
+  <tr>
+    <td class="text-center">
+      <%= link_to new_project_concept_path, title: "Create" do %>
+        <i class="glyphicon glyphicon-plus"></i>
+      <% end %>
+    </td>
+  </tr>
+  
+  <% @concepts.each do |concept| %>
+    <tr>
+    	<td class="nodecoration">
+    	  <%= truncate(concept.description, length: 100) %>
+    	  <div class="pull-right">
+          <%= link_to project_concept_path(id: concept.id), title: "View" do %>
+            <i class="glyphicon glyphicon-eye-open"></i>
+          <% end %>
+          <%= link_to edit_project_concept_path(id: concept.id), title: "Edit" do %>
+            <i class="glyphicon glyphicon-pencil"></i>
+          <% end %>
+          <%= link_to project_concept_path(id: concept.id), title: "Delete", method: :delete, data: { confirm: 'Are you sure?' } do %>
+            <i class="glyphicon glyphicon-trash"></i>
+          <% end %>
+        </div>
+      </td>
+    </tr>
+  <% end %>
+
+</table>

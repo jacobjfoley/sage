@@ -1,0 +1,2 @@
+module DigitalObjectsHelper
+end

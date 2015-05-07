@@ -1,0 +1,45 @@
+<% if notice %>
+  <div id="notice" class="alert alert-success"><%= notice %></div>
+<% end %>
+
+<div class="row nodecoration">
+  <div class="col-md-6">
+    <div class="text-center well">
+      <%= link_to @digital_object.location do%>
+        <%= render_resource @digital_object.location, style: "width: 100%" %><br />
+        <%= truncate(File.basename(@digital_object.location), length: 50) %><br />
+      <% end %>
+
+      <%= link_to edit_project_digital_object_path(@project, @digital_object), title: "Edit" do %>
+        <i class="glyphicon glyphicon-pencil"></i>
+      <% end %>
+      <%= link_to project_digital_object_path(@project, @digital_object), title: "Delete", method: :delete, data: { confirm: 'Are you sure?' } do %>
+        <i class="glyphicon glyphicon-trash"></i>
+      <% end %>
+    </div>
+  </div>
+  
+  <div class="col-md-6">
+    <h3>Concepts</h3>
+    <table class="table table-striped">
+      <% @digital_object.relevant.keys.each do |relevant| %>
+      <tr>
+        <td>
+          <%= link_to truncate(relevant.description, length: 50), [@project, relevant] %>
+          <div class="pull-right">
+            <% if !@digital_object.concepts.include? relevant %>
+              <%= link_to add_concept_project_digital_object_path(@project, @digital_object, concept: relevant.id), method: :post, title: "Add" do %>
+                <i class="glyphicon glyphicon-plus"></i>
+              <% end %>
+            <% else %>
+              <%= link_to remove_concept_project_digital_object_path(@project, @digital_object, concept: relevant.id), method: :post, title: "Remove" do %>
+                <i class="glyphicon glyphicon-minus"></i>
+              <% end %>
+            <% end %>
+          </div>
+        </td>
+      </tr>
+      <% end %>
+    </table>
+  </div>  
+</div>

@@ -1,0 +1,24 @@
+<%= form_for([@project, @concept]) do |f| %>
+  <% if @concept.errors.any? %>
+    <div id="error_explanation" class="alert alert-danger">
+      <h2><%= pluralize(@concept.errors.count, "error") %> prohibited this concept from being saved:</h2>
+
+      <ul>
+      <% @concept.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+  <div class="form-group">
+    <%= f.label :description, "Concept description:" %>
+    <%= f.text_area :description, class: "form-control", rows: 6 %>
+    
+    <br />
+    
+    <div class="actions">
+      <%= f.submit "Done", class: "btn btn-large" %>
+    </div>
+  </div>
+<% end %>

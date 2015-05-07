@@ -1,0 +1,62 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @project.name %>
+</p>
+
+<p>
+  <strong>Notes:</strong>
+  <%= @project.notes %>
+</p>
+
+<% if @user_role.position.eql? "Administrator" %>
+
+<p>
+  <strong>Administrator key:</strong>
+  <%= @project.administrator_key %>
+  <%= link_to "Generate Key", generate_key_project_path(@project, type: "Administrator"), method: :post %>
+  <%= link_to "Remove Key", reset_key_project_path(@project, type: "Administrator"), method: :post %>
+</p>
+
+<p>
+  <strong>Contributor key:</strong>
+  <%= @project.contributor_key %>
+  <%= link_to "Generate Key", generate_key_project_path(@project, type: "Contributor"), method: :post %>
+  <%= link_to "Remove Key", reset_key_project_path(@project, type: "Contributor"), method: :post %>
+</p>
+
+<p>
+  <strong>Viewer key:</strong>
+  <%= @project.viewer_key %>
+  <%= link_to "Generate Key", generate_key_project_path(@project, type: "Viewer"), method: :post %>
+  <%= link_to "Remove Key", reset_key_project_path(@project, type: "Viewer"), method: :post %>
+</p>
+
+<% end %>
+
+<p>
+  <strong>Administrators:</strong>
+  <% @administrators.each do |user| %>
+    <%= user.name %> (<%= user.email %>)<br>
+  <% end %>
+</p>
+
+<% if @user_role.position.eql? "Administrator" %>
+  <p>
+    <strong>Contributors:</strong>
+    <% @contributors.each do |user| %>
+      <%= user.name %> (<%= user.email %>)<br>
+    <% end %>
+  </p>
+
+  <p>
+    <strong>Viewers:</strong>
+    <% @viewers.each do |user| %>
+      <%= user.name %> (<%= user.email %>)<br>
+    <% end %>
+  </p>
+<% end %>
+
+<%= link_to 'Edit', edit_project_path(@project) %> |
+<%= link_to 'Back', projects_path %>

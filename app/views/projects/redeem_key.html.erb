@@ -1,0 +1,13 @@
+<p id="notice"><%= notice %></p>
+
+<%= form_tag (check_key_projects_path) do %>
+  <div class="field">
+    <%= label_tag :key, 'Key' %><br>
+    <%= text_field_tag :key %>
+  </div>
+  <div class="actions">
+    <%= submit_tag %>
+  </div>
+<% end %>
+
+<%= link_to 'Back', projects_path %>

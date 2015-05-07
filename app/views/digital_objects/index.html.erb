@@ -1,0 +1,38 @@
+<h1>Objects</h1>
+
+<div class="nodecoration">
+  <div class="row">
+    <div class="col-md-3 text-center well" style="display: table; height: 200px">
+      <%= link_to new_project_digital_object_path, title: "Create", style: "display: table-cell; vertical-align: middle" do %>
+        <i class="glyphicon glyphicon-plus"></i>
+      <% end %>
+      <% col = 1 %>
+    </div>
+
+    <% @digital_objects.each do |digital_object| %>
+      <% if col == 4 %>
+        </div><div class="row">
+        <% col = 0 %>
+      <% end %>
+      <div class="col-md-3 text-center" style="height: 200px">
+        <%= link_to project_digital_object_path(id: digital_object.id) do%>
+          <div style="height: 150px">
+            <%= render_resource digital_object.location, style: "max-height:100%; max-width:100%" %>
+          </div>
+          <%= truncate(File.basename(digital_object.location), length: 20) %>
+        <% end %>
+        <br />
+        <%= link_to digital_object.location, title: "Link" do %>
+          <i class="glyphicon glyphicon-link"></i>
+        <% end %>
+        <%= link_to edit_project_digital_object_path(id: digital_object.id), title: "Edit" do %>
+          <i class="glyphicon glyphicon-pencil"></i>
+        <% end %>
+        <%= link_to project_digital_object_path(id: digital_object.id), title: "Delete", method: :delete, data: { confirm: 'Are you sure?' } do %>
+          <i class="halfling-trash"></i>
+        <% end %>
+      </div>
+      <% col += 1 %>
+    <% end %>
+  </div>
+</div>
