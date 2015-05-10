@@ -9,6 +9,9 @@ gem 'pg'
 # Import bootstrap.
 gem 'bootstrap-sass'
 
+# Import autoprefixer for rails.
+gem 'autoprefixer-rails'
+
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 
