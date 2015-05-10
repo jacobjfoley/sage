@@ -13,6 +13,9 @@
 
 ActiveRecord::Schema.define(version: 20150406074841) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "concepts", force: :cascade do |t|
     t.text     "description"
     t.datetime "created_at"
@@ -20,15 +23,15 @@ ActiveRecord::Schema.define(version: 20150406074841) do
     t.integer  "project_id"
   end
 
-  add_index "concepts", ["project_id"], name: "index_concepts_on_project_id"
+  add_index "concepts", ["project_id"], name: "index_concepts_on_project_id", using: :btree
 
   create_table "concepts_digital_objects", id: false, force: :cascade do |t|
     t.integer "digital_object_id", null: false
     t.integer "concept_id",        null: false
   end
 
-  add_index "concepts_digital_objects", ["concept_id", "digital_object_id"], name: "concept_object"
-  add_index "concepts_digital_objects", ["digital_object_id", "concept_id"], name: "object_concept"
+  add_index "concepts_digital_objects", ["concept_id", "digital_object_id"], name: "concept_object", using: :btree
+  add_index "concepts_digital_objects", ["digital_object_id", "concept_id"], name: "object_concept", using: :btree
 
   create_table "digital_objects", force: :cascade do |t|
     t.text     "location"
@@ -37,7 +40,7 @@ ActiveRecord::Schema.define(version: 20150406074841) do
     t.integer  "project_id"
   end
 
-  add_index "digital_objects", ["project_id"], name: "index_digital_objects_on_project_id"
+  add_index "digital_objects", ["project_id"], name: "index_digital_objects_on_project_id", using: :btree
 
   create_table "projects", force: :cascade do |t|
     t.text     "notes"
@@ -57,8 +60,8 @@ ActiveRecord::Schema.define(version: 20150406074841) do
     t.string   "position"
   end
 
-  add_index "user_roles", ["project_id"], name: "index_user_roles_on_project_id"
-  add_index "user_roles", ["user_id"], name: "index_user_roles_on_user_id"
+  add_index "user_roles", ["project_id"], name: "index_user_roles_on_project_id", using: :btree
+  add_index "user_roles", ["user_id"], name: "index_user_roles_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "email"
