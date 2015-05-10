@@ -1,0 +1,3 @@
+==PROJECT
+* Update project listing and project notes to improve appearance.
+* Expand deletion to responsibly clean up the database.
