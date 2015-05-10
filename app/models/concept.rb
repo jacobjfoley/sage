@@ -6,99 +6,101 @@ class Concept < ActiveRecord::Base
 
   # Validations.
   validates :description, presence: true
-  
+
   # Find relevant objects.
   def relevant
-    
-    # Calculate results.
+
+    # Calculate influence to spread.
+    influence = DigitalObject.all.count
+
     # Default influence, three steps (find object), hasn't dispersed yet.
-    results = collaborate(10, 3, false)
-    
+    results = collaborate(influence, 3, false)
+
     # Filter weak results.
     results.keys.each do |key|
       if results[key] < 1.0
         results.delete key
       end
     end
-    
+
     # Return filtered results.
     return results
   end
-  
+
   # Collaborate with other agents to detect relationships within the project.
   def collaborate(influence, propagations, dispersal)
-    
+
     # Determine what to do.
     # If at the natural end point:
     if propagations == 0
-    
+
       # Assign influence to self and return.
       return {self => influence}
-    
+
     # If dispersal hasn't occurred yet:
     elsif dispersal == false
-    
+
       # Disperse throughout project.
       return project.disperse(influence, propagations, description)
-    
+
     # If at a termination point due to lack of associations:
     elsif digital_objects.count == 0
-    
+
       # Lend influence to global recommendations instead.
       if propagations.even?
-        
+
         # Even, so concepts sought.
         return project.popular_concepts(influence)
       else
-      
+
         # Odd, so objects sought.
         return project.popular_objects(influence)
       end
-      
-    # Normal propagation step, otherwise.  
-    else 
-    
+
+    # Normal propagation step, otherwise.
+    else
+
       # Create empty results hash.
       results = {}
-      
+
       # Determine the amount of influence each.
       amount = influence / digital_objects.count
-      
+
       # Query each association.
       digital_objects.each do |object|
-      
+
         # Fetch results from associate.
         response = object.collaborate(amount, propagations - 1, dispersal)
-        
+
         # Merge response to results.
         aggregate(results, response)
-        
+
       end
-    
+
       # Return results.
       return results
-      
+
     end
   end
-  
+
   # Merge with other concepts.
   def merge(*concepts)
-    
+
     # For each concept to be merged:
     concepts.each do |concept|
-      
+
       # Append its description as a new paragraph.
       description << "\n\n" << concept.description
-      
+
       # For each object it is associated with:
       concept.digital_objects.each do |object|
-        
+
         # Add it, unless it is already associated with this concept.
         unless concept.include? object
          concept.digital_objects << object
         end
       end
-      
+
       # Destroy the merged concept.
       concept.destroy
     end
@@ -106,24 +108,24 @@ class Concept < ActiveRecord::Base
 
   # Private methods.
   private
-  
+
   # Aggregate a response with the in-progress results hash.
   def aggregate(results, response)
-  
+
     # For each element in the response:
     response.keys.each do |key|
-      
+
       # If the key is already in the results:
       if results.key? key
-        
+
         # Add to the key's influence.
         results[key] += response[key]
       else
-        
+
         # Introduce key to results with its influence.
         results[key] = response[key]
       end
     end
   end
-  
+
 end
