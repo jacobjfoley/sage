@@ -1,36 +1,55 @@
-<% provide :title, " | Instructions" %>
+<% provide :title, " | Guides" %>
 <div class="container">
-  
-  <div class="jumbotron">
-	  <h1 class="text-center">Instructions</h1>
-	  <p>A quick tutorial on the features present in the first prototype of SAGE, covering all the basics as well as known quirks.</p>
-  </div>
-  
-  <h1>Introduction</h1>
-  <p>SAGE relies on two different types of information, Objects and Concepts. While using the application, you will often find yourself exploring the relationships between them. While doing so, you are encouraged to create new concepts and link concepts to objects to expand and improve the network of relationships.</p> 
-  </p>When you first enter the Application page, you will be presented with the objects overview. Navigation can be performed using the sidebar to the left to move between the object and concept overviews. This can be done at any time.</p>
-  
-  <h1>Objects</h1>
-  
-  <p>Pressing the create button on the objects overview page allows you to create a new object. You will be prompted to add the object's URL, which is typically of the form http://www.example.com/myimage.jpg. When finished, press the "Done" button to submit it to the database. SAGE allows you to add any type of digital object, from spreadsheets to web pages, audio files and video files. The only requirement is that they all must have a valid URL.</p>
-  
-  <p class="alert alert-warning"><strong>Known Issue:</strong> Adding an invalid or incomplete URL (e.g. "myimage.jpg" without the "http://www.example.com/images" part, or "abc", which isn't an URL at all) can result in the output of diagnostic error messages as the prototype is still being run in development mode. Press "Back" in your browser and then revisit the address to clear it. This will be fixed shortly after establishing that the application is working on Turing.</p>
-  
-  <p class="alert alert-info"><strong>Caution:</strong> Ensure that the URL you submit is publicly accessible. Services like Dropbox allow you to get public links to your files. If you encounter issues with broken links in SAGE, check that you are using public links, and that the link leads directly to the file.</p>
-  
-  <h1>Concepts</h1>
-  
-  <p>Pressing the create button on the concept overview page allows you to create a new concept. You will be asked to describe the concept you wish to capture, and press the "Done" button when you are finished. This concept can be any detail you observe or infer from the object. Using a photo as an example, these details could include the location, notable objects or people in the photo, or the event during which it was taken.</p>
 
-  <h1>Interaction</h1>
-  <p> When viewing an object, you will see a thumbnail and filename, together which represent the object. Similarly, when viewing a concept, you will see the concept description as its representation. You will also see for both objects and concepts a set of controls and three sections, "Associations", "Suggestions", and "Others".</p>
-  
-  <p>The Associations section shows the concepts/objects that have been associated with the current object/concept. Suggestions shows items that are likely to relate to the current item and are good candidates to be promoted to the Associations section, while the Others section shows items that have not been detected to be relevant. You are encouraged to interact with these sections as you view objects and concepts. The quality of suggestions will improve in the second and third prototypes as more similarity detection algorithms are implemented.</p>
-  
-  <p>Both the objects/concepts overviews and the individal object's/concept's view give you the option to edit the item or delete it. Simply use the relevant buttons to perform these actions.</p>
-  
-  <p> Specific to objects, clicking the thumbnail in the object view allows the original object to be loaded in your browser. This can also be done by clicking the link button on the object overview page.</p>
-  
+  <div class="jumbotron">
+	  <h1 class="text-center">Guides</h1>
+  </div>
+
+  <h1>Introduction to SAGE</h1>
+  <p>SAGE (Semantic Annotation by Group Exploration) allows one or more users to collaboratively annotate a multimedia collection. SAGE supports your work by providing you information derived from analysis of the latent relationships within the data set. Interacting with the suggestions or adding your own information contributes back to the data set, uncovering new information for you to view and assisting with all future investigations in the collection.</p>
+
+  <p>SAGE is an active research project investigating the use of software technologies to assist with annotating and exploring digital cultural heritage collections. Simply by using SAGE, you are contributing valuable research data to this project, which in turn leads to improvements in SAGE.</p>
+
+  <h1>Getting Started</h1>
+  <p>To begin, you will need to register an account. If you've come back after time away, you'll need to log back in to your existing account. This can be achieved from the <%=link_to "Register", new_user_path%> and <%=link_to "Log In", login_users_path%> pages.</p>
+
+  <p>Once you've logged in, you'll have access to your Projects page. From here, you can view your profile, create a new project, redeem project keys, and access any projects you are involved with.</p>
+
+  <h1>Creating a Project</h1>
+  <p>Projects can be created by clicking the "New Project" button from the Projects page. You'll need to give the project a name, and provide some notes on the project. This is where you can describe your project, the kind of material you'll be investigating, your project contact details and any other information you need to share with your fellow collaborators. Think of it as an orientation message for your project.</p>
+
+  <p>Once you've created your project, you'll be moved to the project notes page. If you are the project's creator (and therefore the first administrator for your project), you'll be given a set of controls and extended information on the project that will be useful for managing your collection.</p>
+
+  <h1>Creating and Redeeming Keys</h1>
+  <p>A lot of good work can be performed in SAGE in a private collection, but if you have other people you'd like to share your project with in order to collaborate, you can use the key system to grant them access.<p>
+
+  <p>SAGE allows you to generate a key for three different levels of access:</p>
+
+  <ul>
+    <li>Viewer: Can view the project, but can't modify it in any way.</li>
+    <li>Contributor: Can contribute to the project.</li>
+    <li>Administrator: Can contribute to the project and manage other users.</li>
+  </ul>
+
+  <p>To grant one of these levels of access to another user in SAGE, generate a key and sent it to them (e.g. via email). They can redeem the key on their projects page. The same key can be used by any number of users once shared, so it is possible to share a key (such as the viewer key) on a public website to provide it to a large audience.</p>
+
+  <p>There may come a time when you need to "change the locks", so to speak. Simply regenerate a key to invalidate the old one. Users can leave a project themselves or be removed from the project notes page. If you do not wish to allow a particular key to be used at all, you can simply remove the key altogether to lock down your project.</p>
+
+  <h1>Contributing to a Project</h1>
+  <p>SAGE relies on two different types of information, Objects and Concepts. While using the application, you will often find yourself exploring the relationships between them. While doing so, you are encouraged to create new concepts and link concepts to objects to expand and improve the network of relationships.</p>
+
+  <h1>Objects</h1>
+
+  <p>Pressing the create button on the objects overview page allows you to create a new object. You will be prompted to add the object's URL, which is typically of the form http://www.example.com/myimage.jpg. When finished, press the "Done" button to submit it to the database. SAGE allows you to add any type of digital object, from spreadsheets to web pages, audio files and video files. The only requirement is that they all must have a valid URL.</p>
+
+  <p> Ensure that the URL you submit is publicly accessible. If you encounter issues with broken links in SAGE, check that you are using public links, and that the link leads directly to the file.</p>
+
+  <h1>Concepts</h1>
+
+  <p>Pressing the create button on the concept overview page allows you to create a new concept. You will be asked to describe the concept you wish to capture. This concept can be any detail you observe or infer from the object. Using a photo as an example, these details could include the location, notable objects or people in the photo, or the event during which it was taken.</p>
+
+  <p>Associations show the concepts/objects that have been associated with the current object/concept, and suggestions that are likely to relate to the current item. You are encouraged to interact with these sections as you view objects and concepts. The quality of suggestions will improve as more associations are made, until no useful associations remain to be added.</p>
+
   <h1>Feedback</h1>
-  <p>If you feel content is missing from the instructions section, or if some information could be worded more clearly, please don't hesitate to contact me at jfoley4@une.edu.au and I will make those changes.</p>
+  <p>Simply using SAGE will contribute to its improvement, but if you have a specific suggestion or bug fix to request, don't hesitate to send it via the feedback page. Thanks in advance!</p>
 </div>

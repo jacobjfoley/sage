@@ -1,11 +1,5 @@
 ==Algorithm
-* Wide search currently broken!
 * Search.
-
-==Site
-* Updated main page!
-* Updated guides!
-* Updated feedback!
 
 ==Navbar
 * Separate Projects, Notes visually.
@@ -19,17 +13,19 @@
 ==Users
 * Proper unauthorized message.
 * Password needed to change important user details.
-* Reset -> Placeholder: contact me!
 * Improve profile appearance!
 * User agreement!
 
+==User Role
+* Higher key overrides lower key.
+* Nil doesn't do anything.
+
 ==Project
-* Change Project listing to Projects!
-* Notes heading!
 * Update project listing and project notes to improve appearance!
 * Expand deletion to responsibly clean up the database!
 * Clear all objects and clear all concepts.
 * Crawler for images in drive folder.
+* Remove users from projects.
 
 ==Objects
 * Error on empty create.
