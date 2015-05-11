@@ -5,7 +5,7 @@ class ProjectsController < ApplicationController
   before_action :set_user_role, only: [:show]
   before_action :set_user_lists, only: [:show]
   before_action :check_access, except: [:new, :create, :index, :redeem_key, :check_key]
-  
+
   layout 'control', except: [:new, :create, :index, :redeem_key, :check_key]
 
   # GET /projects
@@ -37,7 +37,7 @@ class ProjectsController < ApplicationController
       if @project.save
         # Project is initially registered to the creating user.
         UserRole.create user_id: @user.id, project_id: @project.id, position: "Administrator"
-      
+
         format.html { redirect_to @project, notice: 'Project was successfully created.' }
         format.json { render action: 'show', status: :created, location: @project }
       else
@@ -77,30 +77,30 @@ class ProjectsController < ApplicationController
 
   # POST /projects/1/generate_key?type=Viewer
   def generate_key
-  
+
     # Generate a new key for the project.
     @project.generate_key(params[:type])
-    
+
     # Save project with new details.
     @project.save
-    
+
     # Redirect back to the project.
     redirect_to @project
   end
-  
+
   # POST /projects/1/reset_key?type=Viewer
   def reset_key
-  
+
     # Reset the given key.
     @project.reset_key(params[:type])
-    
+
     # Save the changes.
     @project.save
-    
+
     # Redirect back to the project.
     redirect_to @project
   end
-  
+
   # POST /projects/check_key?key=sdafasddsfsfasfasfdafdaf
   def check_key
     flash.notice = Project.check_key(params[:key], @user)
@@ -112,35 +112,35 @@ class ProjectsController < ApplicationController
     def set_project
       @project = Project.find(params[:id])
     end
-    
+
     # Set the user.
     def set_user
       @user = User.find(session[:user_id])
     end
-    
+
     # Set the user role.
     def set_user_role
       @user_role = UserRole.where(user_id: @user.id, project_id: @project.id).first
     end
-    
+
     # Set listings of users.
     def set_user_lists
-    
+
       @administrators = []
       @contributors = []
       @viewers = []
-    
+
       UserRole.where(project_id: @project.id, position: "Administrator").each do |role|
         @administrators << User.find(role.user_id)
       end
-      
+
       UserRole.where(project_id: @project.id, position: "Contributor").each do |role|
         @contributors << User.find(role.user_id)
       end
-      
+
       UserRole.where(project_id: @project.id, position: "Viewer").each do |role|
         @viewers << User.find(role.user_id)
-      end      
+      end
     end
 
     # Ensure that the user is currently logged in.
@@ -155,25 +155,25 @@ class ProjectsController < ApplicationController
 
     # Ensure that the user has appropriate access privileges for what they are accessing.
     def check_access
-    
+
       # Define the pages which can be accessed using each level of security.
       viewer_pages = ["show"]
       contributer_pages = ["show"]
       administrator_pages = ["show", "update", "edit", "destroy", "generate_key", "reset_key"]
-      
+
       # Get the currently logged-in user's role in this project, if any.
       @role = UserRole.find_by(user_id: session[:user_id], project_id: params[:id])
-      
+
       # Check if a role exists.
       if @role.nil?
-      
+
         # User doesn't have a role in this project.
         redirect_to "/500.html"
       else
-      
+
         # Filter incorrect permissions.
         if (@role.position.eql? "Viewer") && (viewer_pages.include? params[:action])
-        elsif (@role.position.eql? "Contributer") && (contributer_pages.include? params[:action])
+        elsif (@role.position.eql? "Contributor") && (contributor_pages.include? params[:action])
         elsif (@role.position.eql? "Administrator") && (administrator_pages.include? params[:action])
         else
           # No permissions.

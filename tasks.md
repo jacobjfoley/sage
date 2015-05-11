@@ -18,7 +18,7 @@
 * Nil doesn't do anything.
 
 ==Project
-* Update project listing and project notes to improve appearance!
+* Update project notes to improve appearance!
 * Expand deletion to responsibly clean up the database!
 * Clear all objects and clear all concepts.
 * Crawler for images in drive folder.
