@@ -2,7 +2,7 @@ Sage::Application.routes.draw do
 
   # Projects.
   resources :projects do
-  
+
     # Digital objects, part of a project.
     resources :digital_objects do
       member do
@@ -10,7 +10,7 @@ Sage::Application.routes.draw do
         post 'remove_concept'
       end
     end
-    
+
     # Concepts, part of a project.
     resources :concepts do
       member do
@@ -18,12 +18,12 @@ Sage::Application.routes.draw do
         post 'remove_object'
       end
     end
-    
+
     member do
       post 'generate_key'
       post 'reset_key'
     end
-    
+
     collection do
       get 'redeem_key'
       post 'check_key'
@@ -38,16 +38,17 @@ Sage::Application.routes.draw do
       get 'logout'
     end
   end
-  
+
   # Site root.
   root "site#welcome"
-  
+
   # Site pages.
   match "/welcome", via: "get", to: "site#welcome"
   match "/application", via: "get", to: "site#application"
   match "/guides", via: "get", to: "site#guides"
   match "/feedback", via: "get", to: "site#feedback"
-  
+  match "/agreement", via: "get", to: "site#agreement"
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
@@ -88,7 +89,7 @@ Sage::Application.routes.draw do
   #       get 'recent', on: :collection
   #     end
   #   end
-  
+
   # Example resource route with concerns:
   #   concern :toggleable do
   #     post 'toggle'

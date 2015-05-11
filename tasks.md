@@ -3,7 +3,6 @@
 
 ==Navbar
 * Separate Projects, Notes visually.
-* Change Projects to <-- Back.
 * Include view changes:
   * Recent Concepts, Objects (newest modified)
   * Established Concepts, Objects (oldest modified)
@@ -13,8 +12,6 @@
 ==Users
 * Proper unauthorized message.
 * Password needed to change important user details.
-* Improve profile appearance!
-* User agreement!
 
 ==User Role
 * Higher key overrides lower key.

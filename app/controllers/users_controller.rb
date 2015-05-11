@@ -5,7 +5,7 @@ class UsersController < ApplicationController
   # GET /users
   # GET /users.json
   def index
-  
+
     # Users listing not available. Redirect to error.
     #@users = User.all
     redirect_to "/500.html"
@@ -30,18 +30,24 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
 
-    respond_to do |format|
-      if @user.save
-      
-        # Log in as new user.
-        session[:user_id] = @user.id
-      
-        format.html { redirect_to @user, notice: 'User was successfully created.' }
-        format.json { render action: 'show', status: :created, location: @user }
-      else
-        format.html { render action: 'new' }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
+    # Check participation details were set.
+    if (params[:agreement] && params[:participation] && params[:age])
+      respond_to do |format|
+        if @user.save
+
+          # Log in as new user.
+          session[:user_id] = @user.id
+
+          format.html { redirect_to @user, notice: 'User was successfully created.' }
+          format.json { render action: 'show', status: :created, location: @user }
+        else
+          format.html { render action: 'new' }
+          format.json { render json: @user.errors, status: :unprocessable_entity }
+        end
       end
+    else
+      @user.errors[:base] << "Please confirm your participation details."
+      render action: 'new'
     end
   end
 
@@ -68,34 +74,34 @@ class UsersController < ApplicationController
       format.json { head :no_content }
     end
   end
-  
+
   # GET /users/login
   # POST /users/login
   def login
-  
+
     # Check for the type of request.
     if request.get?
-    
+
       # Initial request to login. Provide form.
       @user = User.new
     else
       # Check details in form and determine if the user will be logged in.
-      
-      # See if the provided email address exists. 
+
+      # See if the provided email address exists.
       @user = User.find_by email: params[:user][:email]
-      
+
       # Check password, if user exists.
       if !@user.nil? && (@user.authenticate params[:user][:password])
-        
+
         # User exists and password is correct. Log in.
         flash[:notice] = "You have successfully logged in."
         session[:user_id] = @user.id
-        
+
         # Redirect to the user's project page.
         redirect_to projects_path
       else
 
-        # Incorrect password, or the user doesn't exist. Back to login page. 
+        # Incorrect password, or the user doesn't exist. Back to login page.
         @user = User.new
         @user.errors[:base] << "Incorrect email address or password."
       end
@@ -104,7 +110,7 @@ class UsersController < ApplicationController
 
   # GET /users/logout
   def logout
-    
+
     # Reset the session.
     reset_session
 
@@ -115,7 +121,7 @@ class UsersController < ApplicationController
   private
     # Callback to check authorisation before access.
     def check_access
-    
+
       # Unless the user is logged in:
       unless session[:user_id].to_s.eql? params[:id]
         flash[:notice] = "You are not permitted to access this page. Please log in to continue."
