@@ -23,6 +23,7 @@
 * Clear all objects and clear all concepts.
 * Crawler for images in drive folder.
 * Remove users from projects.
+* Controls only visible to permitted users.
 
 ==Objects
 * Error on empty create.
