@@ -2,7 +2,7 @@
 * Search.
 
 ==Navbar
-* Separate Projects, Notes visually.
+* !!Separate Projects, Notes visually.
 * Include view changes:
   * Recent Concepts, Objects (newest modified)
   * Established Concepts, Objects (oldest modified)
@@ -10,31 +10,25 @@
   * Popular Concepts, Objects (most associations)
 
 ==Users
-* Proper unauthorized message.
-* Password needed to change important user details.
-
-==User Role
-* Higher key overrides lower key.
-* Nil doesn't do anything.
+* !!Password needed to change important user details.
 
 ==Project
 * Clear all objects and clear all concepts.
 * Crawler for images in drive folder.
-* Remove users from projects.
-* Controls only visible to permitted users.
+* !!Remove users from projects.
 
 ==Objects
-* Error on empty create.
-* Error on clicking generic file.
-* Error on broken link.
-* Error on clicking broken link.
-* Quick concept creation.
+* !!Error on empty create.
+* !!Error on clicking generic file.
+* !!Error on broken link.
+* !!Error on clicking broken link.
+* !!Quick concept creation.
 * Disable duplicates.
 * Green for associated.
 * Delete object on index.
 * Add glyph larger.
 * Flippable.
-* Sorted and display score!
+* !!Sorted and display score
 
 ==Concepts
 * Disable duplicates.
@@ -43,7 +37,7 @@
 * Green for associated.
 * Add button larger.
 * Merge function.
-* Sorted and display score!
+* !!Sorted and display score
 
 ==Agents
 * Shared base for concepts and objects.

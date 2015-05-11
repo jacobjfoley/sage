@@ -125,7 +125,7 @@ class ProjectsController < ApplicationController
       @project = Project.find(params[:id])
     end
 
-    # Set the user.
+    # Set the user.500
     def set_user
       @user = User.find(session[:user_id])
     end
@@ -180,7 +180,7 @@ class ProjectsController < ApplicationController
       if @role.nil?
 
         # User doesn't have a role in this project.
-        redirect_to "/500.html"
+        redirect_to "/403.html"
       else
 
         # Filter incorrect permissions.
@@ -189,7 +189,7 @@ class ProjectsController < ApplicationController
         elsif (@role.position.eql? "Administrator") && (administrator_pages.include? params[:action])
         else
           # No permissions.
-          redirect_to "/404.html"
+          redirect_to "/403.html"
         end
       end
     end

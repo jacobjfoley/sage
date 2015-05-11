@@ -8,7 +8,7 @@ class UsersController < ApplicationController
 
     # Users listing not available. Redirect to error.
     #@users = User.all
-    redirect_to "/500.html"
+    redirect_to "/403.html"
   end
 
   # GET /users/1
