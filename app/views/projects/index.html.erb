@@ -2,30 +2,40 @@
 
 <h1>Projects</h1>
 
-<%= link_to 'Profile', user_path(@user) %>
-<%= link_to 'New Project', new_project_path %>
-<%= link_to 'Redeem Key', redeem_key_projects_path %>
-
-<br><br>
-
-<table>
-  <thead>
-    <tr>
-      <th>Notes</th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @projects.each do |project| %>
-      <tr>
-        <td><%= project.notes %></td>
-        <td><%= link_to 'Show', project %></td>
-        <td><%= link_to 'Edit', edit_project_path(project) %></td>
-        <td><%= link_to 'Destroy', project, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
+<div class="row">
+  <div class="col-md-4">
+    <%= link_to user_path(@user) do %>
+      <div class="text-center well">Profile</div>
     <% end %>
-  </tbody>
+  </div>
+  <div class="col-md-4">
+    <%= link_to new_project_path do %>
+      <div class="text-center well">New Project</div>
+    <% end %>
+  </div>
+  <div class="col-md-4">
+    <%= link_to redeem_key_projects_path do %>
+      <div class="text-center well">Redeem Key</div>
+    <% end %>
+  </div>
+</div>
+
+<table class="table table-striped">
+  <% @projects.each do |project| %>
+    <tr>
+    	<td class="nodecoration">
+        <%= link_to project_path(project), title: "View" do %>
+          <%= truncate(project.name, length: 100) %>
+        <% end %>
+    	  <div class="pull-right">
+          <%= link_to edit_project_path(project), title: "Edit" do %>
+            <i class="glyphicon glyphicon-pencil"></i>
+          <% end %>
+          <%= link_to project_path(project), title: "Delete", method: :delete, data: { confirm: 'Are you sure?' } do %>
+            <i class="glyphicon glyphicon-trash"></i>
+          <% end %>
+        </div>
+      </td>
+    </tr>
+  <% end %>
 </table>
