@@ -1,8 +1,8 @@
 class ProjectsController < ApplicationController
   before_action :set_project, only: [:show, :edit, :update, :destroy, :generate_key, :reset_key]
   before_action :check_logged_in
-  before_action :set_user, only: [:show, :create, :index, :check_key, :check_access]
-  before_action :set_user_role, only: [:show]
+  before_action :set_user, only: [:show, :create, :index, :destroy, :check_key, :check_access]
+  before_action :set_user_role, only: [:show, :destroy]
   before_action :set_user_lists, only: [:show]
   before_action :check_access, except: [:new, :create, :index, :redeem_key, :check_key]
 
@@ -17,6 +17,7 @@ class ProjectsController < ApplicationController
   # GET /projects/1
   # GET /projects/1.json
   def show
+    @admins = UserRole.where(project_id: @project.id, position:"Administrator").count
   end
 
   # GET /projects/new
@@ -64,7 +65,18 @@ class ProjectsController < ApplicationController
   # DELETE /projects/1
   # DELETE /projects/1.json
   def destroy
-    @project.destroy
+
+    # Remove the user's role from this project.
+    @user_role.destroy
+
+    # Check number of admins for deletion method.
+    if UserRole.where(project_id: @project.id, position: "Administrator").count == 0
+
+      # Destroy entire project.
+      @project.destroy
+    end
+
+    # Redirect.
     respond_to do |format|
       format.html { redirect_to projects_url }
       format.json { head :no_content }
@@ -157,8 +169,8 @@ class ProjectsController < ApplicationController
     def check_access
 
       # Define the pages which can be accessed using each level of security.
-      viewer_pages = ["show"]
-      contributor_pages = ["show"]
+      viewer_pages = ["show", "destroy"]
+      contributor_pages = ["show", "destroy"]
       administrator_pages = ["show", "update", "edit", "destroy", "generate_key", "reset_key"]
 
       # Get the currently logged-in user's role in this project, if any.

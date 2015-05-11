@@ -160,17 +160,37 @@ class Project < ActiveRecord::Base
     end
 
     # Check if provided key is present.
-    if all_keys.key? key
+    if (all_keys.key?(key) && !(key.nil?))
 
       # Get details.
       project = all_keys[key][:project]
       position = all_keys[key][:position]
 
-      # Assign user role within project.
-      UserRole.create(user_id: user.id, project_id: project.id, position: position)
+      # Check for prior role.
+      prior = UserRole.where(user_id: user.id, project_id: project.id)
 
-      # Return success.
-      return "You have successfully been added to the project."
+      # Assign user role within project if the user has none already.
+      if prior.count == 0
+
+        # Create new role.
+        UserRole.create(user_id: user.id, project_id: project.id, position: position)
+
+        # Return success.
+        return "You have successfully been added to the project."
+      else
+
+        # Check for upgrade.
+        if position.eql? "Administrator"
+          prior.first.update(position: "Administrator")
+        elsif (prior.first.position.eql?("Viewer") && position.eql?("Contributor"))
+          prior.first.update(position: "Contributor")
+        else
+          return "You already have an equal or better role in the project."
+        end
+
+        # Return success.
+        return "You have successfully been promoted in the project."
+      end
     else
 
       # Return error.

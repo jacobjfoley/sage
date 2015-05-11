@@ -18,8 +18,14 @@
       <div class="col-md-2 btn btn-default"><i class="glyphicon glyphicon-pencil"></i> Edit</div>
     <% end %>
     <div class="col-md-1"></div>
-    <%= link_to project_path(@project), title: "Delete", method: :delete, data: { confirm: 'Are you sure?' } do %>
-      <div class="col-md-2 btn btn-default"><i class="glyphicon glyphicon-trash"></i> Delete</div>
+    <% if @admins > 1 %>
+      <%= link_to project_path(@project), title: "Leave", method: :delete do %>
+      <div class="col-md-2 btn btn-default"><i class="glyphicon glyphicon-remove-circle"></i> Leave</div>
+    <% end %>
+    <% else %>
+      <%= link_to project_path(@project), title: "Delete", method: :delete, data: { confirm: 'Are you sure?' } do %>
+        <div class="col-md-2 btn btn-default"><i class="glyphicon glyphicon-trash"></i> Delete</div>
+      <% end %>
     <% end %>
     <div class="col-md-2"></div>
   </div>
@@ -50,11 +56,15 @@
 <% else %>
 
   <div class="row">
-    <div class="col-md-5"></div>
+    <div class="col-md-3"></div>
     <%= link_to projects_path do%>
       <div class="col-md-2 btn btn-default"><i class="glyphicon glyphicon-arrow-left"></i> Back</div>
     <% end %>
-    <div class="col-md-5"></div>
+    <div class="col-md-2"></div>
+    <%= link_to project_path(@project), title: "Leave", method: :delete do %>
+      <div class="col-md-2 btn btn-default"><i class="glyphicon glyphicon-remove-circle"></i> Leave</div>
+    <% end %>
+    <div class="col-md-3"></div>
   </div>
 
 <% end %>
