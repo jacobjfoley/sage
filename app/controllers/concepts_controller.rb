@@ -4,7 +4,7 @@ class ConceptsController < ApplicationController
   before_action :set_project
   before_action :set_concept, only: [:show, :edit, :update, :destroy, :add_object, :remove_object]
   before_action :set_object, only: [:add_object, :remove_object]
-  
+
   layout 'control'
 
   # GET /concepts
@@ -31,7 +31,7 @@ class ConceptsController < ApplicationController
   # POST /concepts.json
   def create
     @concept = Concept.new(concept_params)
-    
+
     # Set the project ID from the parameters passed to this controller.
     @concept.project_id = @project.id
 
@@ -69,22 +69,22 @@ class ConceptsController < ApplicationController
       format.json { head :no_content }
     end
   end
-  
+
   # POST /concepts/1/add_object
   def add_object
     unless @concept.digital_objects.include? @object
       @concept.digital_objects << @object
     end
-    
+
     redirect_to project_concept_path(@project, @concept)
   end
-  
+
   # POST /concepts/1/remove_object
   def remove_object
-    if @concept.digital_objects.include? @object    
+    if @concept.digital_objects.include? @object
       @concept.digital_objects.delete @object
     end
-    
+
     redirect_to project_concept_path(@project, @concept)
   end
 
@@ -93,12 +93,12 @@ class ConceptsController < ApplicationController
     def set_concept
       @concept = Concept.find(params[:id])
     end
-    
+
     # Get the digital object object.
     def set_object
       @object = DigitalObject.find(params[:object])
     end
-    
+
     # Get the project that the concept belongs to.
     def set_project
       @project = Project.find(params[:project_id])
@@ -116,25 +116,25 @@ class ConceptsController < ApplicationController
 
     # Ensure that the user has appropriate access privileges for what they are accessing.
     def check_access
-    
+
       # Define the pages which can be accessed using each level of security.
       viewer_pages = ["show", "index"]
-      contributer_pages = ["show", "index", "new", "create", "update", "edit", "destroy", "add_object", "remove_object"]
+      contributor_pages = ["show", "index", "new", "create", "update", "edit", "destroy", "add_object", "remove_object"]
       administrator_pages = ["show", "index", "new", "create", "update", "edit", "destroy", "add_object", "remove_object"]
-      
+
       # Get the currently logged-in user's role in this project, if any.
       @role = UserRole.find_by(user_id: session[:user_id], project_id: params[:project_id])
-      
+
       # Check if a role exists.
       if @role.nil?
-      
+
         # User doesn't have a role in this project.
         redirect_to "/500.html"
       else
-      
+
         # Filter incorrect permissions.
         if (@role.position.eql? "Viewer") && (viewer_pages.include? params[:action])
-        elsif (@role.position.eql? "Contributer") && (contributer_pages.include? params[:action])
+        elsif (@role.position.eql? "Contributor") && (contributor_pages.include? params[:action])
         elsif (@role.position.eql? "Administrator") && (administrator_pages.include? params[:action])
         else
           # No permissions.

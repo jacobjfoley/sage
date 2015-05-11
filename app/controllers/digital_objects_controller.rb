@@ -4,9 +4,9 @@ class DigitalObjectsController < ApplicationController
   before_action :set_project
   before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :add_concept, :remove_concept]
   before_action :set_concept, only: [:add_concept, :remove_concept]
-  
+
   layout 'control'
-  
+
 
   # GET /digital_objects
   # GET /digital_objects.json
@@ -31,31 +31,31 @@ class DigitalObjectsController < ApplicationController
   # POST /digital_objects
   # POST /digital_objects.json
   def create
-    
+
     # Flag to test whether new object could be saved.
     saved = true;
-    
+
     # Determine if adding a batch or single entry.
     if digital_object_params[:location].lines.count == 1
       # Single entry. Create object using params directly.
       @digital_object = DigitalObject.new(digital_object_params)
-      
+
       # Set the project ID from the parameters passed to this controller.
       @digital_object.project_id = @project.id
-       
+
       saved = @digital_object.save
     else
       # Batch entry. Fetch locations.
       locations = digital_object_params[:location].lines
-      
+
       # Modify params for each location, and use them to create objects.
       locations.each do |loc|
         params[:digital_object][:location] = loc.chomp
         @digital_object = DigitalObject.new(digital_object_params)
-        
+
         # Set the project ID from the parameters passed to this controller.
         @digital_object.project_id = @project.id
-        
+
         saved &= @digital_object.save
       end
     end
@@ -94,22 +94,22 @@ class DigitalObjectsController < ApplicationController
       format.json { head :no_content }
     end
   end
-  
+
   # POST /objects/1/add_concept
   def add_concept
     unless @digital_object.concepts.include? @concept
       @digital_object.concepts << @concept
     end
-    
+
     redirect_to project_digital_object_path(@project, @digital_object)
   end
-  
+
   # POST /objects/1/remove_object
   def remove_concept
-    if @digital_object.concepts.include? @concept    
+    if @digital_object.concepts.include? @concept
       @digital_object.concepts.delete @concept
     end
-    
+
     redirect_to project_digital_object_path(@project, @digital_object)
   end
 
@@ -118,7 +118,7 @@ class DigitalObjectsController < ApplicationController
     def set_digital_object
       @digital_object = DigitalObject.find(params[:id])
     end
-    
+
     def set_concept
       @concept = Concept.find(params[:concept])
     end
@@ -139,25 +139,25 @@ class DigitalObjectsController < ApplicationController
 
     # Ensure that the user has appropriate access privileges for what they are accessing.
     def check_access
-    
+
       # Define the pages which can be accessed using each level of security.
       viewer_pages = ["show", "index"]
-      contributer_pages = ["show", "index", "new", "create", "update", "edit", "destroy", "add_concept", "remove_concept"]
+      contributor_pages = ["show", "index", "new", "create", "update", "edit", "destroy", "add_concept", "remove_concept"]
       administrator_pages = ["show", "index", "new", "create", "update", "edit", "destroy", "add_concept", "remove_concept"]
-      
+
       # Get the currently logged-in user's role in this project, if any.
       @role = UserRole.find_by(user_id: session[:user_id], project_id: params[:project_id])
-      
+
       # Check if a role exists.
       if @role.nil?
-      
+
         # User doesn't have a role in this project.
         redirect_to "/404.html"
       else
-      
+
         # Filter incorrect permissions.
         if (@role.position.eql? "Viewer") && (viewer_pages.include? params[:action])
-        elsif (@role.position.eql? "Contributer") && (contributer_pages.include? params[:action])
+        elsif (@role.position.eql? "Contributor") && (contributor_pages.include? params[:action])
         elsif (@role.position.eql? "Administrator") && (administrator_pages.include? params[:action])
         else
           # No permissions.

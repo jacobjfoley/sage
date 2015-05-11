@@ -158,7 +158,7 @@ class ProjectsController < ApplicationController
 
       # Define the pages which can be accessed using each level of security.
       viewer_pages = ["show"]
-      contributer_pages = ["show"]
+      contributor_pages = ["show"]
       administrator_pages = ["show", "update", "edit", "destroy", "generate_key", "reset_key"]
 
       # Get the currently logged-in user's role in this project, if any.
