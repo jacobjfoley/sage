@@ -11,17 +11,35 @@ class Concept < ActiveRecord::Base
   def relevant
 
     # Calculate influence to spread.
-    influence = DigitalObject.all.count
+    influence = project.digital_objects.count
 
     # Default influence, three steps (find object), hasn't dispersed yet.
     results = collaborate(influence, 3, false)
 
-    # Filter weak results.
-    results.keys.each do |key|
-      if results[key] < 1.0
-        results.delete key
-      end
+    # Calculate absorbed influence.
+    absorbed = 0.0
+    digital_objects.each do |object|
+      absorbed += results[object]
     end
+
+    # Calculate missing influence.
+    missing = influence
+    results.keys.each do |key|
+      missing -= results[key]
+    end
+
+    # Distribute consumed and absorbed influence among popular.
+    popular = project.popular_objects(absorbed+missing)
+
+    # Merge harmonic intuition results with popular.
+    aggregate(results, popular)
+
+    # # Filter weak results.
+    # results.keys.each do |key|
+    #   if results[key] < 1.0
+    #     results.delete key
+    #   end
+    # end
 
     # Return filtered results.
     return results
@@ -46,16 +64,8 @@ class Concept < ActiveRecord::Base
     # If at a termination point due to lack of associations:
     elsif digital_objects.count == 0
 
-      # Lend influence to global recommendations instead.
-      if propagations.even?
-
-        # Even, so concepts sought.
-        return project.popular_concepts(influence)
-      else
-
-        # Odd, so objects sought.
-        return project.popular_objects(influence)
-      end
+      # Consume influence and return nothing.
+      return {}
 
     # Normal propagation step, otherwise.
     else

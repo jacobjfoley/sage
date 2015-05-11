@@ -1,11 +1,11 @@
 ==Algorithm
-* Wide search currently broken.
+* Wide search currently broken!
 * Search.
 
 ==Site
-* Updated main page.
-* Updated guides.
-* Updated feedback.
+* Updated main page!
+* Updated guides!
+* Updated feedback!
 
 ==Navbar
 * Separate Projects, Notes visually.
@@ -19,14 +19,15 @@
 ==Users
 * Proper unauthorized message.
 * Password needed to change important user details.
-* Reset -> Placeholder: contact me.
-* Improve profile appearance.
+* Reset -> Placeholder: contact me!
+* Improve profile appearance!
+* User agreement!
 
 ==Project
-* Change Project listing to Projects.
-* Notes heading.
-* Update project listing and project notes to improve appearance.
-* Expand deletion to responsibly clean up the database.
+* Change Project listing to Projects!
+* Notes heading!
+* Update project listing and project notes to improve appearance!
+* Expand deletion to responsibly clean up the database!
 * Clear all objects and clear all concepts.
 * Crawler for images in drive folder.
 
@@ -40,6 +41,8 @@
 * Green for associated.
 * Delete object on index.
 * Add glyph larger.
+* Flippable.
+* Sorted and display score!
 
 ==Concepts
 * Disable duplicates.
@@ -47,6 +50,12 @@
 * Click anywhere for concept in listing.
 * Green for associated.
 * Add button larger.
+* Merge function.
+* Sorted and display score!
+
+==Agents
+* Shared base for concepts and objects.
+* Ability to show colour gradient for similarity score.
 
 ==Performance
 * Create thumbnails for images.
