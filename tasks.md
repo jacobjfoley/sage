@@ -1,21 +1,26 @@
-==Algorithm
-* Search.
+==Features
+* Search and Merge, Recommended For Expansion, Agent Features.
+* Import and Export, Clear, Merge, Project Features.
+* Thumbnails, performance upgrade.
 
-==Navbar
-* !!Separate Projects, Notes visually.
-* Include view changes:
-  * Recent Concepts, Objects (newest modified)
-  * Established Concepts, Objects (oldest modified)
-  * New Concepts, Objects (zero associations)
-  * Popular Concepts, Objects (most associations)
+----------
+
+==Presentation
+* Buttons and text larger.
+* Colour scheme in navbar.
 
 ==Users
 * !!Password needed to change important user details.
 
 ==Project
-* Clear all objects and clear all concepts.
-* Crawler for images in drive folder.
 * !!Remove users from projects.
+
+==Agents
+* Date ranges in photos?
+* Shared base for concepts and objects.
+* !!Sorted and display score by associated, relevant colour.
+* Disable duplicates.
+* Linkthrough to Google Image Search
 
 ==Objects
 * !!Error on empty create.
@@ -23,27 +28,8 @@
 * !!Error on broken link.
 * !!Error on clicking broken link.
 * !!Quick concept creation.
-* Disable duplicates.
-* Green for associated.
 * Delete object on index.
-* Add glyph larger.
 * Flippable.
-* !!Sorted and display score
 
 ==Concepts
-* Disable duplicates.
-* Bulk concepts somehow?
-* Click anywhere for concept in listing.
-* Green for associated.
-* Add button larger.
-* Merge function.
-* !!Sorted and display score
-
-==Agents
-* Shared base for concepts and objects.
-* Ability to show colour gradient for similarity score.
-
-==Performance
-* Create thumbnails for images.
-* Store a cache of words / explore wordnet/keywords.
-* Limit per-page listing of objects or concepts.
+* Click anywhere for concept(&project) in listing.

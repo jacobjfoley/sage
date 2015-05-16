@@ -4,23 +4,19 @@
 
 <div class="row">
   <div class="col-md-4">
-    <%= link_to user_path(@user) do %>
-      <div class="text-center well">Profile</div>
-    <% end %>
+    <%= link_to "Profile", user_path(@user), class: "btn btn-default btn-lg btn-block" %>
   </div>
   <div class="col-md-4">
-    <%= link_to new_project_path do %>
-      <div class="text-center well">New Project</div>
-    <% end %>
+    <%= link_to "New Project", new_project_path, class: "btn btn-default btn-lg btn-block" %>
   </div>
   <div class="col-md-4">
-    <%= link_to redeem_key_projects_path do %>
-      <div class="text-center well">Redeem Key</div>
-    <% end %>
+    <%= link_to "Redeem Key", redeem_key_projects_path, class: "btn btn-default btn-lg btn-block" %>
   </div>
 </div>
 
-<table class="table table-striped">
+<br>
+
+<table class="table table-striped table-bordered">
   <% @projects.each do |project| %>
     <tr>
     	<td class="nodecoration">
