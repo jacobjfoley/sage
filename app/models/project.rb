@@ -119,7 +119,7 @@ class Project < ActiveRecord::Base
     while !unique
 
       # Generate a new key.
-      key = SecureRandom.base64
+      key = SecureRandom.urlsafe_base64
 
       # Check for uniqueness across database.
       unique = !(all_keys.include? key)

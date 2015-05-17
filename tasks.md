@@ -18,6 +18,7 @@
 ==Agents
 * Date ranges in photos?
 * Shared base for concepts and objects.
+* Partial for concepts and objects? Bootstrap gallery?
 * !!Sorted and display score by associated, relevant colour.
 * Disable duplicates.
 * Linkthrough to Google Image Search

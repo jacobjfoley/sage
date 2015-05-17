@@ -87,6 +87,17 @@ class DigitalObject < ActiveRecord::Base
     end
   end
 
+  # Get the URL of the digital object's thumbnail.
+  def thumbnail(x, y)
+
+    # Calculate the hash of the object's original URL.
+
+    # If the thumbnail of the specified size doesn't exist, create it.
+
+    # Return the URL.
+    return "/thumbnails/hash_xxy.jpg"
+  end
+
   # Private methods.
   private
 
@@ -107,5 +118,26 @@ class DigitalObject < ActiveRecord::Base
         results[key] = response[key]
       end
     end
+  end
+
+  # Generate a new thumbnail.
+  def generate_thumbnail(x, y)
+
+    # Get the object's target URL filetype.
+
+    # If an image:
+
+      # Fetch it.
+
+      # Resize it.
+
+      # If not already a JPEG, convert it to one.
+
+      # Write the new thumbnail.
+
+    # Otherwise, for non-images:
+
+      # Provide an appropriate placeholder.
+
   end
 end
