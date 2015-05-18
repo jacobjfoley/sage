@@ -198,6 +198,17 @@ class Project < ActiveRecord::Base
     end
   end
 
+  # Clear all thumbnails belonging to objects in this project.
+  def clear_thumbnails
+
+    # For each digital object in the project:
+    digital_objects.each do |object|
+
+      # Delete this object's thumbnails.
+      object.clear_thumbnails()
+    end
+  end
+
   # Private methods.
   private
 

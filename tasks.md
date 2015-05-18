@@ -1,7 +1,7 @@
 ==Features
 * Search and Merge, Recommended For Expansion, Agent Features.
 * Import and Export, Clear, Merge, Project Features.
-* Thumbnails, performance upgrade.
+* Thumbnails on Google Drive.
 
 ----------
 

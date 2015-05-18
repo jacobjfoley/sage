@@ -107,28 +107,6 @@ class DigitalObject < ActiveRecord::Base
     return "/thumbnails/#{digest}_#{x}x#{y}.jpg"
   end
 
-  # Private methods.
-  private
-
-  # Aggregate a response with the in-progress results hash.
-  def aggregate(results, response)
-
-    # For each element in the response:
-    response.keys.each do |key|
-
-      # If the key is already in the results:
-      if results.key? key
-
-        # Add to the key's influence.
-        results[key] += response[key]
-      else
-
-        # Introduce key to results with its influence.
-        results[key] = response[key]
-      end
-    end
-  end
-
   # Generate a new thumbnail.
   def generate_thumbnail(x, y, digest)
 
@@ -152,5 +130,42 @@ class DigitalObject < ActiveRecord::Base
     # Write the new thumbnail to the thumbnail cache.
     thumb.write "public/thumbnails/#{digest}_#{x}x#{y}.jpg"
 
+  end
+
+  # Clear existing thumbnails.
+  def clear_thumbnails()
+
+    # Calculate the digest of the object's original URL.
+    digest = Digest::SHA256.hexdigest location
+
+    # Get all thumbnails belonging to this object.
+    thumbnails = Dir.glob("public/thumbnails/#{digest}_*")
+
+    # Delete each thumbnail.
+    thumbnails.each do |thumbnail|
+      File.delete thumbnail
+    end
+  end
+
+  # Private methods.
+  private
+
+  # Aggregate a response with the in-progress results hash.
+  def aggregate(results, response)
+
+    # For each element in the response:
+    response.keys.each do |key|
+
+      # If the key is already in the results:
+      if results.key? key
+
+        # Add to the key's influence.
+        results[key] += response[key]
+      else
+
+        # Introduce key to results with its influence.
+        results[key] = response[key]
+      end
+    end
   end
 end
