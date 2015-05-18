@@ -1,3 +1,6 @@
+require 'digest'
+require 'fileutils'
+
 class DigitalObject < ActiveRecord::Base
 
   # Associations with other models.
@@ -90,12 +93,18 @@ class DigitalObject < ActiveRecord::Base
   # Get the URL of the digital object's thumbnail.
   def thumbnail(x, y)
 
-    # Calculate the hash of the object's original URL.
+    # Calculate the digest of the object's original URL.
+    digest = Digest::SHA256.hexdigest location
 
-    # If the thumbnail of the specified size doesn't exist, create it.
+    # If the thumbnail of the image and specified size doesn't exist:
+    unless File.exist? "public/thumbnails/#{digest}_#{x}x#{y}.jpg"
 
-    # Return the URL.
-    return "/thumbnails/hash_xxy.jpg"
+      # Create it.
+      generate_thumbnail(x, y, digest)
+    end
+
+    # Return the URL to the caller.
+    return "/thumbnails/#{digest}_#{x}x#{y}.jpg"
   end
 
   # Private methods.
@@ -121,23 +130,27 @@ class DigitalObject < ActiveRecord::Base
   end
 
   # Generate a new thumbnail.
-  def generate_thumbnail(x, y)
+  def generate_thumbnail(x, y, digest)
 
-    # Get the object's target URL filetype.
+    # Fetch a representation of the resource.
+    begin
 
-    # If an image:
+      # Attempt to fetch resource as if it were an image.
+      image = Magick::Image.read(location).first
 
-      # Fetch it.
+    # In the event of the resource not being an image:
+    rescue Magick::ImageMagickError
 
-      # Resize it.
+      # Get a generic image as a substitute.
+      image = Magick::Image.read("app/assets/images/generic_file.jpg").first
 
-      # If not already a JPEG, convert it to one.
+    end
 
-      # Write the new thumbnail.
+    # Resize it to the desired size.
+    thumb = image.resize_to_fit(x, y)
 
-    # Otherwise, for non-images:
-
-      # Provide an appropriate placeholder.
+    # Write the new thumbnail to the thumbnail cache.
+    thumb.write "public/thumbnails/#{digest}_#{x}x#{y}.jpg"
 
   end
 end
