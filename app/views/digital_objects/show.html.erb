@@ -6,7 +6,7 @@
   <div class="col-md-6">
     <div class="text-center well">
       <%= link_to @digital_object.location do%>
-        <%= render_resource @digital_object.thumbnail(400,400), style: "width: 100%" %><br />
+        <%= image_tag @digital_object.thumbnail(400,400), style: "width: 100%" %><br />
         <%= truncate(File.basename(@digital_object.location), length: 50) %><br />
       <% end %>
 

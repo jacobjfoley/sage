@@ -96,15 +96,20 @@ class DigitalObject < ActiveRecord::Base
     # Calculate the digest of the object's original URL.
     digest = Digest::SHA256.hexdigest location
 
-    # If the thumbnail of the image and specified size doesn't exist:
-    unless File.exist? "public/thumbnails/#{digest}_#{x}x#{y}.jpg"
+    # Check if the thumbnail of the image and specified size exists.
+    if File.exist? "public/thumbnails/#{digest}_#{x}x#{y}.jpg"
 
-      # Create it.
-      generate_thumbnail(x, y, digest)
+      # Return the URL to the caller.
+      return "/thumbnails/#{digest}_#{x}x#{y}.jpg"
+
+    else
+
+      # Schedule to create it.
+      Thread.new {generate_thumbnail(x, y, digest)}
+
+      # Return placeholder URL.
+      return "hourglass.jpg"
     end
-
-    # Return the URL to the caller.
-    return "/thumbnails/#{digest}_#{x}x#{y}.jpg"
   end
 
   # Generate a new thumbnail.
@@ -127,12 +132,15 @@ class DigitalObject < ActiveRecord::Base
     # If the image is larger than the desired size:
     if (image.x_resolution > x || image.y_resolution > y)
 
-      # Resize it to the desired size.
-      thumb = image.resize_to_fit(x, y)
+      # Keep a reference to the original.
+      original = image
+
+      # Resize image to the desired size.
+      image = original.resize_to_fit(x, y)
     end
 
     # Write the new thumbnail to the thumbnail cache.
-    thumb.write "public/thumbnails/#{digest}_#{x}x#{y}.jpg"
+    image.write "public/thumbnails/#{digest}_#{x}x#{y}.jpg"
   end
 
   # Clear existing thumbnails.
