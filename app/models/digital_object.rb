@@ -124,12 +124,15 @@ class DigitalObject < ActiveRecord::Base
 
     end
 
-    # Resize it to the desired size.
-    thumb = image.resize_to_fit(x, y)
+    # If the image is larger than the desired size:
+    if (image.x_resolution > x || image.y_resolution > y)
+
+      # Resize it to the desired size.
+      thumb = image.resize_to_fit(x, y)
+    end
 
     # Write the new thumbnail to the thumbnail cache.
     thumb.write "public/thumbnails/#{digest}_#{x}x#{y}.jpg"
-
   end
 
   # Clear existing thumbnails.
