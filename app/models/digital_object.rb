@@ -105,10 +105,10 @@ class DigitalObject < ActiveRecord::Base
     else
 
       # Schedule to create it.
-      Thread.new {generate_thumbnail(x, y, digest)}
+      generate_thumbnail(x, y, digest)
 
       # Return placeholder URL.
-      return "hourglass.jpg"
+      return "/thumbnails/#{digest}_#{x}x#{y}.jpg"
     end
   end
 

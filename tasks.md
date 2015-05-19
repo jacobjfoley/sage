@@ -2,6 +2,7 @@
 * Search and Merge, Recommended For Expansion, Agent Features.
 * Import and Export, Clear, Merge, Project Features.
 * Thumbnails on Google Drive.
+* Job scheduling.
 
 ----------
 
