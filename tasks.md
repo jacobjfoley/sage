@@ -6,10 +6,6 @@
 
 ----------
 
-==Presentation
-* Buttons and text larger.
-* Colour scheme in navbar.
-
 ==Users
 * !!Password needed to change important user details.
 

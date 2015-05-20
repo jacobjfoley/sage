@@ -2,11 +2,11 @@
 
 <%= form_tag (check_key_projects_path) do %>
   <div class="field">
-    <%= label_tag :key, 'Key' %><br>
-    <%= text_field_tag :key %>
+    <%= label_tag :key, 'Key'%><br>
+    <%= text_field_tag :key, "", class: "form-control" %>
   </div>
   <div class="actions">
-    <%= submit_tag %>
+    <%= submit_tag "Done", class: "btn btn-md" %>
   </div>
 <% end %>
 
