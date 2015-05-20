@@ -3,9 +3,6 @@ source 'https://rubygems.org'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.1'
 
-# Heroku's gem.
-gem 'rails_12factor'
-
 # Use pg as the database for Active Record.
 gem 'pg'
 
@@ -49,7 +46,7 @@ gem 'bcrypt', '~> 3.1.7'
 # gem 'capistrano-rails', group: :development
 
 # Include rmagick for thumbnail generation.
-gem 'rmagick'
+gem 'rmagick' :require => 'RMagick'
 
 group :development, :test do
 
@@ -61,4 +58,10 @@ group :development, :test do
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
+end
+
+group :production do
+
+  # Heroku's gem.
+  gem 'rails_12factor'
 end
