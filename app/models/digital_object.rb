@@ -1,5 +1,7 @@
 require 'digest'
 require 'fileutils'
+require 'net/http'
+require 'uri'
 
 class DigitalObject < ActiveRecord::Base
 
@@ -123,14 +125,18 @@ class DigitalObject < ActiveRecord::Base
     # Fetch a representation of the resource.
     begin
 
+      # Fetch the resource.
+      img = Net::HTTP.get(URI.parse(location))
+      puts img
+
       # Attempt to fetch resource as if it were an image.
       image = Magick::Image.read(location).first
 
     # In the event of the resource not being an image:
-    #rescue Magick::ImageMagickError
+    rescue Magick::ImageMagickError
 
       # Get a generic image as a substitute.
-      #image = Magick::Image.read("app/assets/images/generic_file.jpg").first
+      image = Magick::Image.read("app/assets/images/generic_file.jpg").first
 
     end
 
