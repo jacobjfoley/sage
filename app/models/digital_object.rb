@@ -108,6 +108,7 @@ class DigitalObject < ActiveRecord::Base
 
     else
 
+      # TODO
       # Schedule to create it.
       generate_thumbnail(x, y, digest)
 
@@ -126,21 +127,18 @@ class DigitalObject < ActiveRecord::Base
       image = Magick::Image.read(location).first
 
     # In the event of the resource not being an image:
-    rescue Magick::ImageMagickError
+    #rescue Magick::ImageMagickError
 
       # Get a generic image as a substitute.
-      image = Magick::Image.read("app/assets/images/generic_file.jpg").first
+      #image = Magick::Image.read("app/assets/images/generic_file.jpg").first
 
     end
 
     # If the image is larger than the desired size:
     if (image.x_resolution > x || image.y_resolution > y)
 
-      # Keep a reference to the original.
-      original = image
-
       # Resize image to the desired size.
-      image = original.resize_to_fit(x, y)
+      image = image.resize_to_fit(x, y)
     end
 
     # Write the new thumbnail to the thumbnail cache.
