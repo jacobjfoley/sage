@@ -46,7 +46,7 @@ gem 'bcrypt', '~> 3.1.7'
 # gem 'capistrano-rails', group: :development
 
 # Include rmagick for thumbnail generation.
-gem 'rmagick', :require => 'RMagick'
+gem 'rmagick', :require => 'rmagick'
 
 group :development, :test do
 

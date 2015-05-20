@@ -18,3 +18,4 @@
 
 # Ignore thumbnails.
 /public/thumbnails/*
+!/public/thumbnails/
