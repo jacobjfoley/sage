@@ -34,22 +34,22 @@
 
   <div class="row">
     <div class="col-md-3"><strong>Administrator key:</strong></div>
-    <div class="col-md-6"><%= @project.administrator_key %></div>
-    <div class="col-md-3"><%= link_to "Generate Key", generate_key_project_path(@project, type: "Administrator"), method: :post %> |
+    <div class="col-md-5"><%= @project.administrator_key %></div>
+    <div class="col-md-4"><%= link_to "Generate Key", generate_key_project_path(@project, type: "Administrator"), method: :post %> |
     <%= link_to "Remove Key", reset_key_project_path(@project, type: "Administrator"), method: :post %></div>
   </div>
 
   <div class="row">
     <div class="col-md-3"><strong>Contributor key:</strong></div>
-    <div class="col-md-6"><%= @project.contributor_key %></div>
-    <div class="col-md-3"><%= link_to "Generate Key", generate_key_project_path(@project, type: "Contributor"), method: :post %> |
+    <div class="col-md-5"><%= @project.contributor_key %></div>
+    <div class="col-md-4"><%= link_to "Generate Key", generate_key_project_path(@project, type: "Contributor"), method: :post %> |
     <%= link_to "Remove Key", reset_key_project_path(@project, type: "Contributor"), method: :post %></div>
   </div>
 
   <div class="row">
     <div class="col-md-3"><strong>Viewer key:</strong></div>
-    <div class="col-md-6"><%= @project.viewer_key %></div>
-    <div class="col-md-3"><%= link_to "Generate Key", generate_key_project_path(@project, type: "Viewer"), method: :post %> |
+    <div class="col-md-5"><%= @project.viewer_key %></div>
+    <div class="col-md-4"><%= link_to "Generate Key", generate_key_project_path(@project, type: "Viewer"), method: :post %> |
     <%= link_to "Remove Key", reset_key_project_path(@project, type: "Viewer"), method: :post %></div>
   </div>
 
