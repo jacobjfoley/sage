@@ -30,7 +30,6 @@
 * !!Error on broken link.
 * !!Error on clicking broken link.
 * !!Quick concept creation.
-* Delete object on index.
 * Flippable.
 
 ==Concepts
