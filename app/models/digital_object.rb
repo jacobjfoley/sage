@@ -125,11 +125,7 @@ class DigitalObject < ActiveRecord::Base
     begin
 
       # Fetch resource.
-      open("tmp/original", "wb") do |file|
-        open(location) do |uri|
-          file.write(uri.read)
-        end
-      end
+      open("tmp/original", "wb").write(open(location).read)
 
       # Attempt to read resource as though it were an image.
       image = Magick::Image.read("tmp/original").first
