@@ -8,11 +8,17 @@
     <div class="col-md-12 well">
       <%= @concept.description %>
       <div class="pull-right">
+        <%= link_to "https://www.google.com.au/search?q=#{@concept.description}&tbm=isch", title: "Google Image Search" do %>
+          <i class="glyphicon glyphicon-camera"> </i>
+        <% end %>
+        <%= link_to "https://www.google.com.au/search?q=#{@concept.description}", title: "Google Search" do %>
+          <i class="glyphicon glyphicon-globe"> </i>
+        <% end %>
         <%= link_to edit_project_concept_path(@project, @concept), title: "Edit" do %>
-          <i class="glyphicon glyphicon-pencil"></i>
+          <i class="glyphicon glyphicon-pencil"> </i>
         <% end %>
         <%= link_to project_concept_path(@project, @concept), title: "Delete", method: :delete, data: { confirm: 'Are you sure?' } do %>
-          <i class="glyphicon glyphicon-trash"></i>
+          <i class="glyphicon glyphicon-trash"> </i>
         <% end %>
       </div>
     </div>
@@ -31,7 +37,7 @@
           <div class="col-md-4 text-center" style="height: 150px">
             <%= link_to project_digital_object_path(@project, object) do %>
               <div style="height: 100px">
-                <%= image_tag object.thumbnail, style: "max-height:100%; max-width:100%" %>
+                <%= image_tag object.thumbnail(150,150), style: "max-height:100%; max-width:100%" %>
               </div>
               <%= truncate(File.basename(object.location), length: 20) %>
             <% end %>
