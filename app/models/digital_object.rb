@@ -5,6 +5,7 @@ class DigitalObject < ActiveRecord::Base
 
   # Callbacks.
   before_save :prepare_link, if: :location_changed?
+  before_save :clear_thumbnails, if: :location_changed?
 
   # Associations with other models.
   has_and_belongs_to_many :concepts
