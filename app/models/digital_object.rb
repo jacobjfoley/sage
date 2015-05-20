@@ -3,6 +3,9 @@ require 'fileutils'
 
 class DigitalObject < ActiveRecord::Base
 
+  # Callbacks.
+  before_save :prepare_link, if: :location_changed?
+
   # Associations with other models.
   has_and_belongs_to_many :concepts
   belongs_to :project
@@ -155,6 +158,28 @@ class DigitalObject < ActiveRecord::Base
     # Delete each thumbnail.
     thumbnails.each do |thumbnail|
       File.delete thumbnail
+    end
+  end
+
+  # Identifies if the provided location is a google link, and if so, prepares
+  # a webcontentlink to the same resource instead. This is accessible to both
+  # users and the server and preserves the object's id.
+  def prepare_link
+
+    # Form appropriate regular expression.
+    google_regexp = %r{https://drive\.google\.com/open\?(.*)}
+
+    # Determine if a googledrive link.
+    if google_regexp.match(location)
+
+      # New location.
+      wcl = "https://docs.google.com/uc?"
+
+      # Extract the file id.
+      id = google_regexp.match(location)[1]
+
+      # Update new location using WebContentLink.
+      self.location = wcl + id
     end
   end
 
