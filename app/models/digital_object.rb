@@ -111,8 +111,7 @@ class DigitalObject < ActiveRecord::Base
     else
 
       # Schedule to create it.
-      #GenerateThumbnailJob.perform_later(self, x, y, digest)
-      generate_thumbnail(x,y,digest)
+      GenerateThumbnailJob.perform_later(self, x, y, digest)
 
       # Return placeholder URL.
       return "/hourglass.jpg"
