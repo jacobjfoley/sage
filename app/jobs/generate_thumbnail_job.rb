@@ -5,10 +5,10 @@ class GenerateThumbnailJob < ActiveJob::Base
   def perform(object, x, y, digest)
 
     # If the thumbnail still hasn't been generated yet:
-    #unless File.exist? "public/thumbnails/#{digest}_#{x}x#{y}.jpg"
+    unless File.exist? "public/thumbnails/#{digest}_#{x}x#{y}.jpg"
 
       # Generate a thumbnail.
       object.generate_thumbnail(x, y, digest)
-    #end
+    end
   end
 end
