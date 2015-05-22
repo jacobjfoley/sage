@@ -50,6 +50,7 @@ gem 'rmagick', :require => 'rmagick'
 
 # Delayed Job for jobs.
 gem 'delayed_job_active_record'
+gem 'daemons'
 
 group :development, :test do
 

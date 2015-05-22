@@ -4,16 +4,17 @@ require 'open-uri'
 
 class DigitalObject < ActiveRecord::Base
 
-  # Callbacks.
-  before_save :prepare_link, if: :location_changed?
-  before_save :clear_thumbnails, if: :location_changed?
-
   # Associations with other models.
   has_and_belongs_to_many :concepts
   belongs_to :project
 
   # Validations.
   validates :location, presence: true
+
+  # Callbacks.
+  before_save :prepare_link, if: :location_changed?
+  before_save :clear_thumbnails, if: :location_changed?
+  before_destroy :clear_thumbnails
 
   # Find relevant objects.
   def relevant
@@ -109,12 +110,11 @@ class DigitalObject < ActiveRecord::Base
 
     else
 
-      # TODO
       # Schedule to create it.
-      generate_thumbnail(x, y, digest)
+      GenerateThumbnailJob.perform_later(self, x, y, digest)
 
       # Return placeholder URL.
-      return "/thumbnails/#{digest}_#{x}x#{y}.jpg"
+      return "/hourglass.jpg"
     end
   end
 
@@ -125,10 +125,10 @@ class DigitalObject < ActiveRecord::Base
     begin
 
       # Fetch resource.
-      open("tmp/original", "wb").write(open(location).read)
+      open("tmp/#{digest}", "wb").write(open(location).read)
 
       # Attempt to read resource as though it were an image.
-      image = Magick::Image.read("tmp/original").first
+      image = Magick::Image.read("tmp/#{digest}").first
 
     # In the event of the resource not being an image:
     rescue Magick::ImageMagickError, OpenURI::HTTPError
