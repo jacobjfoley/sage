@@ -48,6 +48,9 @@ gem 'bcrypt', '~> 3.1.7'
 # Include rmagick for thumbnail generation.
 gem 'rmagick', :require => 'rmagick'
 
+# Delayed Job for jobs.
+gem 'delayed_job_active_record'
+
 group :development, :test do
 
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
