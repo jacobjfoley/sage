@@ -6,6 +6,8 @@
 * Clear concepts, associations or objects.
 * Cloning projects.
 * Merging projects.
+* Statistics -- Counts, Averages, Word Counts, Quartiles.
+* Evaluation -- Recall and Precision measures.
 
 ==Agents
 * Shared base for concepts and objects.
@@ -20,7 +22,7 @@
 * !!Error on broken link.
 * !!Error on clicking broken link.
 * Quick concept creation.
-* Scheduled thumbnailing.
+* Scheduled thumbnailing on S3.
 * Drive import.
 * Flippable.
 
