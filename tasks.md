@@ -1,3 +1,8 @@
+==Site
+* Updated welcome page.
+* Updated forms and survey for official signup.
+* Quick-start guide.
+
 ==Users
 * !!Password needed to change important user details.
 
@@ -8,6 +13,7 @@
 * Merging projects.
 * Statistics -- Counts, Averages, Word Counts, Quartiles.
 * Evaluation -- Recall and Precision measures.
+* Option to support different algorithms besides SAGE-A.
 
 ==Agents
 * Shared base for concepts and objects.
