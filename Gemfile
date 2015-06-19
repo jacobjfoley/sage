@@ -42,6 +42,9 @@ gem 'bcrypt', '~> 3.1.7'
 # Use RestClient for RESTful HTTP.
 gem 'rest-client'
 
+# Use the AWS SDK for S3 access.
+gem 'aws-sdk'
+
 # Use Unicorn as the app server
 # gem 'unicorn'
 

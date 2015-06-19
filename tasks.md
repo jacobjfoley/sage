@@ -23,11 +23,6 @@
 * Empty of contributions (filter).
 
 ==Objects
-* !!Error on empty create.
-* !!Error on clicking generic file.
-* !!Error on broken link.
-* !!Error on clicking broken link.
-* !!Error on relative path.
 * Quick concept creation.
 * Scheduled thumbnailing on S3.
 * Drive import.
