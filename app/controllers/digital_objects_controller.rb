@@ -7,7 +7,6 @@ class DigitalObjectsController < ApplicationController
 
   layout 'control'
 
-
   # GET /digital_objects
   # GET /digital_objects.json
   def index

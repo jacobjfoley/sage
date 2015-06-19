@@ -1,7 +1,3 @@
-require 'digest'
-require 'fileutils'
-require 'open-uri'
-
 class DigitalObject < ActiveRecord::Base
 
   # Associations with other models.
@@ -13,7 +9,7 @@ class DigitalObject < ActiveRecord::Base
 
   # Callbacks.
   before_save :prepare_link, if: :location_changed?
-  before_save :clear_thumbnails, if: :location_changed?
+  before_save :change_thumbnail_base, if: :location_changed?
   before_destroy :clear_thumbnails
 
   # Find relevant objects.
@@ -99,22 +95,42 @@ class DigitalObject < ActiveRecord::Base
   # Get the URL of the digital object's thumbnail.
   def thumbnail(x, y)
 
-    # Calculate the digest of the object's original URL.
-    digest = Digest::SHA256.hexdigest location
+    # Check if thumbnail base hasn't been defined.
+    if thumbnail_base.nil?
 
-    # Check if the thumbnail of the image and specified size exists.
-    if File.exist? "public/thumbnails/#{digest}_#{x}x#{y}.jpg"
-
-      # Return the URL to the caller.
-      return "/thumbnails/#{digest}_#{x}x#{y}.jpg"
-
-    else
-
-      # Schedule to create it.
-      GenerateThumbnailJob.perform_later(self, x, y, digest)
+      # Generate a thumbnail base and possibly thumbnail.
+      GenerateThumbnailAndBaseJob.perform_later(id, x, y)
 
       # Return placeholder URL.
-      return "/hourglass.jpg"
+      return "/processing.svg"
+
+    # Check if scalable image.
+  elsif thumbnail_base =~ /\.svg\z/
+
+      # SVGs will automatically resize.
+      return thumbnail_base
+
+    # Otherwise, processed thumbnail is required.
+    else
+
+      # Calculate the digest of the object's thumbnail base.
+      digest = Digest::SHA256.hexdigest thumbnail_base
+
+      # Check if suitable thumbnail is already in cache.
+      if File.exist? "public/thumbnails/#{digest}_#{x}x#{y}.jpg"
+
+        # Return the URL to the caller.
+        return "/thumbnails/#{digest}_#{x}x#{y}.jpg"
+
+      # Otherwise, new thumbnail needed.
+      else
+
+        # Schedule a new thumbnail generation job.
+        GenerateThumbnailJob.perform_later(id, x, y, digest)
+
+        # Return placeholder URL.
+        return "/processing.svg"
+      end
     end
   end
 
@@ -124,36 +140,91 @@ class DigitalObject < ActiveRecord::Base
     # Fetch a representation of the resource.
     begin
 
-      # Fetch resource.
-      open("tmp/#{digest}", "wb").write(open(location).read)
+      # Specify resource.
+      resource = RestClient::Resource.new(thumbnail_base)
 
-      # Attempt to read resource as though it were an image.
-      image = Magick::Image.read("tmp/#{digest}").first
+      # Attempt to read resource.
+      image = Magick::Image.from_blob(resource.get).first
 
-    # In the event of the resource not being an image:
-    rescue Magick::ImageMagickError, OpenURI::HTTPError
+      # If the image is larger than the desired size:
+      if (image.x_resolution > x || image.y_resolution > y)
 
-      # Get a generic image as a substitute.
-      image = Magick::Image.read("app/assets/images/generic_file.jpg").first
+        # Resize image to the desired size.
+        image = image.resize_to_fit(x, y)
+      end
 
+      # Write the new thumbnail to the thumbnail cache.
+      image.write "public/thumbnails/#{digest}_#{x}x#{y}.jpg"
+
+    # Rescue in the event of an error.
+    rescue Magick::ImageMagickError
+
+      # Use a bug thumbnail.
+      self.thumbnail_base = "/bug.svg"
+
+      # Save changes.
+      self.save
+    end
+  end
+
+  # Sets the thumbnail base appropriately for the object's location.
+  def generate_thumbnail_base(location)
+
+    # If the location is not a URI:
+    if location !~ /\A#{URI::regexp}\z/
+
+      self.thumbnail_base = "/text.svg"
+
+    # The location is a URI.
+    else
+
+      # Fetch the resource's metadata.
+      response = RestClient.head(location)
+
+      # Check if a broken URI.
+      if response.code != 200
+
+        # Use a missing file thumbnail.
+        self.thumbnail_base = "/missing.svg"
+
+      # Check if an image file.
+      elsif response.headers[:content_type] =~ /\Aimage/
+
+        # The location is an image file. Use it for the thumbnail.
+        self.thumbnail_base = location
+
+      # Otherwise, unknown filetype.
+      else
+
+        # Use a generic file thumbnail.
+        self.thumbnail_base ="/generic.svg"
+      end
     end
 
-    # If the image is larger than the desired size:
-    #if (image.x_resolution > x || image.y_resolution > y)
+    # Save changes.
+    self.save
+  end
 
-      # Resize image to the desired size.
-      image = image.resize_to_fit(x, y)
-    #end
+  # Change thumbnail base.
+  def change_thumbnail_base(thumbnail_location = location)
 
-    # Write the new thumbnail to the thumbnail cache.
-    image.write "public/thumbnails/#{digest}_#{x}x#{y}.jpg"
+    # Clear existing thumbnails.
+    unless thumbnail_base.nil?
+      clear_thumbnails()
+    end
+
+    # Remove thumbnail base.
+    self.thumbnail_base = nil
+
+    # Queue thumbnail job.
+    ChangeThumbnailBaseJob.perform_later(id, thumbnail_location)
   end
 
   # Clear existing thumbnails.
   def clear_thumbnails()
 
     # Calculate the digest of the object's original URL.
-    digest = Digest::SHA256.hexdigest location
+    digest = Digest::SHA256.hexdigest thumbnail_base
 
     # Get all thumbnails belonging to this object.
     thumbnails = Dir.glob("public/thumbnails/#{digest}_*")
@@ -184,6 +255,13 @@ class DigitalObject < ActiveRecord::Base
       # Update new location using WebContentLink.
       self.location = wcl + id
     end
+  end
+
+  # Identify if the object's location can be used as a valid URI.
+  def has_uri?
+
+    # Check if location matches URI regexp.
+    return location =~ /\A#{URI::regexp}\z/
   end
 
   # Private methods.

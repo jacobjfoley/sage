@@ -5,7 +5,12 @@
 <div class="row nodecoration">
   <div class="col-md-6">
     <div class="text-center well">
-      <%= link_to @digital_object.location do%>
+      <% if @digital_object.has_uri? %>
+        <%= link_to @digital_object.location do%>
+          <%= image_tag @digital_object.thumbnail(400,400), style: "width: 100%" %><br />
+          <%= truncate(File.basename(@digital_object.location), length: 50) %><br />
+        <% end %>
+      <% else %>
         <%= image_tag @digital_object.thumbnail(400,400), style: "width: 100%" %><br />
         <%= truncate(File.basename(@digital_object.location), length: 50) %><br />
       <% end %>
