@@ -245,7 +245,9 @@ class DigitalObject < ActiveRecord::Base
     end
 
     # Delete each thumbnail.
-    bucket.delete_objects({delete: {objects: delete_array}})
+    unless delete_array.empty?
+      bucket.delete_objects({delete: {objects: delete_array}})
+    end
   end
 
   # Identifies if the provided location is a google link, and if so, prepares
