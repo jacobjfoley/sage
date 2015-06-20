@@ -105,7 +105,7 @@ class DigitalObject < ActiveRecord::Base
       return "/processing.svg"
 
     # Check if scalable image.
-  elsif thumbnail_base =~ /\.svg\z/
+    elsif thumbnail_base =~ /\.svg\z/
 
       # SVGs will automatically resize.
       return thumbnail_base
@@ -116,11 +116,14 @@ class DigitalObject < ActiveRecord::Base
       # Calculate the digest of the object's thumbnail base.
       digest = Digest::SHA256.hexdigest thumbnail_base
 
+      # Determine potential location on Amazon S3.
+      object = Aws::S3::Object.new("sage-une", "#{digest}_#{x}x#{y}.jpg")
+
       # Check if suitable thumbnail is already in cache.
-      if File.exist? "public/thumbnails/#{digest}_#{x}x#{y}.jpg"
+      if object.exists?
 
         # Return the URL to the caller.
-        return "/thumbnails/#{digest}_#{x}x#{y}.jpg"
+        return "https://s3-ap-southeast-2.amazonaws.com/sage-une/#{digest}_#{x}x#{y}.jpg"
 
       # Otherwise, new thumbnail needed.
       else
@@ -153,8 +156,11 @@ class DigitalObject < ActiveRecord::Base
         image = image.resize_to_fit(x, y)
       end
 
-      # Write the new thumbnail to the thumbnail cache.
-      image.write "public/thumbnails/#{digest}_#{x}x#{y}.jpg"
+      # Access Amazon S3 object.
+      object = Aws::S3::Object.new("sage-une", "#{digest}_#{x}x#{y}.jpg")
+
+      # Write thumbnail to S3.
+      object.put({acl: "public-read", body: image.to_blob})
 
     # Rescue in the event of an error.
     rescue Magick::ImageMagickError
@@ -226,13 +232,20 @@ class DigitalObject < ActiveRecord::Base
     # Calculate the digest of the object's original URL.
     digest = Digest::SHA256.hexdigest thumbnail_base
 
+    # Create S3 bucket resource.
+    bucket = Aws::S3::Bucket.new("sage-une")
+
     # Get all thumbnails belonging to this object.
-    thumbnails = Dir.glob("public/thumbnails/#{digest}_*")
+    thumbnails = bucket.objects({prefix: digest})
+
+    # Extract into array.
+    delete_array = []
+    thumbnails.each do |thumbnail|
+      delete_array << {key: thumbnail.key}
+    end
 
     # Delete each thumbnail.
-    thumbnails.each do |thumbnail|
-      File.delete thumbnail
-    end
+    bucket.delete_objects({delete: {objects: delete_array}})
   end
 
   # Identifies if the provided location is a google link, and if so, prepares

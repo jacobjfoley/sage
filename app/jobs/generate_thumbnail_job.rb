@@ -7,8 +7,11 @@ class GenerateThumbnailJob < ActiveJob::Base
     # Load object.
     object = DigitalObject.find(object_id)
 
+    # Access Amazon S3 object.
+    s3_object = Aws::S3::Object.new("sage-une", "#{digest}_#{x}x#{y}.jpg")
+
     # If the thumbnail hasn't already been generated:
-    unless File.exist? "public/thumbnails/#{digest}_#{x}x#{y}.jpg"
+    unless s3_object.exists?
 
       # Generate a thumbnail.
       object.generate_thumbnail(x, y, digest)
