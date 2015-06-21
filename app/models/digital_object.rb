@@ -9,7 +9,7 @@ class DigitalObject < ActiveRecord::Base
 
   # Callbacks.
   before_save :prepare_link, if: :location_changed?
-  before_save :change_thumbnail_base, if: :location_changed?
+  before_save :reset_thumbnail_base, if: :location_changed?
   before_destroy :clear_thumbnails
 
   # Find relevant objects.
@@ -211,42 +211,45 @@ class DigitalObject < ActiveRecord::Base
     self.save
   end
 
-  # Change thumbnail base.
-  def change_thumbnail_base(thumbnail_location = location)
+  # Reset thumbnail base.
+  def reset_thumbnail_base
 
     # Clear existing thumbnails.
-    unless thumbnail_base.nil?
-      clear_thumbnails()
-    end
+    clear_thumbnails()
 
     # Remove thumbnail base.
     self.thumbnail_base = nil
-
-    # Queue thumbnail job.
-    ChangeThumbnailBaseJob.perform_later(id, thumbnail_location)
   end
 
   # Clear existing thumbnails.
   def clear_thumbnails()
 
-    # Calculate the digest of the object's original URL.
-    digest = Digest::SHA256.hexdigest thumbnail_base
+    # If the object doesn't have a nil thumbnail base:
+    unless thumbnail_base.nil?
 
-    # Create S3 bucket resource.
-    bucket = Aws::S3::Bucket.new("sage-une")
+      # If this is the only object with this location:
+      if DigitalObject.where(location: location).count == 1
 
-    # Get all thumbnails belonging to this object.
-    thumbnails = bucket.objects({prefix: digest})
+        # Calculate the digest of the object's original URL.
+        digest = Digest::SHA256.hexdigest thumbnail_base
 
-    # Extract into array.
-    delete_array = []
-    thumbnails.each do |thumbnail|
-      delete_array << {key: thumbnail.key}
-    end
+        # Create S3 bucket resource.
+        bucket = Aws::S3::Bucket.new("sage-une")
 
-    # Delete each thumbnail.
-    unless delete_array.empty?
-      bucket.delete_objects({delete: {objects: delete_array}})
+        # Get all thumbnails belonging to this object.
+        thumbnails = bucket.objects({prefix: digest})
+
+        # Extract into array.
+        delete_array = []
+        thumbnails.each do |thumbnail|
+          delete_array << {key: thumbnail.key}
+        end
+
+        # Delete each thumbnail.
+        unless delete_array.empty?
+          bucket.delete_objects({delete: {objects: delete_array}})
+        end
+      end
     end
   end
 
