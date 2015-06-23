@@ -10,6 +10,7 @@ class DigitalObject < ActiveRecord::Base
   # Callbacks.
   before_save :prepare_link, if: :location_changed?
   before_save :reset_thumbnail_base, if: :location_changed?
+  before_save :check_flatten, if: :location_changed?
   before_destroy :clear_thumbnails
 
   # Find relevant objects.
@@ -184,26 +185,30 @@ class DigitalObject < ActiveRecord::Base
     # The location is a URI.
     else
 
-      # Fetch the resource's metadata.
-      response = RestClient.head(location)
+      # Attempt to fetch resource data.
+      begin
 
-      # Check if a broken URI.
-      if response.code != 200
+        # Fetch the resource's metadata.
+        response = RestClient.head(location)
+
+        # Check if an image file.
+        if response.headers[:content_type] =~ /\Aimage/
+
+          # The location is an image file. Use it for the thumbnail.
+          self.thumbnail_base = location
+
+        # Otherwise, unknown filetype.
+        else
+
+          # Use a generic file thumbnail.
+          self.thumbnail_base ="/generic.svg"
+        end
+
+      # Rescue in the event of an error.
+      rescue RestClient::Exception
 
         # Use a missing file thumbnail.
         self.thumbnail_base = "/missing.svg"
-
-      # Check if an image file.
-      elsif response.headers[:content_type] =~ /\Aimage/
-
-        # The location is an image file. Use it for the thumbnail.
-        self.thumbnail_base = location
-
-      # Otherwise, unknown filetype.
-      else
-
-        # Use a generic file thumbnail.
-        self.thumbnail_base ="/generic.svg"
       end
     end
 
@@ -282,8 +287,51 @@ class DigitalObject < ActiveRecord::Base
     return location =~ /\A#{URI::regexp}\z/
   end
 
+  # Check if two or more objects shall be flattened:
+  def check_flatten
+
+    # Find all digital objects with the same project id and location.
+    same_objects = DigitalObject.where(
+      project_id: project_id,
+      location: location
+    )
+
+    # Remove self.
+    same_objects.delete(self)
+
+    # If other objects have the same attributes:
+    if same_objects.count > 0
+
+      # For each object:
+      same_objects.each do |same_object|
+
+        # Flatten that object into this object.
+        flatten(same_object)
+      end
+    end
+  end
+
   # Private methods.
   private
+
+  # Flatten another digital object into this one.
+  def flatten(other_object)
+
+    # Go through the other object's concepts.
+    other_object.concepts.each do |concept|
+
+      # Accept each new concept.
+      unless concepts.include? concept
+        concepts << concept
+      end
+    end
+
+    # Accept other object's thumbnail base (e.g. if a custom thumbnail base).
+    thumbnail_base = other_object.thumbnail_base
+
+    # Destroy the merged object.
+    other_object.destroy
+  end
 
   # Aggregate a response with the in-progress results hash.
   def aggregate(results, response)

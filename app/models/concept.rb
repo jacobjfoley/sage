@@ -7,6 +7,9 @@ class Concept < ActiveRecord::Base
   # Validations.
   validates :description, presence: true
 
+  # Callbacks.
+  before_save :check_flatten, if: :description_changed?
+
   # Find relevant objects.
   def relevant
 
@@ -93,6 +96,30 @@ class Concept < ActiveRecord::Base
     end
   end
 
+  # Check if two or more concepts shall be flattened:
+  def check_flatten
+
+    # Find all concepts with the same project id and description.
+    same_concepts = Concept.where(
+      project_id: project_id,
+      description: description
+    )
+
+    # Remove self.
+    same_concepts.delete(self)
+
+    # If there are other concepts with the same details:
+    if same_concepts.count > 0
+
+      # For each concept:
+      same_concepts.each do |same_concept|
+
+        # Flatten that concept into this concept.
+        flatten(same_concept)
+      end
+    end
+  end
+
   # Merge with other concepts.
   def merge(*concepts)
 
@@ -106,8 +133,8 @@ class Concept < ActiveRecord::Base
       concept.digital_objects.each do |object|
 
         # Add it, unless it is already associated with this concept.
-        unless concept.include? object
-         concept.digital_objects << object
+        unless digital_objects.include? object
+          digital_objects << object
         end
       end
 
@@ -118,6 +145,22 @@ class Concept < ActiveRecord::Base
 
   # Private methods.
   private
+
+  # Flatten another concept into this one.
+  def flatten(other_concept)
+
+    # Go through the other concepts's objects.
+    other_concept.digital_objects.each do |object|
+
+      # Accept each new object.
+      unless digital_objects.include? object
+        digital_objects << object
+      end
+    end
+
+    # Destroy the other concept.
+    other_concept.destroy
+  end
 
   # Aggregate a response with the in-progress results hash.
   def aggregate(results, response)
@@ -137,5 +180,4 @@ class Concept < ActiveRecord::Base
       end
     end
   end
-
 end

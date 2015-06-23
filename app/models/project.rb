@@ -209,6 +209,65 @@ class Project < ActiveRecord::Base
     end
   end
 
+  # Clone a project.
+  def clone(creator)
+
+    # Create an identical project.
+    clone = Project.create(
+      notes: notes,
+      name: "Clone of #{name}"
+    )
+
+    # Have the clone pull content from this project.
+    clone.pull(self.id)
+
+    # Set up creator as new administrator.
+    UserRole.create(
+      user_id: creator,
+      project_id: clone.id,
+      position: "Administrator"
+    )
+  end
+
+  # Merge a copy of the contents of another project with this one.
+  def pull(other_project_id)
+
+    # Load the other project.
+    other_project = Project.find(other_project_id)
+
+    # Initialise a digital object mapping, original ids -> copy ids.
+    mapping = {}
+
+    # For each object in the original project:
+    other_project.digital_objects.each do |other_object|
+
+      # Create a copy of the object.
+      my_object = DigitalObject.create(
+        project_id: id,
+        location: other_object.location,
+        thumbnail_base: other_object.thumbnail_base
+      )
+
+      # Add to mapping.
+      mapping[other_object.id] = my_object.id
+    end
+
+    # For each concept in the original project:
+    other_project.concepts.each do |other_concept|
+
+      # Create a copy of the concept.
+      my_concept = Concept.create(
+        project_id: id,
+        description: other_concept.description
+      )
+
+      # Link to new objects.
+      other_concept.digital_objects.each do |link|
+        my_concept.digital_objects << DigitalObject.find(mapping[link.id])
+      end
+    end
+  end
+
   # Private methods.
   private
 
