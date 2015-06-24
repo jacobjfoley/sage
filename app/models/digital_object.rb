@@ -151,7 +151,7 @@ class DigitalObject < ActiveRecord::Base
       image = Magick::Image.from_blob(resource.get).first
 
       # If the image is larger than the desired size:
-      if (image.x_resolution > x || image.y_resolution > y)
+      if (image.columns > x) || (image.rows > y)
 
         # Resize image to the desired size.
         image = image.resize_to_fit(x, y)
