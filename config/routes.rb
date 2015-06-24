@@ -22,6 +22,7 @@ Sage::Application.routes.draw do
     member do
       post 'generate_key'
       post 'reset_key'
+      get 'analytics'
     end
 
     collection do

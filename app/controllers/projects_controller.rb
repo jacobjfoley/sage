@@ -1,5 +1,5 @@
 class ProjectsController < ApplicationController
-  before_action :set_project, only: [:show, :edit, :update, :destroy, :generate_key, :reset_key]
+  before_action :set_project, only: [:show, :edit, :update, :destroy, :generate_key, :reset_key, :analytics]
   before_action :check_logged_in
   before_action :set_user, only: [:show, :create, :index, :destroy, :check_key, :check_access]
   before_action :set_user_role, only: [:show, :destroy]
@@ -119,6 +119,13 @@ class ProjectsController < ApplicationController
     redirect_to redeem_key_projects_path
   end
 
+  # GET /projects/1/analytics
+  def analytics
+
+    # Get the project's statistics hash.
+    @statistics = @project.analytics
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_project
@@ -169,9 +176,9 @@ class ProjectsController < ApplicationController
     def check_access
 
       # Define the pages which can be accessed using each level of security.
-      viewer_pages = ["show", "destroy"]
-      contributor_pages = ["show", "destroy"]
-      administrator_pages = ["show", "update", "edit", "destroy", "generate_key", "reset_key"]
+      viewer_pages = ["show", "destroy", "analytics"]
+      contributor_pages = ["show", "destroy", "analytics"]
+      administrator_pages = ["show", "update", "edit", "destroy", "generate_key", "reset_key", "analytics"]
 
       # Get the currently logged-in user's role in this project, if any.
       @role = UserRole.find_by(user_id: session[:user_id], project_id: params[:id])

@@ -268,6 +268,91 @@ class Project < ActiveRecord::Base
     end
   end
 
+  # Generate project statistics.
+  def analytics
+
+    # Create a hash to store individual statistics.
+    statistics = {}
+
+    # Get objects, concepts and user counts.
+    statistics[:user_count] = users.count
+    statistics[:objects_count] = digital_objects.count
+    statistics[:concepts_count] = concepts.count
+    statistics[:assications_count] = 0
+    statistics[:word_count] = 0
+
+    # Gather object statistics.
+    digital_objects.each do |object|
+
+      # Get number of associations.
+      associations = object.concepts.count
+
+      # Gather associations.
+      statistics[:assications_count] += associations
+
+      # Check for min.
+      if !(statistics.has_key? :min_objects) || (associations < statistics[:min_objects])
+        statistics[:min_objects] = associations
+      end
+
+      # Check for max.
+      if !(statistics.has_key? :max_objects) || (associations > statistics[:max_objects])
+        statistics[:max_objects] = associations
+      end
+    end
+
+    # Gather concept statistics.
+    concepts.each do |concept|
+
+      # Get number of associations.
+      associations = concept.digital_objects.count
+
+      # Check for min.
+      if !(statistics.has_key? :min_concepts) || (associations < statistics[:min_concepts])
+        statistics[:min_concepts] = associations
+      end
+
+      # Check for max.
+      if !(statistics.has_key? :max_concepts) || (associations > statistics[:max_concepts])
+        statistics[:max_concepts] = associations
+      end
+
+      # Get word count.
+      words = concept.description.split.size
+
+      # Gather words.
+      statistics[:word_count] += words
+
+      # Check for min words.
+      if !(statistics.has_key? :min_words) || (words < statistics[:min_words])
+        statistics[:min_words] = words
+      end
+
+      # Check for max.
+      if !(statistics.has_key? :max_words) || (words > statistics[:max_words])
+        statistics[:max_words] = words
+      end
+    end
+
+    # Determine averages.
+    if statistics[:objects_count] > 0
+      statistics[:avg_objects] = statistics[:assications_count] / statistics[:objects_count]
+    else
+      statistics[:avg_objects] = 0
+    end
+
+    if statistics[:concepts_count] > 0
+      statistics[:avg_concepts] = statistics[:assications_count] / statistics[:concepts_count]
+      statistics[:avg_words] = statistics[:word_count] / statistics[:concepts_count]
+    else
+      statistics[:avg_concepts] = 0
+      statistics[:avg_words] = 0
+    end
+
+    # Return statistics.
+    return statistics
+  end
+
   # Private methods.
   private
 

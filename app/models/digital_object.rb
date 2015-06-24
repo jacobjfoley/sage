@@ -329,7 +329,7 @@ class DigitalObject < ActiveRecord::Base
     # Accept other object's thumbnail base (e.g. if a custom thumbnail base).
     thumbnail_base = other_object.thumbnail_base
 
-    # Destroy the merged object.
+    # Destroy the flattened object.
     other_object.destroy
   end
 

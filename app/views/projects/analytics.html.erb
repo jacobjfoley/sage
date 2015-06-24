@@ -1,0 +1,75 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Analytics</h1>
+
+<table class="table table-bordered">
+  <tr>
+    <th class="text-center">Item</th>
+    <th class="text-center">Count</th>
+  </tr>
+  <tr>
+    <td colspan="2"> <strong>Counts</strong> </td>
+  <tr>
+  <tr>
+    <td>Number of Users</td>
+    <td><%= @statistics[:user_count] || 0 %> </td>
+  </tr>
+  <tr>
+    <td>Number of Objects</td>
+    <td><%= @statistics[:objects_count] || 0 %> </td>
+  </tr>
+  <tr>
+    <td>Number of Concepts</td>
+    <td><%= @statistics[:concepts_count] || 0 %> </td>
+  </tr>
+  <tr>
+    <td>Number of Associations</td>
+    <td><%= @statistics[:associations_total] || 0 %> </td>
+  </tr>
+  <tr>
+    <td colspan="2"> <strong>Objects</strong> </td>
+  <tr>
+  <tr>
+    <td>Objects - Minimum Associations</td>
+    <td><%= @statistics[:min_objects] || 0 %> </td>
+  </tr>
+  <tr>
+    <td>Objects - Average Associations</td>
+    <td><%= @statistics[:avg_objects] || 0 %> </td>
+  </tr>
+  <tr>
+    <td>Objects - Maximum Associations</td>
+    <td><%= @statistics[:max_objects] || 0 %> </td>
+  </tr>
+  <tr>
+    <td colspan="2"> <strong>Concepts</strong> </td>
+  <tr>
+  <tr>
+    <td>Concepts - Minimum Associations</td>
+    <td><%= @statistics[:min_concepts] || 0 %> </td>
+  </tr>
+  <tr>
+    <td>Concepts - Average Associations</td>
+    <td><%= @statistics[:avg_concepts] || 0 %> </td>
+  </tr>
+  <tr>
+    <td>Concepts - Maximum Associations</td>
+    <td><%= @statistics[:max_concepts] || 0 %> </td>
+  </tr>
+  <tr>
+    <td>Concepts - Minimum Word Count</td>
+    <td><%= @statistics[:min_words] || 0 %> </td>
+  </tr>
+  <tr>
+    <td>Concepts - Average Word Count</td>
+    <td><%= @statistics[:avg_words] || 0 %> </td>
+  </tr>
+  <tr>
+    <td>Concepts - Maximum Word Count</td>
+    <td><%= @statistics[:max_words] || 0 %> </td>
+  </tr>
+  <tr>
+    <td>Concepts - Total Word Count</td>
+    <td><%= @statistics[:word_count] || 0 %> </td>
+  </tr>
+</table>
