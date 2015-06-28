@@ -103,7 +103,7 @@ class DigitalObject < ActiveRecord::Base
       GenerateThumbnailAndBaseJob.perform_later(id, x, y)
 
       # Return placeholder URL.
-      return "/processing.svg"
+      return ActionController::Base.helpers.asset_path("processing.svg")
 
     # Check if scalable image.
     elsif thumbnail_base =~ /\.svg\z/
@@ -133,7 +133,7 @@ class DigitalObject < ActiveRecord::Base
         GenerateThumbnailJob.perform_later(id, x, y, digest)
 
         # Return placeholder URL.
-        return "/processing.svg"
+        return ActionController::Base.helpers.asset_path("processing.svg")
       end
     end
   end
@@ -167,7 +167,7 @@ class DigitalObject < ActiveRecord::Base
     rescue Magick::ImageMagickError
 
       # Use a bug thumbnail.
-      self.thumbnail_base = "/bug.svg"
+      self.thumbnail_base = ActionController::Base.helpers.asset_path("bug.svg")
 
       # Save changes.
       self.save
@@ -180,7 +180,7 @@ class DigitalObject < ActiveRecord::Base
     # If the location is not a URI:
     if location !~ /\A#{URI::regexp}\z/
 
-      self.thumbnail_base = "/text.svg"
+      self.thumbnail_base = ActionController::Base.helpers.asset_path("text.svg")
 
     # The location is a URI.
     else
@@ -201,14 +201,14 @@ class DigitalObject < ActiveRecord::Base
         else
 
           # Use a generic file thumbnail.
-          self.thumbnail_base ="/generic.svg"
+          self.thumbnail_base = ActionController::Base.helpers.asset_path("generic.svg")
         end
 
       # Rescue in the event of an error.
       rescue RestClient::Exception
 
         # Use a missing file thumbnail.
-        self.thumbnail_base = "/missing.svg"
+        self.thumbnail_base = ActionController::Base.helpers.asset_path("missing.svg")
       end
     end
 
