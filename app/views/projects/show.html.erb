@@ -10,23 +10,26 @@
 
   <div class="row">
     <div class="col-md-2"></div>
+    <div class="col-md-8 text-center">
     <%= link_to projects_path do%>
-      <div class="col-md-2 btn btn-default"><i class="glyphicon glyphicon-arrow-left"></i> Back</div>
+      <div class="btn btn-default"><i class="glyphicon glyphicon-arrow-left"></i> Back</div>
     <% end %>
-    <div class="col-md-1"></div>
     <%= link_to edit_project_path(@project), title: "Edit" do %>
-      <div class="col-md-2 btn btn-default"><i class="glyphicon glyphicon-pencil"></i> Edit</div>
+      <div class="btn btn-default"><i class="glyphicon glyphicon-pencil"></i> Edit</div>
     <% end %>
-    <div class="col-md-1"></div>
+    <%= link_to reset_thumbnail_bases_project_path(@project), title: "Clear Thumbnails", method: :post do %>
+      <div class="btn btn-default"><i class="glyphicon glyphicon-remove-circle"></i> Remove Thumbnails</div>
+    <% end %>
     <% if @admins > 1 %>
       <%= link_to project_path(@project), title: "Leave", method: :delete do %>
-      <div class="col-md-2 btn btn-default"><i class="glyphicon glyphicon-remove-circle"></i> Leave</div>
+      <div class="btn btn-default"><i class="glyphicon glyphicon-remove-circle"></i> Leave</div>
     <% end %>
     <% else %>
       <%= link_to project_path(@project), title: "Delete", method: :delete, data: { confirm: 'Are you sure?' } do %>
-        <div class="col-md-2 btn btn-default"><i class="glyphicon glyphicon-trash"></i> Delete</div>
+        <div class="btn btn-default"><i class="glyphicon glyphicon-trash"></i> Delete</div>
       <% end %>
     <% end %>
+    </div>
     <div class="col-md-2"></div>
   </div>
 

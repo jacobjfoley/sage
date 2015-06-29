@@ -42,6 +42,10 @@
     <td><%= @statistics[:max_objects] || 0 %> </td>
   </tr>
   <tr>
+    <td>Objects - Standard Deviation</td>
+    <td><%= @statistics[:object_std_deviation] || 0 %> </td>
+  </tr>
+  <tr>
     <td colspan="2"> <strong>Concepts</strong> </td>
   <tr>
   <tr>
@@ -55,6 +59,10 @@
   <tr>
     <td>Concepts - Maximum Associations</td>
     <td><%= @statistics[:max_concepts] || 0 %> </td>
+  </tr>
+  <tr>
+    <td>Concepts - Standard Deviation</td>
+    <td><%= @statistics[:concept_std_deviation] || 0 %> </td>
   </tr>
   <tr>
     <td>Concepts - Minimum Word Count</td>

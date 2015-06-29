@@ -209,6 +209,17 @@ class Project < ActiveRecord::Base
     end
   end
 
+  # Reset all thumbnail bases belonging to objects in this project.
+  def reset_thumbnail_bases
+
+    # For each digital object in the project:
+    digital_objects.each do |object|
+
+      # Delete this object's thumbnail base.
+      object.reset_thumbnail_base
+    end
+  end
+
   # Clone a project.
   def clone(creator)
 
@@ -227,6 +238,9 @@ class Project < ActiveRecord::Base
       project_id: clone.id,
       position: "Administrator"
     )
+
+    # Return the clone to caller.
+    return clone.id
   end
 
   # Merge a copy of the contents of another project with this one.
@@ -280,6 +294,10 @@ class Project < ActiveRecord::Base
     statistics[:concepts_count] = concepts.count
     statistics[:assications_count] = 0
     statistics[:word_count] = 0
+    statistics[:total_object_variance] = 0
+    statistics[:total_concept_variance] = 0
+    statistics[:object_std_deviation] = 0
+    statistics[:concept_std_deviation] = 0
 
     # Gather object statistics.
     digital_objects.each do |object|
@@ -347,6 +365,36 @@ class Project < ActiveRecord::Base
     else
       statistics[:avg_concepts] = 0
       statistics[:avg_words] = 0
+    end
+
+    # Calculate object variance.
+    digital_objects.each do |object|
+
+      # Calculate summed variance.
+      statistics[:total_object_variance] += (object.concepts.count -
+        statistics[:avg_objects]) ^ 2
+    end
+
+    # Calculate concept variance.
+    concepts.each do |concept|
+
+      # Calculate summed variance.
+      statistics[:total_concept_variance] += (concept.digital_objects.count -
+        statistics[:avg_concepts]) ^ 2
+    end
+
+    # Determine object standard deviation.
+    if statistics[:objects_count] > 1
+      statistics[:object_std_deviation] =
+        Math.sqrt(statistics[:total_object_variance] /
+        statistics[:objects_count] - 1.0)
+    end
+
+    # Determine concept standard deviation.
+    if statistics[:concepts_count] > 1
+      statistics[:concept_std_deviation] =
+        Math.sqrt(statistics[:total_concept_variance] /
+        statistics[:concepts_count] - 1.0)
     end
 
     # Return statistics.
