@@ -1,13 +1,13 @@
 class Evaluation
 
   # Process project and report scores.
-  def evaluate(project_id, partition_level)
+  def evaluate(project_id, testing_partition)
 
     # Retrieve the desired project.
     project = Project.find(project_id)
 
     # Clone the project and capture the clone's ID.
-    clone_id = project.clone
+    clone_id = project.clone(1)
 
     # Retrieve the clone of the provided project.
     test_project = Project.find(clone_id)
@@ -16,12 +16,12 @@ class Evaluation
     truth_hash = create_truth_hash(test_project)
 
     # Partition the data in the test project.
-    partition(test_project, partition_level)
+    partition(test_project, testing_partition)
 
     # Initialise algorithm hashes.
     algorithms = []
-    algorithms << {name: "SAGE-A", precision: [], recall: [] }
-    #algorithms << {name: "Random", precision: [], recall: [] }
+    algorithms << { name: "SAGE-A", precision: [], recall: [] }
+    #algorithms << { name: "Random", precision: [], recall: [] }
 
     # For each test concept:
     test_project.concepts.each do |concept|
@@ -29,19 +29,14 @@ class Evaluation
       # Test each algorithm.
       algorithms.each do |algorithm|
 
-        # Create empty suggestions array.
-        suggestions = []
-
         # Use the algorithm to fetch suggestions.
-        concept.relevant.keys.each do |key|
-          suggestions << key
-        end
+        suggestions = concept.relevant.keys
 
         # Calculate precision.
-        algorithm[:precision] << precision(suggestions, truth_hash[concept.id])
+        algorithm[:precision] << precision(suggestions, truth_hash[concept])
 
         # Calculate recall.
-        algorithm[:recall] << recall(suggestions, truth_hash[concept.id])
+        algorithm[:recall] << recall(suggestions, truth_hash[concept])
       end
     end
 
@@ -57,7 +52,11 @@ class Evaluation
       end
 
       # Find mean average precision.
-      algorithm[:average_precision] = total_precision / algorithm[:precision].count
+      if algorithm[:precision].count > 0
+        algorithm[:average_precision] = total_precision / algorithm[:precision].count
+      else
+        algorithm[:average_precision] = 0
+      end
 
       # Introduce total recall (heh) variable.
       total_recall = 0.0
@@ -68,21 +67,24 @@ class Evaluation
       end
 
       # Find mean average recall.
-      algorithm[:average_recall] = total_recall / algorithm[:recall].count
+      if algorithm[:recall].count > 0
+        algorithm[:average_recall] = total_recall / algorithm[:recall].count
+      else
+        algorithm[:average_recall] = 0
+      end
     end
 
     # Calculate composite scores.
     algorithms.each do |algorithm|
 
       algorithm[:f05] = f_beta(algorithm[:average_precision],
-        algorithm[:average_recall, 0.5])
+        algorithm[:average_recall], 0.5)
 
       algorithm[:f1] = f_beta(algorithm[:average_precision],
-        algorithm[:average_recall, 1.0])
+        algorithm[:average_recall], 1.0)
 
       algorithm[:f2] = f_beta(algorithm[:average_precision],
-        algorithm[:average_recall, 2])
-
+        algorithm[:average_recall], 2)
     end
 
     # Remove clone project.
@@ -101,13 +103,8 @@ class Evaluation
     # For each concept in the test project:
     project.concepts.each do |concept|
 
-      # Create empty array for that concept.
-      truth_hash[concept.id] = []
-
-      # Add associations to truth_hash.
-      concept.digital_objects.each do |object|
-        truth_hash[concept.id] << object.id
-      end
+      # Create truth array for that concept.
+      truth_hash[concept] = concept.digital_objects
     end
 
     # Return truth hash.
@@ -116,17 +113,17 @@ class Evaluation
 
   # Removes a number of associations from a test project to establish a
   # training data set, and a test data set.
-  def partition(project, partition_level)
+  def partition(project, testing_partition)
 
     # Create empty association array.
     associations = []
 
     # Run through every concept.
-    project.concepts each do |concept|
+    project.concepts.each do |concept|
 
       # Collect the concept's associations.
       concept.digital_objects.each do |object|
-        association << [concept, object]
+        associations << [concept, object]
       end
     end
 
@@ -134,13 +131,13 @@ class Evaluation
     associations.shuffle!
 
     # Calculate the number of associations to remove.
-    to_remove = (1.0 - partition_level) * associations.count
+    to_remove = testing_partition * associations.count
 
     # Round removal number (for accessing indexes).
-    to_remove.round!
+    to_remove.round
 
     # Remove associations.
-    associations[0..to_remove].each do |association|
+    associations[0...to_remove].each do |association|
 
       # Delete the object from the concept.
       association[0].digital_objects.delete association[1]
@@ -159,7 +156,11 @@ class Evaluation
     end
 
     # Return precision.
-    return correct / found.count
+    if found.count > 0
+      return correct / found.count
+    else
+      return 0.0
+    end
   end
 
   # Calculate recall of results.
@@ -174,17 +175,21 @@ class Evaluation
     end
 
     # Return recall.
-    return correct / truth.count
+    if found.count > 0
+      return correct / truth.count
+    else
+      return 0.0
+    end
   end
 
   # Calculate f1 score of results.
   def f_beta(precision, recall, beta)
 
     # Ensure a positive denominator.
-    if precision > 0 || recall > 0
+    if (precision > 0 || recall > 0) && (beta != 0)
 
       # Return f1 score.
-      return (1 + beta^2) * (precision * recall) / (beta^2 * precision + recall)
+      return (1 + beta ** 2) * (precision * recall) / (beta ** 2 * precision + recall)
     else
 
       # Zero denominator, so return 0 for f1 score.
