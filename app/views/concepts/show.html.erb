@@ -29,7 +29,8 @@
       <h1>Objects</h1>
       <div class="row">
         <% position = 0 %>
-        <% @concept.relevant.keys.each do |object| %>
+        <% relevant = @concept.relevant %>
+        <% relevant.keys.each do |object| %>
           <% if position == 4 %>
             </div><div class="row">
             <% position = 0 %>
@@ -41,15 +42,17 @@
               </div>
               <%= truncate(File.basename(object.location), length: 20) %>
             <% end %>
-            <% if @concept.digital_objects.include? object %>
-              <%= link_to remove_object_project_concept_path(@project, @concept, object: object.id), method: :post, title: "Remove" do %>
-                <i class="glyphicon glyphicon-minus"></i>
+            <div>
+              <% if @concept.digital_objects.include? object %>
+                <%= link_to remove_object_project_concept_path(@project, @concept, object: object.id), method: :post, title: "Remove" do %>
+                  <i class="glyphicon glyphicon-minus"></i>
+                <% end %>
+              <% else %>
+                <%= link_to add_object_project_concept_path(@project, @concept, object: object.id), method: :post, title: "Add" do %>
+                  <i class="glyphicon glyphicon-plus"></i>
+                <% end %>
               <% end %>
-            <% else %>
-              <%= link_to add_object_project_concept_path(@project, @concept, object: object.id), method: :post, title: "Add" do %>
-                <i class="glyphicon glyphicon-plus"></i>
-              <% end %>
-            <% end %>
+            </div>
           </div>
         <% end %>
       </div>

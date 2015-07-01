@@ -44,8 +44,8 @@ class Concept < ActiveRecord::Base
     #   end
     # end
 
-    # Return filtered results.
-    return results
+    # Return sorted results.
+    return results.sort_by {|key, value| value}.reverse.to_h
   end
 
   # Collaborate with other agents to detect relationships within the project.
