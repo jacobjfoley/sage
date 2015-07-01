@@ -19,30 +19,11 @@ class Concept < ActiveRecord::Base
     # Default influence, three steps (find object), hasn't dispersed yet.
     results = collaborate(influence, 3, false)
 
-    # # Calculate absorbed influence.
-    # absorbed = 0.0
-    # digital_objects.each do |object|
-    #   absorbed += results[object]
-    # end
-    #
-    # # Calculate missing influence.
-    # missing = influence
-    # results.keys.each do |key|
-    #   missing -= results[key]
-    # end
-    #
-    # # Distribute consumed and absorbed influence among popular.
-    # popular = project.popular_objects(absorbed+missing)
-    #
-    # # Merge harmonic intuition results with popular.
-    # aggregate(results, popular)
+    # Distribute minimal influence among popular.
+    popular = project.popular_objects(1.0)
 
-    # # Filter weak results.
-    # results.keys.each do |key|
-    #   if results[key] < 1.0
-    #     results.delete key
-    #   end
-    # end
+    # Merge collaboration results with popular.
+    aggregate(results, popular)
 
     # Return sorted results.
     return results.sort_by {|key, value| value}.reverse.to_h
