@@ -65,19 +65,22 @@
     <td><%= @statistics[:concept_std_deviation].round(2) %> </td>
   </tr>
   <tr>
-    <td>Concepts - Minimum Word Count</td>
+    <td colspan="2"> <strong>Words</strong> </td>
+  <tr>
+  <tr>
+    <td>Words - Minimum Concept Word Count</td>
     <td><%= @statistics[:min_words] || 0 %> </td>
   </tr>
   <tr>
-    <td>Concepts - Average Word Count</td>
+    <td>Words - Average Concept Word Count</td>
     <td><%= @statistics[:avg_words].round(2) || 0 %> </td>
   </tr>
   <tr>
-    <td>Concepts - Maximum Word Count</td>
+    <td>Words - Maximum Concept Word Count</td>
     <td><%= @statistics[:max_words] || 0 %> </td>
   </tr>
   <tr>
-    <td>Concepts - Total Word Count</td>
+    <td>Words - Total Concept Word Count</td>
     <td><%= @statistics[:word_count] || 0 %> </td>
   </tr>
 </table>

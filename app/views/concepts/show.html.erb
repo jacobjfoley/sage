@@ -30,11 +30,11 @@
       <div class="row">
         <% position = 0 %>
         <% @concept.relevant.keys.each do |object| %>
-          <% if position == 3 %>
+          <% if position == 4 %>
             </div><div class="row">
             <% position = 0 %>
           <% end %>
-          <div class="col-md-4 text-center" style="height: 150px">
+          <div class="col-md-3 text-center" style="height: 150px">
             <%= link_to project_digital_object_path(@project, object) do %>
               <div style="height: 100px">
                 <%= image_tag object.thumbnail(150,150), style: "max-height:100%; max-width:100%" %>
