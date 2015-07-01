@@ -21,7 +21,7 @@ class Project < ActiveRecord::Base
     similar = similar_text(description)
 
     # Determine total weight in results.
-    total = 0
+    total = 0.0
     similar.values.each do |value|
       total += value
     end
@@ -408,7 +408,7 @@ class Project < ActiveRecord::Base
   end
 
   # Private methods.
-  private
+  #private
 
   # Provide an array of tokens based on description.
   def tokenise(description)
@@ -443,7 +443,7 @@ class Project < ActiveRecord::Base
           else
 
             # Add concept to this word listing.
-            words[word][concept] =  1
+            words[word][concept] = 1
           end
 
         else
@@ -478,7 +478,6 @@ class Project < ActiveRecord::Base
 
       # Aggregate results into similar hash.
       aggregate(similar, results)
-
     end
 
     # Normalise results.

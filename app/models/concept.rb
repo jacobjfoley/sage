@@ -14,28 +14,28 @@ class Concept < ActiveRecord::Base
   def relevant
 
     # Calculate influence to spread.
-    influence = project.digital_objects.count
+    influence = project.digital_objects.count.to_f
 
     # Default influence, three steps (find object), hasn't dispersed yet.
     results = collaborate(influence, 3, false)
 
-    # Calculate absorbed influence.
-    absorbed = 0.0
-    digital_objects.each do |object|
-      absorbed += results[object]
-    end
-
-    # Calculate missing influence.
-    missing = influence
-    results.keys.each do |key|
-      missing -= results[key]
-    end
-
-    # Distribute consumed and absorbed influence among popular.
-    popular = project.popular_objects(absorbed+missing)
-
-    # Merge harmonic intuition results with popular.
-    aggregate(results, popular)
+    # # Calculate absorbed influence.
+    # absorbed = 0.0
+    # digital_objects.each do |object|
+    #   absorbed += results[object]
+    # end
+    #
+    # # Calculate missing influence.
+    # missing = influence
+    # results.keys.each do |key|
+    #   missing -= results[key]
+    # end
+    #
+    # # Distribute consumed and absorbed influence among popular.
+    # popular = project.popular_objects(absorbed+missing)
+    #
+    # # Merge harmonic intuition results with popular.
+    # aggregate(results, popular)
 
     # # Filter weak results.
     # results.keys.each do |key|

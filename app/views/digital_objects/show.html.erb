@@ -27,18 +27,20 @@
   <div class="col-md-6">
     <h1>Concepts</h1>
     <table class="table table-striped">
-      <% @digital_object.relevant.keys.each do |relevant| %>
+      <% relevant = @digital_object.relevant %>
+      <% relevant.keys.each do |concept| %>
       <tr>
         <td>
-          <%= link_to truncate(relevant.description, length: 50), [@project, relevant] %>
+          <%= link_to truncate(concept.description, length: 50), [@project, concept] %>
+
           <div class="pull-right">
-            <% if !@digital_object.concepts.include? relevant %>
-              <%= link_to add_concept_project_digital_object_path(@project, @digital_object, concept: relevant.id), method: :post, title: "Add" do %>
-                <i class="glyphicon glyphicon-plus"></i>
+            <% if !@digital_object.concepts.include? concept %>
+              <%= link_to add_concept_project_digital_object_path(@project, @digital_object, concept: concept.id), method: :post, title: "Add" do %>
+                <%= relevant[concept].round(2) %> <i class="glyphicon glyphicon-plus"></i>
               <% end %>
             <% else %>
-              <%= link_to remove_concept_project_digital_object_path(@project, @digital_object, concept: relevant.id), method: :post, title: "Remove" do %>
-                <i class="glyphicon glyphicon-minus"></i>
+              <%= link_to remove_concept_project_digital_object_path(@project, @digital_object, concept: concept.id), method: :post, title: "Remove" do %>
+                <%= relevant[concept].round(2) %> <i class="glyphicon glyphicon-minus"></i>
               <% end %>
             <% end %>
           </div>

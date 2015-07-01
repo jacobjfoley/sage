@@ -5,7 +5,7 @@
 		  </div>
 		</container>
 		<ul class="nav navbar-nav navbar-right">
-		    <% if @logged_in %>
+		  <% if @logged_in %>
 			  <li><%= link_to "Projects", projects_path%></li>
 			  <li><%= link_to "Guides", guides_path%></li>
 			  <li><%= link_to "Feedback", feedback_path%></li>
@@ -13,6 +13,7 @@
 			<% else %>
 			  <li><%= link_to "Guides", guides_path%></li>
 			  <li><%= link_to "Feedback", feedback_path%></li>
+				<li><%= link_to "Register", new_user_path%></li>
 			  <li><%= link_to "Login", login_users_path%></li>
 			<% end %>
 		</ul>

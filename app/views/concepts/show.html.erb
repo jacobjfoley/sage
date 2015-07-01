@@ -45,11 +45,11 @@
             <div>
               <% if @concept.digital_objects.include? object %>
                 <%= link_to remove_object_project_concept_path(@project, @concept, object: object.id), method: :post, title: "Remove" do %>
-                  <i class="glyphicon glyphicon-minus"></i>
+                  <%= relevant[object].round(2) %> <i class="glyphicon glyphicon-minus"></i>
                 <% end %>
               <% else %>
                 <%= link_to add_object_project_concept_path(@project, @concept, object: object.id), method: :post, title: "Add" do %>
-                  <i class="glyphicon glyphicon-plus"></i>
+                  <%= relevant[object].round(2) %> <i class="glyphicon glyphicon-plus"></i>
                 <% end %>
               <% end %>
             </div>
