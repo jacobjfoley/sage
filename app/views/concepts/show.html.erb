@@ -9,10 +9,10 @@
       <%= @concept.description %>
       <div class="pull-right">
         <%= link_to "https://www.google.com.au/search?q=#{@concept.description}&tbm=isch", title: "Google Image Search" do %>
-          <i class="glyphicon glyphicon-camera"> </i>
+          <i class="glyphicon glyphicon-picture"> </i>
         <% end %>
         <%= link_to "https://www.google.com.au/search?q=#{@concept.description}", title: "Google Search" do %>
-          <i class="glyphicon glyphicon-globe"> </i>
+          <i class="glyphicon glyphicon-search"> </i>
         <% end %>
         <%= link_to edit_project_concept_path(@project, @concept), title: "Edit" do %>
           <i class="glyphicon glyphicon-pencil"> </i>
@@ -26,7 +26,7 @@
 
   <div class="row">
     <div class="col-md-12">
-      <h3>Objects</h3>
+      <h1>Objects</h1>
       <div class="row">
         <% position = 0 %>
         <% @concept.relevant.keys.each do |object| %>
