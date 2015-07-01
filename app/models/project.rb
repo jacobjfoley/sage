@@ -480,9 +480,6 @@ class Project < ActiveRecord::Base
       aggregate(similar, results)
     end
 
-    # Normalise results.
-    normalise similar
-
     # Return result.
     return similar
   end
@@ -493,8 +490,10 @@ class Project < ActiveRecord::Base
     # Declare results list.
     results = {}
 
-    # Find list of matching concepts.
+    # If the word table contains the specified word:
     if table.key? word
+
+      # Find list of matching concepts.
       matching = table[word]
 
       # Find inverse term frequency, idf.
@@ -506,32 +505,9 @@ class Project < ActiveRecord::Base
         # Find term frequency, tf, and compute tfidf for the results.
         results[match] = matching[match] * idf
       end
-
-      # Normalise results.
-      normalise results
     end
 
     # Return results.
-    return results
-  end
-
-  # Normalise a hash to have values between 0 and 1.
-  def normalise(results)
-
-    # Total defaults to 0.
-    total = 0.0
-
-    # Establish total weight in hash.
-    results.values.each do |value|
-      total += value
-    end
-
-    # Normalise results in hash.
-    results.keys.each do |key|
-      results[key] /= total
-    end
-
-    # Return the end result.
     return results
   end
 
