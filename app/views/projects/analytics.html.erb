@@ -24,7 +24,7 @@
   </tr>
   <tr>
     <td>Number of Associations</td>
-    <td><%= @statistics[:associations_total] || 0 %> </td>
+    <td><%= @statistics[:associations_count] || 0 %> </td>
   </tr>
   <tr>
     <td colspan="2"> <strong>Objects</strong> </td>
@@ -35,7 +35,7 @@
   </tr>
   <tr>
     <td>Objects - Average Associations</td>
-    <td><%= @statistics[:avg_objects] || 0 %> </td>
+    <td><%= @statistics[:avg_objects].round(2) || 0 %> </td>
   </tr>
   <tr>
     <td>Objects - Maximum Associations</td>
@@ -43,7 +43,7 @@
   </tr>
   <tr>
     <td>Objects - Standard Deviation</td>
-    <td><%= @statistics[:object_std_deviation] || 0 %> </td>
+    <td><%= @statistics[:object_std_deviation].round(2) %> </td>
   </tr>
   <tr>
     <td colspan="2"> <strong>Concepts</strong> </td>
@@ -54,7 +54,7 @@
   </tr>
   <tr>
     <td>Concepts - Average Associations</td>
-    <td><%= @statistics[:avg_concepts] || 0 %> </td>
+    <td><%= @statistics[:avg_concepts].round(2) || 0 %> </td>
   </tr>
   <tr>
     <td>Concepts - Maximum Associations</td>
@@ -62,7 +62,7 @@
   </tr>
   <tr>
     <td>Concepts - Standard Deviation</td>
-    <td><%= @statistics[:concept_std_deviation] || 0 %> </td>
+    <td><%= @statistics[:concept_std_deviation].round(2) %> </td>
   </tr>
   <tr>
     <td>Concepts - Minimum Word Count</td>
@@ -70,7 +70,7 @@
   </tr>
   <tr>
     <td>Concepts - Average Word Count</td>
-    <td><%= @statistics[:avg_words] || 0 %> </td>
+    <td><%= @statistics[:avg_words].round(2) || 0 %> </td>
   </tr>
   <tr>
     <td>Concepts - Maximum Word Count</td>

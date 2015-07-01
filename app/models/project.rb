@@ -292,12 +292,16 @@ class Project < ActiveRecord::Base
     statistics[:user_count] = users.count
     statistics[:objects_count] = digital_objects.count
     statistics[:concepts_count] = concepts.count
-    statistics[:assications_count] = 0
+
+    # Define initial other counts.
+    statistics[:associations_count] = 0
     statistics[:word_count] = 0
-    statistics[:total_object_variance] = 0
-    statistics[:total_concept_variance] = 0
-    statistics[:object_std_deviation] = 0
-    statistics[:concept_std_deviation] = 0
+
+    # Define initial statistics.
+    statistics[:total_object_variance] = 0.0
+    statistics[:total_concept_variance] = 0.0
+    statistics[:object_std_deviation] = 0.0
+    statistics[:concept_std_deviation] = 0.0
 
     # Gather object statistics.
     digital_objects.each do |object|
@@ -306,7 +310,7 @@ class Project < ActiveRecord::Base
       associations = object.concepts.count
 
       # Gather associations.
-      statistics[:assications_count] += associations
+      statistics[:associations_count] += associations
 
       # Check for min.
       if !(statistics.has_key? :min_objects) || (associations < statistics[:min_objects])
@@ -354,17 +358,17 @@ class Project < ActiveRecord::Base
 
     # Determine averages.
     if statistics[:objects_count] > 0
-      statistics[:avg_objects] = statistics[:assications_count] / statistics[:objects_count]
+      statistics[:avg_objects] = statistics[:associations_count].to_f / statistics[:objects_count]
     else
-      statistics[:avg_objects] = 0
+      statistics[:avg_objects] = 0.0
     end
 
     if statistics[:concepts_count] > 0
-      statistics[:avg_concepts] = statistics[:assications_count] / statistics[:concepts_count]
-      statistics[:avg_words] = statistics[:word_count] / statistics[:concepts_count]
+      statistics[:avg_concepts] = statistics[:associations_count].to_f / statistics[:concepts_count]
+      statistics[:avg_words] = statistics[:word_count].to_f / statistics[:concepts_count]
     else
-      statistics[:avg_concepts] = 0
-      statistics[:avg_words] = 0
+      statistics[:avg_concepts] = 0.0
+      statistics[:avg_words] = 0.0
     end
 
     # Calculate object variance.
@@ -372,7 +376,7 @@ class Project < ActiveRecord::Base
 
       # Calculate summed variance.
       statistics[:total_object_variance] += (object.concepts.count -
-        statistics[:avg_objects]) ^ 2
+        statistics[:avg_objects]) ** 2
     end
 
     # Calculate concept variance.
@@ -380,21 +384,23 @@ class Project < ActiveRecord::Base
 
       # Calculate summed variance.
       statistics[:total_concept_variance] += (concept.digital_objects.count -
-        statistics[:avg_concepts]) ^ 2
+        statistics[:avg_concepts]) ** 2
     end
 
     # Determine object standard deviation.
     if statistics[:objects_count] > 1
-      statistics[:object_std_deviation] =
-        Math.sqrt(statistics[:total_object_variance] /
-        statistics[:objects_count] - 1.0)
+      statistics[:object_std_deviation] = Math.sqrt(
+        statistics[:total_object_variance] /
+        (statistics[:objects_count] - 1.0)
+      )
     end
 
     # Determine concept standard deviation.
     if statistics[:concepts_count] > 1
-      statistics[:concept_std_deviation] =
-        Math.sqrt(statistics[:total_concept_variance] /
-        statistics[:concepts_count] - 1.0)
+      statistics[:concept_std_deviation] = Math.sqrt(
+        statistics[:total_concept_variance] /
+        (statistics[:concepts_count] - 1.0)
+      )
     end
 
     # Return statistics.
