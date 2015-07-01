@@ -494,20 +494,22 @@ class Project < ActiveRecord::Base
     results = {}
 
     # Find list of matching concepts.
-    matching = table[word]
+    if table.key? word
+      matching = table[word]
 
-    # Find inverse term frequency, idf.
-    idf = Math.log(concepts.count / matching.keys.count)
+      # Find inverse term frequency, idf.
+      idf = Math.log(concepts.count / matching.keys.count)
 
-    # Check each match.
-    matching.keys.each do |match|
+      # Check each match.
+      matching.keys.each do |match|
 
-      # Find term frequency, tf, and compute tfidf for the results.
-      results[match] = matching[match] * idf
+        # Find term frequency, tf, and compute tfidf for the results.
+        results[match] = matching[match] * idf
+      end
+
+      # Normalise results.
+      normalise results
     end
-
-    # Normalise results.
-    normalise results
 
     # Return results.
     return results
