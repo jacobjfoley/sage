@@ -36,13 +36,16 @@ class DigitalObjectsController < ApplicationController
 
     # Determine if adding a batch or single entry.
     if digital_object_params[:location].lines.count == 1
+
       # Single entry. Create object using params directly.
       @digital_object = DigitalObject.new(digital_object_params)
 
       # Set the project ID from the parameters passed to this controller.
       @digital_object.project_id = @project.id
 
+      # Save the object.
       saved = @digital_object.save
+      
     else
       # Batch entry. Fetch locations.
       locations = digital_object_params[:location].lines

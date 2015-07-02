@@ -282,6 +282,15 @@ class Project < ActiveRecord::Base
     end
   end
 
+  # Automatically generate the common thumbnail sizes.
+  def generate_thumbnails
+
+    # Generate the two standard sizes of images for every object.
+    digital_objects.each do |object|
+      object.generate_common_thumbnails
+    end
+  end
+
   # Generate project statistics.
   def analytics
 
@@ -408,7 +417,7 @@ class Project < ActiveRecord::Base
   end
 
   # Private methods.
-  #private
+  private
 
   # Provide an array of tokens based on description.
   def tokenise(description)

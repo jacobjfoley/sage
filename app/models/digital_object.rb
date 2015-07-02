@@ -8,6 +8,7 @@ class DigitalObject < ActiveRecord::Base
   validates :location, presence: true
 
   # Callbacks.
+  after_create :generate_common_thumbnails
   before_save :prepare_link, if: :location_changed?
   before_save :reset_thumbnail_base, if: :location_changed?
   before_save :check_flatten, if: :location_changed?
@@ -237,6 +238,14 @@ class DigitalObject < ActiveRecord::Base
         end
       end
     end
+  end
+
+  # Generate the common thumbnail sizes.
+  def generate_common_thumbnails
+
+    # Generate the two standard sizes of images.
+    thumbnail(150,150)
+    thumbnail(400,400)
   end
 
   # Identifies if the provided location is a google link, and if so, prepares
