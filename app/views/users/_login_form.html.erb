@@ -1,6 +1,6 @@
 <%= form_for(@user, url: login_users_url) do |f| %>
   <% if @user.errors.any? %>
-    <div id="error_explanation">
+    <div id="error_explanation" class="alert alert-danger">
       <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from logging in:</h2>
 
       <ul>
