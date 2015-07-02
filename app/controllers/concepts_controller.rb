@@ -37,7 +37,7 @@ class ConceptsController < ApplicationController
 
     respond_to do |format|
       if @concept.save
-        format.html { redirect_to [@project, @concept], notice: 'Concept was successfully created.' }
+        format.html { redirect_to new_project_concept_path(@project), notice: 'Concept was successfully created.' }
         format.json { render action: 'show', status: :created, location: @concept }
       else
         format.html { render action: 'new' }
