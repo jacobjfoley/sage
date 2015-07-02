@@ -14,5 +14,10 @@
   <%= @user.email %>
 </p>
 
+<h3> User Agreements </h3>
+<ul>
+  <li><%= link_to "Information Sheet", agreement_path %></li>
+</ul>
+
 <%= link_to 'Edit', edit_user_path(@user) %> |
 <%= link_to 'Back', projects_path %>
