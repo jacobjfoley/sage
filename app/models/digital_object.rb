@@ -29,7 +29,8 @@ class DigitalObject < ActiveRecord::Base
     aggregate(results, popular)
 
     # Return filtered, sorted results.
-    return results.sort_by {|key, value| value}.reverse.to_h
+    return results
+    #.sort_by {|key, value| value}.reverse.to_h
   end
 
   # Collaborate with other agents to detect relationships within the project.
