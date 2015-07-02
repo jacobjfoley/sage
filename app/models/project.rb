@@ -56,7 +56,7 @@ class Project < ActiveRecord::Base
 
     # Determine count of each concept.
     concepts.each do |concept|
-      results[concept] = concept.digital_objects.count + 1
+      results[concept] = concept.digital_objects.count + 1.0
     end
 
     # Determine count total.
@@ -82,7 +82,7 @@ class Project < ActiveRecord::Base
 
     # Determine count of each object.
     digital_objects.each do |object|
-      results[object] = object.concepts.count + 1
+      results[object] = object.concepts.count + 1.0
     end
 
     # Determine count total.
