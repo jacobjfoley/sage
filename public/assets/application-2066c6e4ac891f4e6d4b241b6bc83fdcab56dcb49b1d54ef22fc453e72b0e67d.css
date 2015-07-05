@@ -11,6 +11,7 @@
 
 
  */
+@import "https://fonts.googleapis.com/css?family=Italianno";
 @charset "UTF-8";
 /*!
  * Bootstrap v3.3.5 (http://getbootstrap.com)
@@ -8742,8 +8743,9 @@ button.close {
   background-color: #dbdbdb;
 }
 
-/* line 13, /home/jfoley/Apps/sage/app/assets/stylesheets/bootstrap_overrides.css.scss */
+/* line 12, /home/jfoley/Apps/sage/app/assets/stylesheets/bootstrap_overrides.css.scss */
 .navbar-brand {
+  font-family: 'Italianno', cursive;
   font-weight: bold;
   font-size: 1.8em;
 }
@@ -8755,19 +8757,19 @@ button.close {
 
 /* line 24, /home/jfoley/Apps/sage/app/assets/stylesheets/bootstrap_overrides.css.scss */
 a {
-  color: #000;
+  color: #444;
 }
-/* line 26, /home/jfoley/Apps/sage/app/assets/stylesheets/bootstrap_overrides.css.scss */
+/* line 27, /home/jfoley/Apps/sage/app/assets/stylesheets/bootstrap_overrides.css.scss */
 a:visited {
-  color: #666;
+  color: #777;
 }
-/* line 29, /home/jfoley/Apps/sage/app/assets/stylesheets/bootstrap_overrides.css.scss */
+/* line 31, /home/jfoley/Apps/sage/app/assets/stylesheets/bootstrap_overrides.css.scss */
 a:hover {
   color: #fff;
   background-color: #eee;
 }
 
-/* line 35, /home/jfoley/Apps/sage/app/assets/stylesheets/bootstrap_overrides.css.scss */
+/* line 37, /home/jfoley/Apps/sage/app/assets/stylesheets/bootstrap_overrides.css.scss */
 body {
   background-color: #fff;
   color: #333;
@@ -8776,23 +8778,23 @@ body {
   line-height: 24px;
 }
 
-/* line 44, /home/jfoley/Apps/sage/app/assets/stylesheets/bootstrap_overrides.css.scss */
+/* line 46, /home/jfoley/Apps/sage/app/assets/stylesheets/bootstrap_overrides.css.scss */
 div.field, div.actions {
   margin-bottom: 10px;
 }
 
-/* line 49, /home/jfoley/Apps/sage/app/assets/stylesheets/bootstrap_overrides.css.scss */
+/* line 51, /home/jfoley/Apps/sage/app/assets/stylesheets/bootstrap_overrides.css.scss */
 footer {
   border-top: 1px solid #eaeaea;
   padding-top: 0.5em;
 }
 
-/* line 54, /home/jfoley/Apps/sage/app/assets/stylesheets/bootstrap_overrides.css.scss */
+/* line 56, /home/jfoley/Apps/sage/app/assets/stylesheets/bootstrap_overrides.css.scss */
 p, ol, ul, td {
   font-family: verdana, arial, helvetica, sans-serif;
 }
 
-/* line 58, /home/jfoley/Apps/sage/app/assets/stylesheets/bootstrap_overrides.css.scss */
+/* line 60, /home/jfoley/Apps/sage/app/assets/stylesheets/bootstrap_overrides.css.scss */
 pre {
   background-color: #eee;
   padding: 10px;
