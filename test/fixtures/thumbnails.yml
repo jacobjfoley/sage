@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  source: MyString
+  x: 1
+  'y': 1
+  url: MyString
+  flipped: false
+  local: false
+
+two:
+  source: MyString
+  x: 1
+  'y': 1
+  url: MyString
+  flipped: false
+  local: false
