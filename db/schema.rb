@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150617060859) do
+ActiveRecord::Schema.define(version: 20150706124959) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -68,6 +68,19 @@ ActiveRecord::Schema.define(version: 20150617060859) do
     t.datetime "updated_at"
     t.string   "name"
   end
+
+  create_table "thumbnails", force: :cascade do |t|
+    t.string   "source"
+    t.integer  "x"
+    t.integer  "y"
+    t.string   "url"
+    t.boolean  "flipped"
+    t.boolean  "local"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "thumbnails", ["source", "x", "y"], name: "index_thumbnails_on_source_and_x_and_y", using: :btree
 
   create_table "user_roles", force: :cascade do |t|
     t.integer  "user_id"
