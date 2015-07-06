@@ -16,9 +16,9 @@
       <% end %>
       <div class="col-md-3 text-center" style="height: 200px">
         <%= link_to project_digital_object_path(id: digital_object.id) do%>
-          <div style="height: 150px">
-            <%= image_tag digital_object.thumbnail(150,150), style: "max-height:100%; max-width:100%" %>
-          </div>
+        <div style="height: 150px">
+          <%= image_tag digital_object.thumbnail(150,150), style: "max-height:100%; max-width:100%" %>
+        </div>
           <%= truncate(File.basename(digital_object.location), length: 20) %>
         <% end %>
         <br />

@@ -50,7 +50,7 @@ Sage::Application.routes.draw do
   match "/application", via: "get", to: "site#application"
   match "/guides", via: "get", to: "site#guides"
   match "/feedback", via: "get", to: "site#feedback"
-  match "/agreement", via: "get", to: "site#agreement"
+  match "/participant_information", via: "get", to: "site#participant_information"
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

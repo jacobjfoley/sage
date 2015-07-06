@@ -45,7 +45,7 @@ class DigitalObjectsController < ApplicationController
 
       # Save the object.
       saved = @digital_object.save
-      
+
     else
       # Batch entry. Fetch locations.
       locations = digital_object_params[:location].lines

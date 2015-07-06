@@ -31,7 +31,7 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
 
     # Check participation details were set.
-    if (params[:agreement] && params[:participation] && params[:age])
+    if (params[:participant_information] && params[:participation] && params[:age])
       respond_to do |format|
         if @user.save
 
