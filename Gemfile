@@ -46,6 +46,9 @@ gem 'rest-client'
 # Use the AWS SDK for S3 access.
 gem 'aws-sdk'
 
+# Use the Google API Client for Drive support.
+gem 'google-api-client'
+
 # Use Unicorn as the app server
 # gem 'unicorn'
 

@@ -9,6 +9,7 @@ class DigitalObject < ActiveRecord::Base
 
   # Callbacks.
   after_create :generate_common_thumbnails
+  before_save :check_convertible_location, if: :location_changed?
   before_save :check_flatten, if: :location_changed?
 
   # Find relevant objects.
@@ -86,12 +87,41 @@ class DigitalObject < ActiveRecord::Base
     return location =~ /\A#{URI::regexp}\z/
   end
 
-  # Generate the common thumbnail sizes.
-  def generate_common_thumbnails
+  # Private methods.
+  private
 
-    # Generate the two standard sizes of images.
-    thumbnail(150,150)
-    thumbnail(400,400)
+  # Aggregate a response with the in-progress results hash.
+  def aggregate(results, response)
+
+    # For each element in the response:
+    response.keys.each do |key|
+
+      # If the key is already in the results:
+      if results.key? key
+
+        # Add to the key's influence.
+        results[key] += response[key]
+      else
+
+        # Introduce key to results with its influence.
+        results[key] = response[key]
+      end
+    end
+  end
+
+  # Check if the location should be converted.
+  def check_convertible_location
+
+    # Define locations with ID captures.
+    google_location = %r{\Ahttps://drive.google.com/open\?id=(?<file_id>\w+)\z}
+
+    # Check Google locations.
+    if (data = google_location.match location)
+      self.location = "https://www.googleapis.com/drive/v2/files/#{data[:file_id]}"
+    end
+
+    # Allow save to continue.
+    return true
   end
 
   # Check if two or more objects shall be flattened:
@@ -118,9 +148,6 @@ class DigitalObject < ActiveRecord::Base
     end
   end
 
-  # Private methods.
-  private
-
   # Flatten another digital object into this one.
   def flatten(other_object)
 
@@ -140,22 +167,11 @@ class DigitalObject < ActiveRecord::Base
     other_object.destroy
   end
 
-  # Aggregate a response with the in-progress results hash.
-  def aggregate(results, response)
+  # Generate the common thumbnail sizes.
+  def generate_common_thumbnails
 
-    # For each element in the response:
-    response.keys.each do |key|
-
-      # If the key is already in the results:
-      if results.key? key
-
-        # Add to the key's influence.
-        results[key] += response[key]
-      else
-
-        # Introduce key to results with its influence.
-        results[key] = response[key]
-      end
-    end
+    # Generate the two standard sizes of images.
+    thumbnail(150,150)
+    thumbnail(400,400)
   end
 end

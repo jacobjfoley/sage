@@ -14,7 +14,9 @@ class Thumbnail < ActiveRecord::Base
   TEXT_THUMBNAIL = "text.svg"
   ERROR_THUMBNAIL = "bug.svg"
   MISSING_THUMBNAIL = "missing.svg"
-  URI_REGEXP = /\A#{URI::regexp}\z/
+
+  URI_REGEXP = %r{\A#{URI::regexp}\z}
+  GOOGLE_REGEXP = %r{\Ahttps://www.googleapis.com/drive/v2/files/}
 
   # Retrieve a thumbnail for a given resource.
   def self.find_for(source, x, y)
@@ -58,8 +60,18 @@ class Thumbnail < ActiveRecord::Base
       # Attempt to fetch resource data.
       begin
 
-        # Fetch the resource's metadata.
-        response = RestClient.head(source)
+        # Check if Google resource.
+        if source =~ GOOGLE_REGEXP
+
+          # Fetch the resource's metadata using key.
+          response = RestClient.head source, {params: {key: ENV["GOOGLE_API_KEY"], alt: "media"}}
+
+        # Otherwise, does not need an access key.
+        else
+
+          # Fetch the resource's metadata.
+          response = RestClient.head(source)
+        end
 
         # Check if an image file.
         if response.headers[:content_type] =~ /\Aimage/
@@ -84,7 +96,7 @@ class Thumbnail < ActiveRecord::Base
   end
 
   # Private methods.
-  #private
+  private
 
   # Create a new thumbnail for an image.
   def create_image_thumbnail
@@ -92,11 +104,21 @@ class Thumbnail < ActiveRecord::Base
     # Create the thumbnail image.
     begin
 
-      # Specify resource.
-      resource = RestClient::Resource.new(source)
+      # Check if Google resource.
+      if source =~ GOOGLE_REGEXP
+
+        # Fetch blob using key.
+        blob = RestClient.get source, {params: {key: ENV["GOOGLE_API_KEY"], alt: "media"}}
+
+      # Otherwise, does not need an access key.
+      else
+
+        # Fetch blob.
+        blob = RestClient.get source
+      end
 
       # Attempt to read resource.
-      image = Magick::Image.from_blob(resource.get).first
+      image = Magick::Image.from_blob(blob).first
 
       # If the image is larger than the desired size:
       if (image.columns > x) || (image.rows > y)
