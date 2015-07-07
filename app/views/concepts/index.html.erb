@@ -8,15 +8,14 @@
       <% end %>
     </td>
   </tr>
-  
+
   <% @concepts.each do |concept| %>
     <tr>
     	<td class="nodecoration">
-    	  <%= truncate(concept.description, length: 100) %>
+        <%= link_to project_concept_path(id: concept.id), title: "View" do %>
+    	   <%= truncate(concept.description, length: 100) %>
+         <% end %>
     	  <div class="pull-right">
-          <%= link_to project_concept_path(id: concept.id), title: "View" do %>
-            <i class="glyphicon glyphicon-eye-open"></i>
-          <% end %>
           <%= link_to edit_project_concept_path(id: concept.id), title: "Edit" do %>
             <i class="glyphicon glyphicon-pencil"></i>
           <% end %>
