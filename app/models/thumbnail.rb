@@ -128,14 +128,14 @@ class Thumbnail < ActiveRecord::Base
       end
 
       # Access Amazon S3 object.
-      object = Aws::S3::Object.new("sage-une", "#{digest}_#{x}x#{y}.jpg")
+      object = Aws::S3::Object.new(ENV['S3_BUCKET'], "#{digest}_#{x}x#{y}.jpg")
 
       # Write thumbnail to S3.
       object.put({acl: "public-read", body: image.to_blob})
 
       # Store URL in thumbnail.
       update(
-        url: "https://s3-ap-southeast-2.amazonaws.com/sage-une/#{digest}_#{x}x#{y}.jpg"
+        url: "https://s3-ap-southeast-2.amazonaws.com/#{ENV['S3_BUCKET']}/#{digest}_#{x}x#{y}.jpg"
       )
 
     # Rescue in the event of an error.
