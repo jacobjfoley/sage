@@ -1,5 +1,5 @@
 class ProjectsController < ApplicationController
-  before_action :set_project, only: [:show, :edit, :update, :destroy, :generate_key, :reset_key, :analytics, :reset_thumbnail_bases, :generate_thumbnails]
+  before_action :set_project, only: [:show, :edit, :update, :destroy, :generate_key, :reset_key, :analytics]
   before_action :check_logged_in
   before_action :set_user, only: [:show, :create, :index, :destroy, :check_key, :check_access]
   before_action :set_user_role, only: [:show, :destroy]
@@ -27,25 +27,6 @@ class ProjectsController < ApplicationController
 
   # GET /projects/1/edit
   def edit
-  end
-
-  # POST /projects/1/reset_thumbnail_bases
-  def reset_thumbnail_bases
-
-    # Clear thumbanils in project.
-    @project.reset_thumbnail_bases
-
-    # Redirect back to notes.
-    redirect_to @project, notice: "Thumbnails cleared."
-  end
-
-  # POST /projects/1/generate_thumbnails
-  def generate_thumbnails
-
-    @project.generate_thumbnails
-
-    # Redirect back to notes.
-    redirect_to @project, notice: "Thumbnails are being generated."
   end
 
   # POST /projects
@@ -197,7 +178,7 @@ class ProjectsController < ApplicationController
       # Define the pages which can be accessed using each level of security.
       viewer_pages = ["show", "destroy", "analytics"]
       contributor_pages = ["show", "destroy", "analytics"]
-      administrator_pages = ["show", "update", "edit", "destroy", "generate_key", "reset_key", "analytics", "reset_thumbnail_bases", "generate_thumbnails"]
+      administrator_pages = ["show", "update", "edit", "destroy", "generate_key", "reset_key", "analytics"]
 
       # Get the currently logged-in user's role in this project, if any.
       @role = UserRole.find_by(user_id: session[:user_id], project_id: params[:id])

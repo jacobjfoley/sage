@@ -16,12 +16,6 @@
     <%= link_to edit_project_path(@project), title: "Edit" do %>
       <div class="btn btn-default"><i class="glyphicon glyphicon-pencil"></i> Edit</div>
     <% end %>
-    <%= link_to generate_thumbnails_project_path(@project), title: "Generate Thumbnails", method: :post do %>
-      <div class="btn btn-default"><i class="glyphicon glyphicon-cog"></i> Generate Thumbnails</div>
-    <% end %>
-    <%= link_to reset_thumbnail_bases_project_path(@project), title: "Clear Thumbnails", method: :post do %>
-      <div class="btn btn-default"><i class="glyphicon glyphicon-remove-circle"></i> Remove Thumbnails</div>
-    <% end %>
     <% if @admins > 1 %>
       <%= link_to project_path(@project), title: "Leave", method: :delete do %>
       <div class="btn btn-default"><i class="glyphicon glyphicon-remove-circle"></i> Leave</div>

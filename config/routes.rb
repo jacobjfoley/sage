@@ -23,8 +23,6 @@ Sage::Application.routes.draw do
       get 'analytics'
       post 'generate_key'
       post 'reset_key'
-      post 'reset_thumbnail_bases'
-      post 'generate_thumbnails'
     end
 
     collection do

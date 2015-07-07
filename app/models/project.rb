@@ -198,28 +198,6 @@ class Project < ActiveRecord::Base
     end
   end
 
-  # Clear all thumbnails belonging to objects in this project.
-  def clear_thumbnails
-
-    # For each digital object in the project:
-    digital_objects.each do |object|
-
-      # Delete this object's thumbnails.
-      object.clear_thumbnails()
-    end
-  end
-
-  # Reset all thumbnail bases belonging to objects in this project.
-  def reset_thumbnail_bases
-
-    # For each digital object in the project:
-    digital_objects.each do |object|
-
-      # Delete this object's thumbnail base.
-      object.reset_thumbnail_base
-    end
-  end
-
   # Clone a project.
   def clone(creator)
 
@@ -279,15 +257,6 @@ class Project < ActiveRecord::Base
       other_concept.digital_objects.each do |link|
         my_concept.digital_objects << DigitalObject.find(mapping[link.id])
       end
-    end
-  end
-
-  # Automatically generate the common thumbnail sizes.
-  def generate_thumbnails
-
-    # Generate the two standard sizes of images for every object.
-    digital_objects.each do |object|
-      object.generate_common_thumbnails
     end
   end
 
