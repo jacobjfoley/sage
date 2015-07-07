@@ -9,10 +9,7 @@ class DigitalObject < ActiveRecord::Base
 
   # Callbacks.
   after_create :generate_common_thumbnails
-  before_save :prepare_link, if: :location_changed?
-  before_save :reset_thumbnail_base, if: :location_changed?
   before_save :check_flatten, if: :location_changed?
-  before_destroy :clear_thumbnails
 
   # Find relevant objects.
   def relevant
@@ -75,169 +72,18 @@ class DigitalObject < ActiveRecord::Base
     end
   end
 
-  # Get the URL of the digital object's thumbnail.
+  # Get a thumbnail for the specified size and object.
   def thumbnail(x, y)
 
-    # Check if thumbnail base hasn't been defined.
-    if thumbnail_base.nil?
-
-      # Generate a thumbnail base and possibly thumbnail.
-      GenerateThumbnailAndBaseJob.perform_later(id, x, y)
-
-      # Return placeholder URL.
-      return ActionController::Base.helpers.asset_path("processing.svg")
-
-    # Check if scalable image.
-    elsif thumbnail_base =~ /\.svg\z/
-
-      # SVGs will automatically resize.
-      return thumbnail_base
-
-    # Otherwise, processed thumbnail is required.
-    else
-
-      # Calculate the digest of the object's thumbnail base.
-      digest = Digest::SHA256.hexdigest thumbnail_base
-
-      # Determine potential location on Amazon S3.
-      object = Aws::S3::Object.new("sage-une", "#{digest}_#{x}x#{y}.jpg")
-
-      # Check if suitable thumbnail is already in cache.
-      if object.exists?
-
-        # Return the URL to the caller.
-        return "https://s3-ap-southeast-2.amazonaws.com/sage-une/#{digest}_#{x}x#{y}.jpg"
-
-      # Otherwise, new thumbnail needed.
-      else
-
-        # Schedule a new thumbnail generation job.
-        GenerateThumbnailJob.perform_later(id, x, y, digest)
-
-        # Return placeholder URL.
-        return ActionController::Base.helpers.asset_path("processing.svg")
-      end
-    end
+    # Retrieve a thumbnail for this object.
+    Thumbnail.find_for(location, x, y)
   end
 
-  # Generate a new thumbnail.
-  def generate_thumbnail(x, y, digest)
+  # Check if the object's location is likely to be a link.
+  def has_uri?
 
-    # Fetch a representation of the resource.
-    begin
-
-      # Specify resource.
-      resource = RestClient::Resource.new(thumbnail_base)
-
-      # Attempt to read resource.
-      image = Magick::Image.from_blob(resource.get).first
-
-      # If the image is larger than the desired size:
-      if (image.columns > x) || (image.rows > y)
-
-        # Resize image to the desired size.
-        image = image.resize_to_fit(x, y)
-      end
-
-      # Access Amazon S3 object.
-      object = Aws::S3::Object.new("sage-une", "#{digest}_#{x}x#{y}.jpg")
-
-      # Write thumbnail to S3.
-      object.put({acl: "public-read", body: image.to_blob})
-
-    # Rescue in the event of an error.
-    rescue Magick::ImageMagickError
-
-      # Use a bug thumbnail.
-      self.thumbnail_base = ActionController::Base.helpers.asset_path("bug.svg")
-
-      # Save changes.
-      self.save
-    end
-  end
-
-  # Sets the thumbnail base appropriately for the object's location.
-  def generate_thumbnail_base(location)
-
-    # If the location is not a URI:
-    if location !~ /\A#{URI::regexp}\z/
-
-      self.thumbnail_base = ActionController::Base.helpers.asset_path("text.svg")
-
-    # The location is a URI.
-    else
-
-      # Attempt to fetch resource data.
-      begin
-
-        # Fetch the resource's metadata.
-        response = RestClient.head(location)
-
-        # Check if an image file.
-        if response.headers[:content_type] =~ /\Aimage/
-
-          # The location is an image file. Use it for the thumbnail.
-          self.thumbnail_base = location
-
-        # Otherwise, unknown filetype.
-        else
-
-          # Use a generic file thumbnail.
-          self.thumbnail_base = ActionController::Base.helpers.asset_path("generic.svg")
-        end
-
-      # Rescue in the event of an error.
-      rescue RestClient::Exception
-
-        # Use a missing file thumbnail.
-        self.thumbnail_base = ActionController::Base.helpers.asset_path("missing.svg")
-      end
-    end
-
-    # Save changes.
-    self.save
-  end
-
-  # Reset thumbnail base.
-  def reset_thumbnail_base
-
-    # Clear existing thumbnails.
-    clear_thumbnails()
-
-    # Remove thumbnail base.
-    self.thumbnail_base = nil
-  end
-
-  # Clear existing thumbnails.
-  def clear_thumbnails()
-
-    # If the object doesn't have a nil thumbnail base:
-    unless thumbnail_base.nil?
-
-      # If this is the only object with this location:
-      if DigitalObject.where(location: location).count == 1
-
-        # Calculate the digest of the object's original URL.
-        digest = Digest::SHA256.hexdigest thumbnail_base
-
-        # Create S3 bucket resource.
-        bucket = Aws::S3::Bucket.new("sage-une")
-
-        # Get all thumbnails belonging to this object.
-        thumbnails = bucket.objects({prefix: digest})
-
-        # Extract into array.
-        delete_array = []
-        thumbnails.each do |thumbnail|
-          delete_array << {key: thumbnail.key}
-        end
-
-        # Delete each thumbnail.
-        unless delete_array.empty?
-          bucket.delete_objects({delete: {objects: delete_array}})
-        end
-      end
-    end
+    # Compare location with a valid URI's regexp.
+    return location =~ /\A#{URI::regexp}\z/
   end
 
   # Generate the common thumbnail sizes.
@@ -246,35 +92,6 @@ class DigitalObject < ActiveRecord::Base
     # Generate the two standard sizes of images.
     thumbnail(150,150)
     thumbnail(400,400)
-  end
-
-  # Identifies if the provided location is a google link, and if so, prepares
-  # a webcontentlink to the same resource instead. This is accessible to both
-  # users and the server and preserves the object's id.
-  def prepare_link
-
-    # Form appropriate regular expression.
-    google_regexp = %r{https://drive\.google\.com/open\?(.*)}
-
-    # Determine if a googledrive link.
-    if google_regexp.match(location)
-
-      # New location.
-      wcl = "https://docs.google.com/uc?"
-
-      # Extract the file id.
-      id = google_regexp.match(location)[1]
-
-      # Update new location using WebContentLink.
-      self.location = wcl + id
-    end
-  end
-
-  # Identify if the object's location can be used as a valid URI.
-  def has_uri?
-
-    # Check if location matches URI regexp.
-    return location =~ /\A#{URI::regexp}\z/
   end
 
   # Check if two or more objects shall be flattened:

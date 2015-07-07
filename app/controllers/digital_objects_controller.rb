@@ -1,11 +1,17 @@
 class DigitalObjectsController < ApplicationController
+
+  # Callbacks.
   before_action :check_logged_in
   before_action :check_access
   before_action :set_project
   before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :add_concept, :remove_concept]
   before_action :set_concept, only: [:add_concept, :remove_concept]
 
+  # Layout.
   layout 'control'
+
+  # Helpers.
+  helper ThumbnailHelper
 
   # GET /digital_objects
   # GET /digital_objects.json
