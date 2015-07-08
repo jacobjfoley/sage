@@ -16,7 +16,11 @@ class DigitalObjectsController < ApplicationController
   # GET /digital_objects
   # GET /digital_objects.json
   def index
-    @digital_objects = @project.digital_objects.sort_by(&:updated_at).reverse
+
+    # Fetch the project's digital objects sorted by concept count.
+    @digital_objects = @project.digital_objects.to_a.sort! {
+      |a,b| a.concepts.count <=> b.concepts.count
+    }
   end
 
   # GET /digital_objects/1

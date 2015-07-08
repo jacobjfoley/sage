@@ -10,7 +10,11 @@ class ConceptsController < ApplicationController
   # GET /concepts
   # GET /concepts.json
   def index
-    @concepts = @project.concepts.sort_by(&:updated_at).reverse
+
+    # Fetch the project's concepts sorted by association count.
+    @concepts = @project.concepts.to_a.sort! {
+      |a,b| a.digital_objects.count <=> b.digital_objects.count
+    }
   end
 
   # GET /concepts/1
