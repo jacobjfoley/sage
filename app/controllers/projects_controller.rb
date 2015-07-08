@@ -123,7 +123,7 @@ class ProjectsController < ApplicationController
   def analytics
 
     # Get the project's statistics hash.
-    @statistics = @project.analytics
+    @statistics = Analytics.new(@project).analyse
   end
 
   private

@@ -1,5 +1,5 @@
 class Evaluation
-
+  
   # Process project and report scores.
   def evaluate(project_id, testing_partition)
 
