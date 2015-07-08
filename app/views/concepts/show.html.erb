@@ -35,24 +35,26 @@
             </div><div class="row">
             <% position = 0 %>
           <% end %>
-          <div class="col-md-3 text-center" style="height: 150px">
+          <div class="col-md-3 text-center" style="height: 225px">
             <%= link_to project_digital_object_path(@project, object) do %>
-              <div style="height: 100px">
+              <div style="height: 150px">
                 <%= image_tag thumbnail_url(object.thumbnail(150,150)), style: "max-height:100%; max-width:100%" %>
               </div>
               <%= truncate(File.basename(object.location), length: 20) %>
             <% end %>
-            <div>
-              <% if @concept.digital_objects.include? object %>
-                <%= link_to remove_object_project_concept_path(@project, @concept, object: object.id), method: :post, title: "Remove" do %>
-                  <%= relevant[object].round(2) %> <i class="glyphicon glyphicon-minus"></i>
-                <% end %>
-              <% else %>
-                <%= link_to add_object_project_concept_path(@project, @concept, object: object.id), method: :post, title: "Add" do %>
-                  <%= relevant[object].round(2) %> <i class="glyphicon glyphicon-plus"></i>
-                <% end %>
+            <% if @concept.digital_objects.include? object %>
+              <%= link_to remove_object_project_concept_path(@project, @concept, object: object.id), method: :post, title: "Remove" do %>
+              <div class="btn btn-primary">
+                <%= relevant[object].round(2) %> <i class="glyphicon glyphicon-ok"></i>
+              </div>
               <% end %>
-            </div>
+            <% else %>
+              <%= link_to add_object_project_concept_path(@project, @concept, object: object.id), method: :post, title: "Add" do %>
+                <div class="btn btn-default">
+                  <%= relevant[object].round(2) %> <i class="glyphicon glyphicon-remove"></i>
+                </div>
+              <% end %>
+            <% end %>
           </div>
         <% end %>
       </div>

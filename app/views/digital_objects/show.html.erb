@@ -32,25 +32,29 @@
 
   <div class="col-md-6">
     <h1>Concept Associations</h1>
-    <table class="table table-striped">
+    <table class="table table-hover">
       <% relevant = @digital_object.relevant %>
       <% relevant.keys.each do |concept| %>
       <tr>
+
         <td>
           <%= link_to truncate(concept.description, length: 50), [@project, concept] %>
 
-          <div class="pull-right">
-            <% if !@digital_object.concepts.include? concept %>
-              <%= link_to add_concept_project_digital_object_path(@project, @digital_object, concept: concept.id), method: :post, title: "Add" do %>
-                <%= relevant[concept].round(2) %> <i class="glyphicon glyphicon-plus"></i>
-              <% end %>
-            <% else %>
-              <%= link_to remove_concept_project_digital_object_path(@project, @digital_object, concept: concept.id), method: :post, title: "Remove" do %>
-                <%= relevant[concept].round(2) %> <i class="glyphicon glyphicon-minus"></i>
-              <% end %>
+          <% if !@digital_object.concepts.include? concept %>
+            <%= link_to add_concept_project_digital_object_path(@project, @digital_object, concept: concept.id), method: :post, title: "Add" do %>
+              <div class="btn btn-default pull-right">
+                <%= relevant[concept].round(2) %> <i class="glyphicon glyphicon-remove"></i>
+              </div>
             <% end %>
-          </div>
+          <% else %>
+            <%= link_to remove_concept_project_digital_object_path(@project, @digital_object, concept: concept.id), method: :post, title: "Remove" do %>
+              <div class="btn btn-primary pull-right">
+                <%= relevant[concept].round(2) %> <i class="glyphicon glyphicon-ok"></i>
+              </div>
+            <% end %>
+          <% end %>
         </td>
+
       </tr>
       <% end %>
     </table>
