@@ -18,6 +18,9 @@
       <%= link_to "#", title: "Flip Image", onclick: "$('#thumbnail').toggleClass('flipped')" do %>
         <i class="glyphicon glyphicon-resize-horizontal"></i>
       <% end %>
+      <%= link_to repair_thumbnails_project_digital_object_path(@project, @digital_object), title: "Repair Thumbnails", method: :post do %>
+        <i class="glyphicon glyphicon-refresh"></i>
+      <% end %>
       <%= link_to edit_project_digital_object_path(@project, @digital_object), title: "Edit" do %>
         <i class="glyphicon glyphicon-pencil"></i>
       <% end %>

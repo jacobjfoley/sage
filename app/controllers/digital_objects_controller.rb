@@ -4,7 +4,7 @@ class DigitalObjectsController < ApplicationController
   before_action :check_logged_in
   before_action :check_access
   before_action :set_project
-  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :add_concept, :remove_concept]
+  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :add_concept, :remove_concept, :repair_thumbnails]
   before_action :set_concept, only: [:add_concept, :remove_concept]
 
   # Layout.
@@ -35,6 +35,16 @@ class DigitalObjectsController < ApplicationController
 
   # GET /digital_objects/1/edit
   def edit
+  end
+
+  # POST /digital_object/1/repair_thumbnails
+  def repair_thumbnails
+
+    # Call method on object.
+    @digital_object.repair_thumbnails
+
+    # Redirect back to object.
+    redirect_to project_digital_object_path(@project, @digital_object)
   end
 
   # POST /digital_objects
@@ -154,8 +164,8 @@ class DigitalObjectsController < ApplicationController
 
       # Define the pages which can be accessed using each level of security.
       viewer_pages = ["show", "index"]
-      contributor_pages = ["show", "index", "new", "create", "update", "edit", "destroy", "add_concept", "remove_concept"]
-      administrator_pages = ["show", "index", "new", "create", "update", "edit", "destroy", "add_concept", "remove_concept"]
+      contributor_pages = ["show", "index", "new", "create", "update", "edit", "destroy", "add_concept", "remove_concept", "repair_thumbnails"]
+      administrator_pages = ["show", "index", "new", "create", "update", "edit", "destroy", "add_concept", "remove_concept", "repair_thumbnails"]
 
       # Get the currently logged-in user's role in this project, if any.
       @role = UserRole.find_by(user_id: session[:user_id], project_id: params[:project_id])
