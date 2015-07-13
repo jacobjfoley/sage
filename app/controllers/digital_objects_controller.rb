@@ -57,7 +57,9 @@ class DigitalObjectsController < ApplicationController
     saved = true;
 
     # Determine if adding a batch or single entry.
-    if digital_object_params[:location].lines.count == 1
+    single_mode = digital_object_params[:location].lines.count == 1
+
+    if single_mode
 
       # Single entry. Create object using params directly.
       @digital_object = DigitalObject.new(digital_object_params)
@@ -67,8 +69,8 @@ class DigitalObjectsController < ApplicationController
 
       # Save the object.
       saved = @digital_object.save
-
     else
+
       # Batch entry. Fetch locations.
       locations = digital_object_params[:location].lines
 
@@ -86,8 +88,13 @@ class DigitalObjectsController < ApplicationController
 
     respond_to do |format|
       if saved
-        format.html { redirect_to [@project, @digital_object], notice: 'Digital object was successfully created.' }
-        format.json { render action: 'show', status: :created, location: @digital_object }
+        if single_mode
+          format.html { redirect_to [@project, @digital_object], notice: 'Digital object was successfully created.' }
+          format.json { render action: 'show', status: :created, location: @digital_object }
+        else
+          format.html { redirect_to project_digital_objects_path, notice: 'Digital objects were successfully created.' }
+          format.json { render action: 'index', status: :created, location: @digital_object }
+        end
       else
         format.html { render action: 'new' }
         format.json { render json: @digital_object.errors, status: :unprocessable_entity }
