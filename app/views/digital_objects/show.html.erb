@@ -35,7 +35,7 @@
 
     <%= form_for @concept, url: {action: "add_created_concept"}, html: {class: "form-inline"} do |f| %>
       <div class="input-group", style="width: 100%">
-        <%= f.text_field :description, class: "form-control" %>
+        <%= f.text_field :description, class: "form-control", autofocus: true %>
         <span class="input-group-btn">
           <%= f.submit "Add", class: "btn btn-primary", style: "width: 100%" %>
         </span>
