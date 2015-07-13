@@ -26,22 +26,26 @@ class Project < ActiveRecord::Base
       total += value
     end
 
-    # Distribute influence according to similarity score.
-    similar.keys.each do |key|
-      similar[key] *= influence / total
-    end
-
     # Create results hash.
     results = {}
 
-    # For each similar result:
-    similar.keys.each do |key|
+    # If total is greater than zero:
+    if total > 0
 
-      # Call each similar concept with their portion of total influence.
-      response = key.collaborate(similar[key], propagations, true)
+      # Distribute influence according to similarity score.
+      similar.keys.each do |key|
+        similar[key] *= influence / total
+      end
 
-      # Assimilate response.
-      aggregate(results, response)
+      # For each similar result:
+      similar.keys.each do |key|
+
+        # Call each similar concept with their portion of total influence.
+        response = key.collaborate(similar[key], propagations, true)
+
+        # Assimilate response.
+        aggregate(results, response)
+      end
     end
 
     # Return end result.
@@ -350,7 +354,7 @@ class Project < ActiveRecord::Base
       matching = table[word]
 
       # Find inverse term frequency, idf.
-      idf = Math.log(concepts.count / matching.keys.count)
+      idf = Math.log(concepts.count / matching.keys.count.to_f)
 
       # Check each match.
       matching.keys.each do |match|
