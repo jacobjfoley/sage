@@ -10,13 +10,13 @@
       </ul>
     </div>
   <% end %>
-  
+
   <div class="form-group">
     <%= f.label :description, "Concept description:" %>
-    <%= f.text_area :description, class: "form-control", rows: 6 %>
-    
+    <%= f.text_area :description, class: "form-control", rows: 6, autofocus: true %>
+
     <br />
-    
+
     <div class="actions">
       <%= f.submit "Done", class: "btn btn-md" %>
     </div>
