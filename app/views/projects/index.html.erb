@@ -6,13 +6,13 @@
 
 <div class="row">
   <div class="col-md-4">
-    <%= link_to "Profile", user_path(@user), class: "btn btn-default btn-lg btn-block" %>
-  </div>
-  <div class="col-md-4">
     <%= link_to "New Project", new_project_path, class: "btn btn-default btn-lg btn-block" %>
   </div>
   <div class="col-md-4">
     <%= link_to "Redeem Key", redeem_key_projects_path, class: "btn btn-default btn-lg btn-block" %>
+  </div>
+  <div class="col-md-4">
+    <%= link_to "Profile", user_path(@user), class: "btn btn-default btn-lg btn-block" %>
   </div>
 </div>
 
