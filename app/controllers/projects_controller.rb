@@ -17,7 +17,7 @@ class ProjectsController < ApplicationController
   # GET /projects/1
   # GET /projects/1.json
   def show
-    @admins = UserRole.where(project_id: @project.id, position:"Administrator").count
+    @admins = administrator_count
   end
 
   # GET /projects/new
@@ -140,6 +140,13 @@ class ProjectsController < ApplicationController
     # Set the user role.
     def set_user_role
       @user_role = UserRole.where(user_id: @user.id, project_id: @project.id).first
+    end
+
+    # Find how many administrators are in the current project.
+    def administrator_count
+
+      # Return the number of administrators.
+      return UserRole.where(project_id: @project.id, position:"Administrator").count
     end
 
     # Set listings of users.
