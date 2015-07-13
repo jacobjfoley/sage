@@ -4,7 +4,8 @@ class DigitalObjectsController < ApplicationController
   before_action :check_logged_in
   before_action :check_access
   before_action :set_project
-  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :add_concept, :remove_concept, :repair_thumbnails]
+  before_action :set_digital_object, only: [:show, :edit, :update, :destroy,
+    :add_concept, :remove_concept, :repair_thumbnails, :add_created_concept]
   before_action :set_concept, only: [:add_concept, :remove_concept]
 
   # Layout.
@@ -26,6 +27,7 @@ class DigitalObjectsController < ApplicationController
   # GET /digital_objects/1
   # GET /digital_objects/1.json
   def show
+    @concept = Concept.new
   end
 
   # GET /digital_objects/new
@@ -126,6 +128,33 @@ class DigitalObjectsController < ApplicationController
     redirect_to project_digital_object_path(@project, @digital_object)
   end
 
+  # POST /objects/1/add_created_concept
+  def add_created_concept
+
+    # Create new concept.
+    @concept = Concept.new(params.require(:concept).permit(:description))
+
+    # Set the project ID from the parameters passed to this controller.
+    @concept.project_id = @project.id
+
+    # Attempt to save.
+    if @concept.save
+
+      # Associate new concept with this object.
+      unless @digital_object.concepts.include? @concept
+        @digital_object.concepts << @concept
+      end
+
+      # Redirect with success.
+      redirect_to project_digital_object_path(@project, @digital_object)
+    else
+
+      # Redirect with failure.
+      redirect_to project_digital_object_path(@project, @digital_object),
+        notice: 'Concept was not able to be created.'
+    end
+  end
+
   # POST /objects/1/remove_object
   def remove_concept
     if @digital_object.concepts.include? @concept
@@ -142,7 +171,7 @@ class DigitalObjectsController < ApplicationController
     end
 
     def set_concept
-      @concept = Concept.find(params[:concept])
+      @concept = Concept.find(params[:concept_id])
     end
 
     def set_project
@@ -164,8 +193,14 @@ class DigitalObjectsController < ApplicationController
 
       # Define the pages which can be accessed using each level of security.
       viewer_pages = ["show", "index"]
-      contributor_pages = ["show", "index", "new", "create", "update", "edit", "destroy", "add_concept", "remove_concept", "repair_thumbnails"]
-      administrator_pages = ["show", "index", "new", "create", "update", "edit", "destroy", "add_concept", "remove_concept", "repair_thumbnails"]
+      contributor_pages = ["show", "index", "new", "create", "update", "edit",
+        "destroy", "add_concept", "remove_concept", "repair_thumbnails",
+        "add_created_concept"
+      ]
+      administrator_pages = ["show", "index", "new", "create", "update", "edit",
+         "destroy", "add_concept", "remove_concept", "repair_thumbnails",
+         "add_created_concept"
+      ]
 
       # Get the currently logged-in user's role in this project, if any.
       @role = UserRole.find_by(user_id: session[:user_id], project_id: params[:project_id])

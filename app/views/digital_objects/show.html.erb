@@ -32,6 +32,18 @@
 
   <div class="col-md-6">
     <h1>Concept Associations</h1>
+
+    <%= form_for @concept, url: {action: "add_created_concept"}, html: {class: "form-inline"} do |f| %>
+      <div class="input-group", style="width: 100%">
+        <%= f.text_field :description, class: "form-control" %>
+        <span class="input-group-btn">
+          <%= f.submit "Add", class: "btn btn-primary", style: "width: 100%" %>
+        </span>
+      </div>
+    <% end %>
+
+    <br>
+
     <table class="table table-hover">
       <% relevant = @digital_object.relevant %>
       <% relevant.keys.each do |concept| %>
@@ -41,13 +53,13 @@
           <%= link_to truncate(concept.description, length: 50), [@project, concept] %>
 
           <% if !@digital_object.concepts.include? concept %>
-            <%= link_to add_concept_project_digital_object_path(@project, @digital_object, concept: concept.id), method: :post, title: "Add" do %>
+            <%= link_to add_concept_project_digital_object_path(@project, @digital_object, concept_id: concept.id), method: :post, title: "Add" do %>
               <div class="btn btn-default pull-right">
                 <%= relevant[concept].round(2) %> <i class="glyphicon glyphicon-remove"></i>
               </div>
             <% end %>
           <% else %>
-            <%= link_to remove_concept_project_digital_object_path(@project, @digital_object, concept: concept.id), method: :post, title: "Remove" do %>
+            <%= link_to remove_concept_project_digital_object_path(@project, @digital_object, concept_id: concept.id), method: :post, title: "Remove" do %>
               <div class="btn btn-primary pull-right">
                 <%= relevant[concept].round(2) %> <i class="glyphicon glyphicon-ok"></i>
               </div>

@@ -3,7 +3,7 @@ class ConceptsController < ApplicationController
   before_action :check_access
   before_action :set_project
   before_action :set_concept, only: [:show, :edit, :update, :destroy, :add_object, :remove_object]
-  before_action :set_object, only: [:add_object, :remove_object]
+  before_action :set_object, only: [:add_object, :remove_object, :create_from_object]
 
   layout 'control'
 
@@ -100,7 +100,7 @@ class ConceptsController < ApplicationController
 
     # Get the digital object object.
     def set_object
-      @object = DigitalObject.find(params[:object])
+      @object = DigitalObject.find(params[:object_id])
     end
 
     # Get the project that the concept belongs to.
@@ -123,8 +123,8 @@ class ConceptsController < ApplicationController
 
       # Define the pages which can be accessed using each level of security.
       viewer_pages = ["show", "index"]
-      contributor_pages = ["show", "index", "new", "create", "update", "edit", "destroy", "add_object", "remove_object"]
-      administrator_pages = ["show", "index", "new", "create", "update", "edit", "destroy", "add_object", "remove_object"]
+      contributor_pages = ["show", "index", "new", "create", "update", "edit", "destroy", "add_object", "remove_object", "create_from_object"]
+      administrator_pages = ["show", "index", "new", "create", "update", "edit", "destroy", "add_object", "remove_object", "create_from_object"]
 
       # Get the currently logged-in user's role in this project, if any.
       @role = UserRole.find_by(user_id: session[:user_id], project_id: params[:project_id])
