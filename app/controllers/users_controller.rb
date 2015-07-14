@@ -38,7 +38,7 @@ class UsersController < ApplicationController
           # Log in as new user.
           session[:user_id] = @user.id
 
-          format.html { redirect_to @user, notice: 'User was successfully created.' }
+          format.html { redirect_to projects_path, notice: I18n.t(:user_welcome_message) }
           format.json { render action: 'show', status: :created, location: @user }
         else
           format.html { render action: 'new' }

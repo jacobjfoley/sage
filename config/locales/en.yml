@@ -21,3 +21,4 @@
 
 en:
   hello: "Hello world"
+  user_welcome_message: "Welcome aboard! Now that you've registered, you may wish to create a project, or redeem a key you've been provided. You can do that from here. Think of this page as your control centre, it can be reached at any time by pressing the Projects link in the top bar."
