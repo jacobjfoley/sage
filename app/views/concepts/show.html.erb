@@ -41,7 +41,7 @@
                 <%= image_tag thumbnail_url(object.thumbnail(150,150)), style: "max-height:100%; max-width:100%" %>
               </div>
               <div>
-                <%= truncate(File.basename(object.location), length: 20) %>
+                <div class="truncate"><%=File.basename(object.location) %></div>
               </div>
             <% end %>
             <% if @concept.digital_objects.include? object %>

@@ -30,17 +30,41 @@
   }
 }
 
-a {
-  color: #444;
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-  &:visited {
-    color: #777;
-  }
+.nav {
+  a {
+    color: #444;
 
-  &:hover {
-    color: #fff;
-    background-color: #eee;
+    &:visited {
+      color: #777;
+    }
+
+    &:hover {
+      color: #fff;
+      background-color: #eee;
+    }
   }
+}
+
+a .glyphicon {
+
+    color: #444;
+
+    &:visited {
+      color: #777;
+      text-decoration: none;
+    }
+
+    &:hover {
+      color: #fff;
+      background-color: #eee;
+      text-decoration: none;
+    }
 }
 
 body {
