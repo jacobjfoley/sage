@@ -1,8 +1,15 @@
-module GoogleDrivePicker
+require 'google/api_client'
+require 'google/api_client/client_secrets'
+require 'google/api_client/auth/installed_app'
+require 'google/api_client/auth/storage'
+require 'google/api_client/auth/storages/file_store'
+require 'fileutils'
 
-  CLIENT_ID = '<YOUR_CLIENT_ID>'
-  CLIENT_SECRET = '<YOUR_CLIENT_SECRET>'
-  REDIRECT_URI = '<YOUR_REGISTERED_REDIRECT_URI>'
+class GoogleDriveUtils
+
+  CLIENT_ID = ENV["GOOGLE_CLIENT_ID"]
+  CLIENT_SECRET = ENV["GOOGLE_CLIENT_SECRET"]
+  REDIRECT_URI = ENV["GOOGLE_REDIRECT_URI"]
   SCOPES = [
       'https://www.googleapis.com/auth/drive.metadata.readonly',
       'email',
@@ -215,11 +222,10 @@ module GoogleDrivePicker
       puts "Title: #{file.data}"
       puts "Description: #{file.description}"
       puts "MIME type: #{file.mime_type}"
-    elseif result.status == 401
+    elsif result.status == 401
         # Credentials have been revoked.
         # TODO: Redirect the user to the authorization URL.
         raise NotImplementedError, 'Redirect the user.'
-      end
     else
       puts "An error occurred: #{result.data['error']['message']}"
     end

@@ -33,6 +33,7 @@ class DigitalObjectsController < ApplicationController
   # GET /digital_objects/new
   def new
     @digital_object = DigitalObject.new
+    @google_authorisation_uri = GoogleDriveUtils.new.get_authorization_url(nil, session[:user_id])
   end
 
   # GET /digital_objects/1/edit

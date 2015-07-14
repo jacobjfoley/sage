@@ -36,7 +36,19 @@
         </div>
       </div>
       <div role="tabpanel" class="tab-pane" id="drive">
-
+        <br>
+        <p>
+          In order to import a public folder, you need to grant SAGE permission
+          to access your Google Drive account. This permission will last until
+          you log out of your SAGE account. You can grant permission using the
+          button below.
+        </p>
+        <br>
+        <div class="text-center">
+          <%= link_to @google_authorisation_uri do %>
+            <div class="btn btn-primary">Authorise SAGE</div>
+          <% end %>
+        </div>
       </div>
     </div>
 
