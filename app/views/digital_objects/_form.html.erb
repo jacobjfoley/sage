@@ -11,13 +11,34 @@
     </div>
   <% end %>
 
-  <div class="form-group">
-    <%= f.label :location, "Enter the Object's URL, or multiple URLs on separate lines:" %>
-    <%= f.text_area :location, class: "form-control", rows: 10, autofocus: true %>
-    <br>
+  <div>
 
-    <div class="actions">
-      <%= f.submit "Done", class: "btn btn-md" %>
+    <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active"><a href="#url" role="tab" data-toggle="tab">
+        Add URLs <span class="glyphicon glyphicon-globe"></span>
+      </a></li>
+      <li role="presentation"><a href="#drive" role="tab" data-toggle="tab">
+        Google Drive Import <%= image_tag "drive_icon.png", size: "16" %>
+      </a></li>
+    </ul>
+
+    <div class="tab-content">
+      <div role="tabpanel" class="tab-pane active" id="url">
+        <br>
+        <div class="form-group">
+          <%= f.label :location, "Enter the Object's URL, or multiple URLs on separate lines:" %>
+          <%= f.text_area :location, class: "form-control", rows: 10, autofocus: true %>
+          <br>
+
+          <div class="actions">
+            <%= f.submit "Done", class: "btn btn-md" %>
+          </div>
+        </div>
+      </div>
+      <div role="tabpanel" class="tab-pane" id="drive">
+
+      </div>
     </div>
+
   </div>
 <% end %>
