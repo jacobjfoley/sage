@@ -52,6 +52,9 @@ Sage::Application.routes.draw do
   match "/feedback", via: "get", to: "site#feedback"
   match "/participant_information", via: "get", to: "site#participant_information"
 
+  # Oauth controller.
+  match "/receive_oauth2", via: "get", to: "projects#receive_oauth2"
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

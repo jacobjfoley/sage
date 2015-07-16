@@ -4,9 +4,39 @@ class ProjectsController < ApplicationController
   before_action :set_user, only: [:show, :create, :index, :destroy, :check_key, :check_access]
   before_action :set_user_role, only: [:show, :destroy]
   before_action :set_user_lists, only: [:show]
-  before_action :check_access, except: [:new, :create, :index, :redeem_key, :check_key]
+  before_action :check_access, except: [:new, :create, :index, :redeem_key, :check_key, :receive_oauth2]
 
   layout 'control', except: [:new, :create, :index, :redeem_key, :check_key]
+
+  # GET /receive_oauth2
+  def receive_oauth2
+
+    # Get the project id passed in state.
+    project_id = params[:state]
+
+    # Check whether the call was successful.
+    if params[:error].eql? "access_denied"
+
+      # Unsuccessful. Redirect to project with notice.
+      redirect_to new_project_digital_object_path(project_id),
+        notice: "SAGE was declined access to Google Drive."
+
+    else
+
+      # Get access code.
+      code = params[:code]
+
+      # Exchange authorisation code for access token.
+      authorisation = GoogleDriveUtils.exchange_code(code)
+
+      # Store authorisation in session.
+      session[:authorisation] = authorisation
+
+      # Redirect to project with notice.
+      redirect_to new_project_digital_object_path(project_id),
+        notice: "SAGE has been granted temporary access to Google Drive."
+    end
+  end
 
   # GET /projects
   # GET /projects.json

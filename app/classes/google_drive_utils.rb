@@ -17,6 +17,53 @@ class GoogleDriveUtils
   ]
 
   ##
+  # Retrieve authorization URL.
+  #
+  # @param [String] state
+  #   State for the authorization URL.
+  # @return [String]
+  #  Authorization URL to redirect the user to.
+  def self.get_authorization_url(state)
+
+    # Create new client.
+    client = Google::APIClient.new
+
+    # Configure client.
+    client.authorization.client_id = CLIENT_ID
+    client.authorization.redirect_uri = REDIRECT_URI
+    client.authorization.scope = SCOPES
+
+    # Generate and return authorisation uri.
+    return client.authorization.authorization_uri(
+      :approval_prompt => :force,
+      :access_type => :offline,
+      :state => state
+    ).to_s
+  end
+
+  ##
+  # Exchange an authorization code for OAuth 2.0 credentials.
+  #
+  # @param [String] authorisation_code
+  #   Authorization code to exchange for OAuth 2.0 credentials.
+  # @return [Signet::OAuth2::Client]
+  #  OAuth 2.0 credentials.
+  def self.exchange_code(authorisation_code)
+    client = Google::APIClient.new(application_name: "SAGE")
+    client.authorization.client_id = CLIENT_ID
+    client.authorization.client_secret = CLIENT_SECRET
+    client.authorization.code = authorisation_code
+    client.authorization.redirect_uri = REDIRECT_URI
+
+    begin
+      client.authorization.fetch_access_token!
+      return client.authorization
+    rescue Signet::AuthorizationError
+      raise CodeExchangeError.new(nil)
+    end
+  end
+
+  ##
   # Error raised when an error occurred while retrieving credentials.
   class GetCredentialsError < StandardError
     ##
@@ -53,6 +100,8 @@ class GoogleDriveUtils
   class NoUserIdError < StandardError
   end
 
+  ##############################################################################
+
   ##
   # Retrieved stored credentials for the provided user ID.
   #
@@ -75,27 +124,6 @@ class GoogleDriveUtils
     raise NotImplementedError, 'store_credentials is not implemented.'
   end
 
-  ##
-  # Exchange an authorization code for OAuth 2.0 credentials.
-  #
-  # @param [String] auth_code
-  #   Authorization code to exchange for OAuth 2.0 credentials.
-  # @return [Signet::OAuth2::Client]
-  #  OAuth 2.0 credentials.
-  def exchange_code(authorization_code)
-    client = Google::APIClient.new
-    client.authorization.client_id = CLIENT_ID
-    client.authorization.client_secret = CLIENT_SECRET
-    client.authorization.code = authorization_code
-    client.authorization.redirect_uri = REDIRECT_URI
-
-    begin
-      client.authorization.fetch_access_token!
-      return client.authorization
-    rescue Signet::AuthorizationError
-      raise CodeExchangeError.new(nil)
-    end
-  end
 
   ##
   # Send a request to the UserInfo API to retrieve the user's information.
@@ -119,29 +147,6 @@ class GoogleDriveUtils
       return user_info
     end
     raise NoUserIdError, 'Unable to retrieve the e-mail address.'
-  end
-
-  ##
-  # Retrieve authorization URL.
-  #
-  # @param [String] email_address
-  #   User's e-mail address.
-  # @param [String] state
-  #   State for the authorization URL.
-  # @return [String]
-  #  Authorization URL to redirect the user to.
-  def get_authorization_url(email_address, state)
-    client = Google::APIClient.new
-    client.authorization.client_id = CLIENT_ID
-    client.authorization.redirect_uri = REDIRECT_URI
-    client.authorization.scope = SCOPES
-
-    return client.authorization.authorization_uri(
-      :approval_prompt => :force,
-      :access_type => :offline,
-      :user_id => email_address,
-      :state => state
-    ).to_s
   end
 
   ##

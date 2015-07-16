@@ -1,3 +1,7 @@
+<% if notice %>
+  <p id="notice" class="alert alert-success"><%= notice %></p>
+<% end %>
+
 <%= form_for([@project, @digital_object]) do |f| %>
   <% if @digital_object.errors.any? %>
     <div id="error_explanation" class="alert alert-danger">
@@ -37,18 +41,33 @@
       </div>
       <div role="tabpanel" class="tab-pane" id="drive">
         <br>
-        <p>
-          In order to import a public folder, you need to grant SAGE permission
-          to access your Google Drive account. This permission will last until
-          you log out of your SAGE account. You can grant permission using the
-          button below.
-        </p>
-        <br>
-        <div class="text-center">
-          <%= link_to @google_authorisation_uri do %>
-            <div class="btn btn-primary">Authorise SAGE</div>
+        <% if @have_google_authorisation %>
+
+          <%= form_tag "/project/#{@project.id}/digital_object/import_google",
+            class: "form" do %>
+            <div class="form-group">
+              <label for="folder_location"> Google Drive folder's link: </label>
+              <%= text_field_tag "folder_location", nil, class: "form-control" %>
+            </div>
+            <%= submit_tag "Done", class: "btn btn-primary" %>
           <% end %>
-        </div>
+
+        <% else %>
+
+          <p>
+            In order to import a public folder, you need to grant SAGE permission
+            to access your Google Drive account. This permission will last until
+            you log out of your SAGE account. You can grant permission using the
+            button below.
+          </p>
+          <br>
+          <div class="text-center">
+            <%= link_to @google_authorisation_uri do %>
+              <div class="btn btn-primary">Authorise SAGE</div>
+            <% end %>
+          </div>
+
+        <% end %>
       </div>
     </div>
 
