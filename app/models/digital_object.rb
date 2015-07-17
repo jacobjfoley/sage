@@ -16,10 +16,10 @@ class DigitalObject < ActiveRecord::Base
   def self.ranked(project_id)
 
     # Get objects.
-    digital_objects = DigitalObject.where(project: project_id)
+    digital_objects = DigitalObject.where(project: project_id).to_a
 
     # Sort by association count.
-    digital_objects.to_a.sort! {
+    digital_objects.sort! {
       |a,b| a.concepts.count <=> b.concepts.count
     }
 
@@ -160,7 +160,7 @@ class DigitalObject < ActiveRecord::Base
     same_objects = DigitalObject.where(
       project_id: project_id,
       location: location
-    )
+    ).to_a
 
     # Remove self.
     same_objects.delete(self)

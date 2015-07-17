@@ -14,10 +14,10 @@ class Concept < ActiveRecord::Base
   def self.ranked(project_id)
 
     # Get concepts.
-    concepts = Concept.where(project: project_id)
+    concepts = Concept.where(project: project_id).to_a
 
     # Sort by association count.
-    concepts.to_a.sort! {
+    concepts.sort! {
       |a,b| a.digital_objects.count <=> b.digital_objects.count
     }
 
@@ -58,7 +58,7 @@ class Concept < ActiveRecord::Base
     elsif dispersal == false
 
       # Disperse throughout project.
-      return project.disperse(influence, propagations, description)
+      return project.disperse(influence, propagations, id)
 
     # If at a termination point due to lack of associations:
     elsif digital_objects.count == 0
@@ -95,16 +95,26 @@ class Concept < ActiveRecord::Base
   # Check if two or more concepts shall be flattened:
   def check_flatten
 
-    # Find all concepts with the same project id and description.
-    same_concepts = Concept.where(
-      project_id: project_id,
-      description: description
-    )
+    # Find all concepts with the same project id.
+    same_project_concepts = Concept.where(
+      project_id: project_id
+    ).to_a
 
     # Remove self.
-    same_concepts.delete(self)
+    same_project_concepts.delete(self)
 
-    # If there are other concepts with the same details:
+    # Create list of matching concepts.
+    same_concepts = []
+    target_matchable_description = matchable_description
+    same_project_concepts.each do |concept|
+
+      # If a duplicate matchable description, add to list.
+      if concept.matchable_description.eql? target_matchable_description
+        same_concepts << concept
+      end
+    end
+
+    #If there are other concepts with the same details:
     if same_concepts.count > 0
 
       # For each concept:
@@ -114,6 +124,17 @@ class Concept < ActiveRecord::Base
         flatten(same_concept)
       end
     end
+
+    # Allow save to continue.
+    return true
+  end
+
+  # Returns the most matchable description of a concept.
+  def matchable_description
+
+    # Lower case, punctuation stripped.
+    return description.downcase.gsub(/[^a-z0-9\s]/i, '')
+
   end
 
   # Merge with other concepts.
@@ -153,6 +174,9 @@ class Concept < ActiveRecord::Base
         digital_objects << object
       end
     end
+
+    # Adopt existing concept's description.
+    self.description = other_concept.description
 
     # Destroy the other concept.
     other_concept.destroy

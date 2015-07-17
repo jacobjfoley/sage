@@ -15,10 +15,10 @@ class Project < ActiveRecord::Base
   validates :administrator_key, uniqueness: true, allow_nil: true
 
   # Find suggestions based on concept description.
-  def disperse(influence, propagations, description)
+  def disperse(influence, propagations, concept_id)
 
     # Find all similar concepts to the provided description.
-    similar = similar_text(description)
+    similar = similar_text(concept_id)
 
     # Determine total weight in results.
     total = 0.0
@@ -268,10 +268,10 @@ class Project < ActiveRecord::Base
   private
 
   # Provide an array of tokens based on description.
-  def tokenise(description)
+  def tokenise(concept)
 
     # Return tokens formed from lowercase symbol-less description.
-    return description.downcase.gsub(/[^a-z0-9\s]/i, '').split
+    return concept.matchable_description.split
   end
 
   # Provide a mapping of all words in the concept table.
@@ -284,7 +284,7 @@ class Project < ActiveRecord::Base
     concepts.each do |concept|
 
       # Get the tokens for the current concept.
-      tokens = tokenise(concept.description)
+      tokens = tokenise(concept)
 
       # For each token:
       tokens.each do |word|
@@ -316,10 +316,13 @@ class Project < ActiveRecord::Base
   end
 
   # Find all related concepts by text similarity.
-  def similar_text(description)
+  def similar_text(concept_id)
+
+    # Get the concept.
+    concept = Concept.find(concept_id)
 
     # Generate unique word list for this concept.
-    tokens = tokenise(description)
+    tokens = tokenise(concept)
 
     # Generate a new word table.
     words = word_table
