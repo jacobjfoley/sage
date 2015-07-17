@@ -47,13 +47,13 @@
             <% if @concept.digital_objects.include? object %>
               <%= link_to remove_object_project_concept_path(@project, @concept, object_id: object.id), method: :post, title: "Remove" do %>
               <div class="btn btn-primary">
-                <%= relevant[object].round(2) %> <i class="glyphicon glyphicon-check"></i>
+                <%= relevant[object].round(2) %> <i class="glyphicon glyphicon-ok"></i>
               </div>
               <% end %>
             <% else %>
               <%= link_to add_object_project_concept_path(@project, @concept, object_id: object.id), method: :post, title: "Add" do %>
                 <div class="btn btn-default">
-                  <%= relevant[object].round(2) %> <i class="glyphicon glyphicon-unchecked"></i>
+                  <%= relevant[object].round(2) %> <i class="glyphicon glyphicon-ok fade"></i>
                 </div>
               <% end %>
             <% end %>

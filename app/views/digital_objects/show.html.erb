@@ -55,13 +55,13 @@
           <% if !@digital_object.concepts.include? concept %>
             <%= link_to add_concept_project_digital_object_path(@project, @digital_object, concept_id: concept.id), method: :post, title: "Add" do %>
               <div class="btn btn-default pull-right">
-                <%= relevant[concept].round(2) %> <i class="glyphicon glyphicon-unchecked"></i>
+                <%= relevant[concept].round(2) %> <i class="glyphicon glyphicon-ok fade"></i>
               </div>
             <% end %>
           <% else %>
             <%= link_to remove_concept_project_digital_object_path(@project, @digital_object, concept_id: concept.id), method: :post, title: "Remove" do %>
               <div class="btn btn-primary pull-right">
-                <%= relevant[concept].round(2) %> <i class="glyphicon glyphicon-check"></i>
+                <%= relevant[concept].round(2) %> <i class="glyphicon glyphicon-ok"></i>
               </div>
             <% end %>
           <% end %>

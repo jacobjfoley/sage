@@ -754,7 +754,7 @@ th {
 }
 
 /* line 109, /home/jfoley/.gem/ruby/gems/bootstrap-sass-3.3.5/assets/stylesheets/bootstrap/_glyphicons.scss */
-.glyphicon-check:before {
+.glyphicon-ok:before {
   content: "\e067";
 }
 
@@ -1184,7 +1184,7 @@ th {
 }
 
 /* line 195, /home/jfoley/.gem/ruby/gems/bootstrap-sass-3.3.5/assets/stylesheets/bootstrap/_glyphicons.scss */
-.glyphicon-unchecked:before {
+.glyphicon-ok fade:before {
   content: "\e157";
 }
 
