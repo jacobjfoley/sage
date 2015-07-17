@@ -1,5 +1,5 @@
 class ProjectsController < ApplicationController
-  before_action :set_project, only: [:show, :edit, :update, :destroy, :generate_key, :reset_key, :analytics]
+  before_action :set_project, only: [:show, :edit, :update, :destroy, :generate_key, :reset_key, :analytics, :remove_user]
   before_action :check_logged_in
   before_action :set_user, only: [:show, :create, :index, :destroy, :check_key, :check_access]
   before_action :set_user_role, only: [:show, :destroy]
@@ -90,6 +90,26 @@ class ProjectsController < ApplicationController
         format.json { render json: @project.errors, status: :unprocessable_entity }
       end
     end
+  end
+
+  # POST /projects/1/remove_user
+  def remove_user
+
+    # Fetch user role.
+    role = UserRole.find_by(
+      user_id: params[:removed_user_id],
+      project_id: @project.id
+    )
+
+    # Check for deleting administrators.
+    unless role.position.eql? "Administrator"
+
+      # If not administrator, destroy role.
+      role.destroy
+    end
+
+    # Redirect back to project.
+    redirect_to project_path(@project)
   end
 
   # DELETE /projects/1
@@ -215,7 +235,7 @@ class ProjectsController < ApplicationController
       # Define the pages which can be accessed using each level of security.
       viewer_pages = ["show", "destroy", "analytics"]
       contributor_pages = ["show", "destroy", "analytics"]
-      administrator_pages = ["show", "update", "edit", "destroy", "generate_key", "reset_key", "analytics"]
+      administrator_pages = ["show", "update", "edit", "destroy", "generate_key", "reset_key", "analytics", "remove_user"]
 
       # Get the currently logged-in user's role in this project, if any.
       @role = UserRole.find_by(user_id: session[:user_id], project_id: params[:id])

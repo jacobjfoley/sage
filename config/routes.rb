@@ -25,6 +25,7 @@ Sage::Application.routes.draw do
       get 'analytics'
       post 'generate_key'
       post 'reset_key'
+      post 'remove_user'
     end
 
     collection do

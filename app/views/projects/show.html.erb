@@ -87,7 +87,12 @@
   <div>
     <strong>Contributors:</strong><br>
     <% @contributors.each do |user| %>
-      <p style="margin-left:2em"><%= user.name %> (<%= user.email %>)</p>
+      <div>
+        <%= link_to remove_user_project_path(@project, removed_user_id: user.id), method: :post do %><div class="btn btn-default">
+          <span class="glyphicon glyphicon-remove-circle"></span> Remove
+        </div><% end %>
+        <span style="margin-left:2em"><%= user.name %> (<%= user.email %>)</span>
+      </div>
     <% end %>
   </div>
   <% end %>
@@ -96,7 +101,12 @@
   <div>
     <strong>Viewers:</strong><br>
     <% @viewers.each do |user| %>
-      <p style="margin-left:2em">%= user.name %> (<%= user.email %>)</p>
+      <div>
+        <%= link_to remove_user_project_path(@project, removed_user_id: user.id), method: :post do %><div class="btn btn-default">
+          <span class="glyphicon glyphicon-remove-circle"></span> Remove
+        </div><% end %>
+        <span style="margin-left:2em"><%= user.name %> (<%= user.email %>)</span>
+      </div>
     <% end %>
   </div>
   <% end %>
