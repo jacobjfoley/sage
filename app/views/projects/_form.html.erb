@@ -1,4 +1,4 @@
-<%= form_for(@project) do |f| %>
+<%= form_for @project do |f| %>
   <% if @project.errors.any? %>
     <div id="error_explanation" class="alert alert-danger">
       <h2><%= pluralize(@project.errors.count, "error") %> prohibited this project from being saved:</h2>
@@ -11,15 +11,21 @@
     </div>
   <% end %>
 
-  <div class="field">
+  <div class="field form-group">
     <%= f.label :name, "Project name:" %><br>
     <%= f.text_field :name, class: "form-control", autofocus: true %>
   </div>
-  <div class="field">
+
+  <div class="field form-group">
     <%= f.label :notes, "Additional information about the project:" %><br>
     <%= f.text_area :notes, class: "form-control", rows: 10 %>
   </div>
-  <div class="actions">
-    <%= f.submit "Done", class: "btn btn-md" %>
+
+  <div class="actions form-group">
+    <%= link_to projects_path do %><div class="btn btn-default">
+      <span class="glyphicon glyphicon-arrow-left"></span> Back
+    </div><% end %>
+
+    <%= f.submit "Done", class: "btn btn-primary" %>
   </div>
 <% end %>

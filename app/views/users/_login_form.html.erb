@@ -1,4 +1,4 @@
-<%= form_for(@user, url: login_users_url) do |f| %>
+<%= form_for @user, url: login_users_url, html: {class: "form-horizontal"} do |f| %>
   <% if @user.errors.any? %>
     <div id="error_explanation" class="alert alert-danger">
       <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from logging in:</h2>
@@ -11,14 +11,33 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :email %><br>
-    <%= f.text_field :email, autofocus: true %>
+  <div class="field form-group">
+    <%= f.label :email, class: "col-md-2 control-label" %>
+    <div class="col-md-10">
+      <%= f.text_field :email, autofocus: true, class: "form-control" %>
+    </div>
   </div>
-  <div class="field">
-    <%= f.label :password %><br>
-    <%= f.password_field :password %>
+
+  <div class="field form-group">
+    <%= f.label :password, class: "col-md-2 control-label" %>
+    <div class="col-md-10">
+      <%= f.password_field :password, class: "form-control" %>
+    </div>
   </div>
-  
-    <%= f.submit "Log In", class: "btn btn-default" %>
+
+  <br>
+
+  <div class="actions text-center">
+    <%= link_to welcome_path do %><div class="btn btn-default">
+      <span class="glyphicon glyphicon-arrow-left"></span> Back
+    </div><% end %>
+
+    <%= f.submit "Log In", class: "btn btn-primary" %>
+  </div>
+
+  <br>
+
+  <div class="text-center">
+    <p><i>If you have forgotten your password, please contact me via the feedback page.</i></p>
+  </div>
 <% end %>

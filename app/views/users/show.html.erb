@@ -4,6 +4,8 @@
 
 <h1>Profile</h1>
 
+<h3> User Details </h3>
+
 <p>
   <strong>Name:</strong>
   <%= @user.name %>
@@ -15,9 +17,19 @@
 </p>
 
 <h3> Participant Information </h3>
+
 <ul>
   <li><%= link_to "Information Sheet For Participants", participant_information_path %></li>
 </ul>
 
-<%= link_to 'Edit', edit_user_path(@user) %> |
-<%= link_to 'Back', projects_path %>
+<br>
+
+<div class="actions">
+  <%= link_to projects_path do %><div class="btn btn-default">
+    <span class="glyphicon glyphicon-arrow-left"></span> Back
+  </div><% end %>
+
+  <%= link_to edit_user_path(@user) do %><div class="btn btn-primary">
+    <span class="glyphicon glyphicon-pencil"></span> Edit Details
+  </div><% end %>
+</div>

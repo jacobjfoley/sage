@@ -1,5 +1,7 @@
-<h1>Editing user</h1>
+<h1>Editing User</h1>
 
-<%= render 'form' %>
+<% provide :back_path, user_path(@user) %>
 
-<%= link_to 'Back', @user %>
+<div style="max-width: 50em" class="center-block">
+  <%= render 'form' %>
+</div>

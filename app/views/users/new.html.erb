@@ -1,5 +1,7 @@
-<h1>New User</h1>
+<h1>Register</h1>
 
-<%= render 'form' %>
+<% provide :back_path, welcome_path %>
 
-<%= link_to 'Back', welcome_path %>
+<div style="max-width: 50em" class="center-block">
+  <%= render 'form' %>
+</div>

@@ -1,4 +1,4 @@
-<%= form_for(@user) do |f| %>
+<%= form_for @user, html: {class: "form-horizontal"} do |f| %>
   <% if @user.errors.any? %>
     <div id="error_explanation" class="alert alert-danger">
       <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
@@ -11,41 +11,58 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :name %><br>
-    <%= f.text_field :name, autofocus: true %>
+  <div class="field form-group">
+    <%= f.label :name, class: "col-md-2 control-label" %>
+    <div class="col-md-10">
+      <%= f.text_field :name, autofocus: true, class: "form-control" %>
+    </div>
   </div>
 
-  <div class="field">
-    <%= f.label :email %><br>
-    <%= f.text_field :email %>
+  <div class="field form-group">
+    <%= f.label :email, class: "col-md-2 control-label" %>
+    <div class="col-md-10">
+      <%= f.text_field :email, class: "form-control" %>
+    </div>
   </div>
 
-  <div class="field">
-    <%= f.label :password %><br>
-    <%= f.password_field :password %>
+  <% if @user.new_record? %>
+
+    <div class="field form-group">
+      <%= f.label :password, class: "col-md-2 control-label" %>
+      <div class="col-md-10">
+        <%= f.password_field :password, class: "form-control" %>
+      </div>
+    </div>
+
+    <br>
+
+    <p>
+      Please read the <a href="/participant_information" target="_blank"> Information Sheet For Participants</a> before responding to the following questions.
+    </p>
+
+    <div class="field">
+      <%= check_box_tag :participant_information, class:"col-md-2" %>
+      <%= label_tag(:participant_information, "I have read the information contained in the Information Sheet For Participants.") %>
+    </div>
+
+    <div class="field">
+      <%= check_box_tag :participation  %>
+      <%= label_tag(:participation, "I agree to participate in this activty, understanding that I may withdraw at any time.") %>
+    </div>
+
+    <div class="field">
+      <%= check_box_tag :age  %>
+      <%= label_tag(:age, "I am over 18 years of age.") %>
+    </div>
+
+  <% end %>
+
+  <div class="actions text-center">
+    <%= link_to yield(:back_path) do %><div class="btn btn-default">
+      <span class="glyphicon glyphicon-arrow-left"></span> Back
+    </div><% end %>
+
+    <%= f.submit "Submit", class: "btn btn-primary" %>
   </div>
 
-  <br>
-
-  <p>Please read the <a href="/participant_information" target="_blank"> Information Sheet For Participants</a> before responding to the following questions.</p>
-
-  <div class="field">
-    <%= check_box_tag(:participant_information) %>
-    <%= label_tag(:participant_information, "I have read the information contained in the Information Sheet For Participants.") %>
-  </div>
-
-  <div class="field">
-    <%= check_box_tag(:participation) %>
-    <%= label_tag(:participation, "I agree to participate in this activty, understanding that I may withdraw at any time.") %>
-  </div>
-
-  <div class="field">
-    <%= check_box_tag(:age) %>
-    <%= label_tag(:age, "I am over 18 years of age.") %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit %>
-  </div>
 <% end %>

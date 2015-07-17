@@ -4,13 +4,17 @@
 
 <h1>Redeem Key</h1>
 <%= form_tag (check_key_projects_path) do %>
-  <div class="field">
-    <%= label_tag :key, 'Key'%><br>
+
+  <div class="field form-group">
+    <%= label_tag :key, 'Key:'%><br>
     <%= text_field_tag :key, "", class: "form-control" %>
   </div>
-  <div class="actions">
-    <%= submit_tag "Done", class: "btn btn-md" %>
+
+  <div class="actions form-group">
+    <%= link_to projects_path do %><div class="btn btn-default">
+      <span class="glyphicon glyphicon-arrow-left"></span> Back
+    </div><% end %>
+
+    <%= submit_tag "Done", class: "btn btn-primary" %>
   </div>
 <% end %>
-
-<%= link_to 'Back', projects_path %>
