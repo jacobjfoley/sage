@@ -29,6 +29,10 @@
 }
 
 .nodecoration {
+  a {
+    color: #444;
+  }
+
   a:hover {
     text-decoration: none;
   }

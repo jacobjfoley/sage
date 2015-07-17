@@ -2,35 +2,33 @@
   <div id="notice" class="alert alert-success"><%= notice %></div>
 <% end %>
 
-<div class="nodecoration">
 
-  <div class="row">
-    <div class="col-md-12 well">
-      <%= @concept.description %>
-      <div class="pull-right">
-        <%= link_to "https://www.google.com.au/search?q=#{@concept.description}&tbm=isch", title: "Google Image Search" do %>
-          <i class="glyphicon glyphicon-picture"> </i>
-        <% end %>
-        <%= link_to "https://www.google.com.au/search?q=#{@concept.description}", title: "Google Search" do %>
-          <i class="glyphicon glyphicon-search"> </i>
-        <% end %>
-        <%= link_to edit_project_concept_path(@project, @concept), title: "Edit" do %>
-          <i class="glyphicon glyphicon-pencil"> </i>
-        <% end %>
-        <%= link_to project_concept_path(@project, @concept), title: "Delete", method: :delete, data: { confirm: 'Are you sure?' } do %>
-          <i class="glyphicon glyphicon-trash"> </i>
-        <% end %>
-      </div>
+<div class="row">
+  <div class="col-md-12 well">
+    <%= @concept.description %>
+    <div class="pull-right">
+      <%= link_to "https://www.google.com.au/search?q=#{@concept.description}&tbm=isch", title: "Google Image Search" do %>
+        <i class="glyphicon glyphicon-picture"> </i>
+      <% end %>
+      <%= link_to "https://www.google.com.au/search?q=#{@concept.description}", title: "Google Search" do %>
+        <i class="glyphicon glyphicon-search"> </i>
+      <% end %>
+      <%= link_to edit_project_concept_path(@project, @concept), title: "Edit" do %>
+        <i class="glyphicon glyphicon-pencil"> </i>
+      <% end %>
+      <%= link_to project_concept_path(@project, @concept), title: "Delete", method: :delete, data: { confirm: 'Are you sure?' } do %>
+        <i class="glyphicon glyphicon-trash"> </i>
+      <% end %>
     </div>
   </div>
+</div>
 
-  </div>
   <div class="text-center">
     <%= link_to project_concepts_path(@project), title: "Back" do %>
       <div class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Back</div>
     <% end %>
     <%= link_to project_concept_path(@project, Concept.ranked(@project.id).first), title: "Target Least Annotated" do %>
-    <div class="btn btn-default"><span class="glyphicon glyphicon-screenshot"></span> Annotation Target</div>
+      <div class="btn btn-default"><span class="glyphicon glyphicon-screenshot"></span> Annotation Target</div>
     <% end %>
   </div>
 
@@ -45,15 +43,17 @@
             </div><div class="row">
             <% position = 0 %>
           <% end %>
-          <div class="col-md-3 text-center" style="height: 240px">
+
+          <div class="col-md-3 text-center nodecoration" style="height: 240px">
             <%= link_to project_digital_object_path(@project, object) do %>
               <div style="height: 150px">
                 <%= image_tag thumbnail_url(object.thumbnail(150,150)), style: "max-height:100%; max-width:100%" %>
               </div>
               <div>
-                <div class="truncate"><%=File.basename(object.location) %></div>
+                <div class="truncate"> <%=File.basename(object.location) %> </div>
               </div>
             <% end %>
+
             <% if @concept.digital_objects.include? object %>
               <%= link_to remove_object_project_concept_path(@project, @concept, object_id: object.id), method: :post, title: "Remove" do %>
               <div class="btn btn-primary">
@@ -68,8 +68,11 @@
               <% end %>
             <% end %>
           </div>
+
         <% end %>
+
       </div>
+
     </div>
   </div>
 </div>
