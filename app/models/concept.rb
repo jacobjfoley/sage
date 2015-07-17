@@ -10,6 +10,21 @@ class Concept < ActiveRecord::Base
   # Callbacks.
   before_save :check_flatten, if: :description_changed?
 
+  # Returns ranked ordering of concepts by association count.
+  def self.ranked(project_id)
+
+    # Get concepts.
+    concepts = Concept.where(project: project_id)
+
+    # Sort by association count.
+    concepts.to_a.sort! {
+      |a,b| a.digital_objects.count <=> b.digital_objects.count
+    }
+
+    # Return list.
+    return concepts
+  end
+
   # Find relevant objects.
   def relevant
 

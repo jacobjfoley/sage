@@ -12,9 +12,7 @@ class ConceptsController < ApplicationController
   def index
 
     # Fetch the project's concepts sorted by association count.
-    @concepts = @project.concepts.to_a.sort! {
-      |a,b| a.digital_objects.count <=> b.digital_objects.count
-    }
+    @concepts = Concept.ranked(@project.id)
   end
 
   # GET /concepts/1

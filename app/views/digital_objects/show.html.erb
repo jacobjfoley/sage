@@ -28,6 +28,14 @@
         <i class="glyphicon glyphicon-trash"></i>
       <% end %>
     </div>
+    <div class="text-center">
+      <%= link_to project_digital_objects_path(@project), title: "Back" do %>
+        <div class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Back</div>
+      <% end %>
+      <%= link_to project_digital_object_path(@project, DigitalObject.ranked(@project.id).first), title: "Target Least Annotated" do %>
+      <div class="btn btn-default"><span class="glyphicon glyphicon-screenshot"></span> Annotation Target</div>
+      <% end %>
+    </div>
   </div>
 
   <div class="col-md-6">

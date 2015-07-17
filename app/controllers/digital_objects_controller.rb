@@ -19,9 +19,7 @@ class DigitalObjectsController < ApplicationController
   def index
 
     # Fetch the project's digital objects sorted by concept count.
-    @digital_objects = @project.digital_objects.to_a.sort! {
-      |a,b| a.concepts.count <=> b.concepts.count
-    }
+    @digital_objects = DigitalObject.ranked(@project)
   end
 
   # GET /digital_objects/1

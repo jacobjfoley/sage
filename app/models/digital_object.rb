@@ -12,6 +12,21 @@ class DigitalObject < ActiveRecord::Base
   before_save :check_convertible_location, if: :location_changed?
   before_save :check_flatten, if: :location_changed?
 
+  # Returns ranked ordering of objects by association count.
+  def self.ranked(project_id)
+
+    # Get objects.
+    digital_objects = DigitalObject.where(project: project_id)
+
+    # Sort by association count.
+    digital_objects.to_a.sort! {
+      |a,b| a.concepts.count <=> b.concepts.count
+    }
+
+    # Return list.
+    return digital_objects
+  end
+
   # Find relevant objects.
   def relevant
 
