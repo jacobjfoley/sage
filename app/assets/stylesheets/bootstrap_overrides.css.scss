@@ -69,10 +69,16 @@ a .glyphicon {
     }
 
     &:hover {
-      color: #fff;
-      background-color: #eee;
+      color: #aaa;
       text-decoration: none;
     }
+}
+
+a .btn .glyphicon {
+
+  &:hover {
+    color: #444
+  }
 }
 
 body {
