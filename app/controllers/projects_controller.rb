@@ -26,15 +26,25 @@ class ProjectsController < ApplicationController
       # Get access code.
       code = params[:code]
 
-      # Exchange authorisation code for access token.
-      authorisation = GoogleDriveUtils.exchange_code(code)
+      # Commence exchange process.
+      begin
 
-      # Store authorisation in session.
-      session[:authorisation] = authorisation
+        # Exchange authorisation code for access token.
+        authorisation = GoogleDriveUtils.exchange_code(code)
 
-      # Redirect to project with notice.
-      redirect_to new_project_digital_object_path(project_id),
-        notice: "SAGE has been granted temporary access to Google Drive."
+        # Store authorisation in session.
+        session[:authorisation] = authorisation
+
+        # Redirect to project with notice.
+        redirect_to new_project_digital_object_path(project_id),
+          notice: "SAGE has been granted temporary access to Google Drive."
+
+      # Rescue from expired code issues.
+    rescue CodeExchangeError
+
+        redirect_to new_project_digital_object_path(project_id),
+          notice: "An issue was encountered while requesting access to Google Drive."
+      end
     end
   end
 

@@ -63,43 +63,6 @@ class GoogleDriveUtils
     end
   end
 
-  ##
-  # Error raised when an error occurred while retrieving credentials.
-  class GetCredentialsError < StandardError
-    ##
-    # Initialize a NoRefreshTokenError instance.
-    #
-    # @param [String] authorize_url
-    #   Authorization URL to redirect the user to in order to in order to request
-    #   offline access.
-    def initialize(authorization_url)
-      @authorization_url = authorization_url
-    end
-
-    def authorization_url=(authorization_url)
-      @authorization_url = authorization_url
-    end
-
-    def authorization_url
-      return @authorization_url
-    end
-  end
-
-  ##
-  # Error raised when a code exchange has failed.
-  class CodeExchangeError < GetCredentialsError
-  end
-
-  ##
-  # Error raised when no refresh token has been found.
-  class NoRefreshTokenError < GetCredentialsError
-  end
-
-  ##
-  # Error raised when no user ID could be retrieved.
-  class NoUserIdError < StandardError
-  end
-
   ##############################################################################
 
   ##
@@ -235,5 +198,41 @@ class GoogleDriveUtils
       puts "An error occurred: #{result.data['error']['message']}"
     end
   end
+end
 
+##
+# Error raised when an error occurred while retrieving credentials.
+class GetCredentialsError < StandardError
+  ##
+  # Initialize a NoRefreshTokenError instance.
+  #
+  # @param [String] authorize_url
+  #   Authorization URL to redirect the user to in order to in order to request
+  #   offline access.
+  def initialize(authorization_url)
+    @authorization_url = authorization_url
+  end
+
+  def authorization_url=(authorization_url)
+    @authorization_url = authorization_url
+  end
+
+  def authorization_url
+    return @authorization_url
+  end
+end
+
+##
+# Error raised when a code exchange has failed.
+class CodeExchangeError < GetCredentialsError
+end
+
+##
+# Error raised when no refresh token has been found.
+class NoRefreshTokenError < GetCredentialsError
+end
+
+##
+# Error raised when no user ID could be retrieved.
+class NoUserIdError < StandardError
 end
