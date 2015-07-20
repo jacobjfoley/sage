@@ -146,7 +146,7 @@ class DigitalObject < ActiveRecord::Base
 
     # Check Google locations.
     if (data = google_location.match location)
-      self.location = "https://www.googleapis.com/drive/v2/files/#{data[:file_id]}"
+      self.location = "https://docs.google.com/uc?id=#{data[:file_id]}"
     end
 
     # Allow save to continue.

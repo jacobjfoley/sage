@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150706124959) do
+ActiveRecord::Schema.define(version: 20150720005352) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,7 +54,7 @@ ActiveRecord::Schema.define(version: 20150706124959) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "project_id"
-    t.string   "thumbnail_base"
+    t.string   "thumbnail_url"
   end
 
   add_index "digital_objects", ["project_id"], name: "index_digital_objects_on_project_id", using: :btree
