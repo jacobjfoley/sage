@@ -9,6 +9,7 @@ class DigitalObject < ActiveRecord::Base
 
   # Callbacks.
   after_create :generate_common_thumbnails
+  before_save :check_conversions, if: :location_changed?
   before_save :reset_thumbnail_url, if: :location_changed?
   before_save :check_flatten, if: :location_changed?
 
@@ -143,6 +144,17 @@ class DigitalObject < ActiveRecord::Base
     end
   end
 
+  # Checks if a given location should be changed before saving, particularly
+  # when using other services as content providers.
+  def check_conversions
+
+    # Check Google Drive conversions.
+    check_google_drive_conversion
+
+    # Allow save to continue.
+    return true
+  end
+
   # Check if two or more objects shall be flattened:
   def check_flatten
 
@@ -168,7 +180,7 @@ class DigitalObject < ActiveRecord::Base
   end
 
   # Check if the location should be converted.
-  def check_google_drive_location
+  def check_google_drive_conversion
 
     # Define locations with ID captures.
     drive_location = %r{\Ahttps://drive.google.com/open\?id=(?<file_id>\w+)\z}
@@ -176,6 +188,17 @@ class DigitalObject < ActiveRecord::Base
     # Check Google locations.
     if (data = drive_location.match location)
       self.location = "https://docs.google.com/uc?id=#{data[:file_id]}"
+    end
+  end
+
+  # Check if the location is a WebContentLink and set thumbnail_url accordingly.
+  def check_google_wcl_thumbnail
+
+    # Define locations with ID captures.
+    wcl_location = %r{\Ahttps://docs.google.com/uc\?id=(?<file_id>\w+)\z}
+
+    # Check Google locations.
+    if (data = wcl_location.match location)
       self.thumbnail_url = "https://www.googleapis.com/drive/v2/files/#{data[:file_id]}"
     end
   end
@@ -213,8 +236,8 @@ class DigitalObject < ActiveRecord::Base
     # Set thumbnail url to nil.
     self.thumbnail_url = nil
 
-    # Check if a Google Drive location.
-    check_google_drive_location
+    # Check if a Google WebContentLink.
+    check_google_wcl_thumbnail
 
     # Allow save to continue.
     return true
