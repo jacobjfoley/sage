@@ -91,8 +91,11 @@ class DigitalObject < ActiveRecord::Base
   # Get a thumbnail for the specified size and object.
   def thumbnail(x, y)
 
+    # If the thumbnail hasn't been set for this object, use location.
+    self.update(thumbnail_url: location)
+
     # Retrieve a thumbnail for this object.
-    Thumbnail.find_for(location, x, y)
+    Thumbnail.find_for(thumbnail_url, x, y)
   end
 
   # Attempts to repair thumbnails.
@@ -147,6 +150,7 @@ class DigitalObject < ActiveRecord::Base
     # Check Google locations.
     if (data = google_location.match location)
       self.location = "https://docs.google.com/uc?id=#{data[:file_id]}"
+      self.thumbnail_url = "https://www.googleapis.com/drive/v2/files/#{data[:file_id]}"
     end
 
     # Allow save to continue.
