@@ -18,8 +18,7 @@ class ProjectsController < ApplicationController
     if params[:error].eql? "access_denied"
 
       # Unsuccessful. Redirect to project with notice.
-      redirect_to new_project_digital_object_path(project_id),
-        notice: "SAGE was declined access to Google Drive."
+      notice = "SAGE was declined access to Google Drive."
 
     else
 
@@ -33,19 +32,21 @@ class ProjectsController < ApplicationController
         authorisation = GoogleDriveUtils.exchange_code(code)
 
         # Store authorisation in session.
-        session[:authorisation] = authorisation.access_token
+        session[:access_token] = authorisation.access_token
 
-        # Redirect to project with notice.
-        redirect_to new_project_digital_object_path(project_id),
-          notice: "SAGE has been granted temporary access to Google Drive."
+        # Notify of success.
+        notice = "SAGE has been granted temporary access to Google Drive."
 
       # Rescue from expired code issues.
-    rescue CodeExchangeError
+      rescue CodeExchangeError
 
-        redirect_to new_project_digital_object_path(project_id),
-          notice: "An issue was encountered while requesting access to Google Drive."
+        # Notify of error.
+        notice = "An issue was encountered while requesting access to Google Drive."
       end
     end
+
+    # Redirect the user.
+    redirect_to new_project_digital_object_path(project_id), notice: notice
   end
 
   # GET /projects

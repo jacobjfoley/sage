@@ -31,7 +31,7 @@ class DigitalObjectsController < ApplicationController
   # GET /digital_objects/new
   def new
     @digital_object = DigitalObject.new
-    @have_google_authorisation = session[:authorisation]
+    @have_google_authorisation = session[:access_token]
     @google_authorisation_uri = GoogleDriveUtils.get_authorization_url(@project.id)
   end
 
@@ -53,48 +53,33 @@ class DigitalObjectsController < ApplicationController
   # POST /digital_objects.json
   def create
 
+    # Get location list.
+    locations = digital_object_params[:location].lines
+
     # Flag to test whether new object could be saved.
     saved = true;
 
-    # Determine if adding a batch or single entry.
-    single_mode = digital_object_params[:location].lines.count == 1
+    # Modify params for each location, and use them to create objects.
+    locations.each do |location|
 
-    if single_mode
+      # Create digital object.
+      saved &= DigitalObject.create(
+        project_id: @project.id,
+        location: location.chomp
+      )
+    end
 
-      # Single entry. Create object using params directly.
-      @digital_object = DigitalObject.new(digital_object_params)
-
-      # Set the project ID from the parameters passed to this controller.
-      @digital_object.project_id = @project.id
-
-      # Save the object.
-      saved = @digital_object.save
-    else
-
-      # Batch entry. Fetch locations.
-      locations = digital_object_params[:location].lines
-
-      # Modify params for each location, and use them to create objects.
-      locations.each do |loc|
-        params[:digital_object][:location] = loc.chomp
-        @digital_object = DigitalObject.new(digital_object_params)
-
-        # Set the project ID from the parameters passed to this controller.
-        @digital_object.project_id = @project.id
-
-        saved &= @digital_object.save
-      end
+    # Set notice.
+    if locations.count > 1 && saved
+      notice = "Digital objects were successfully created."
+    elsif saved
+      notice = "Digital object was successfully created."
     end
 
     respond_to do |format|
       if saved
-        if single_mode
-          format.html { redirect_to [@project, @digital_object], notice: 'Digital object was successfully created.' }
-          format.json { render action: 'show', status: :created, location: @digital_object }
-        else
-          format.html { redirect_to project_digital_objects_path, notice: 'Digital objects were successfully created.' }
-          format.json { render action: 'index', status: :created, location: @digital_object }
-        end
+        format.html { redirect_to project_digital_objects_path, notice: notice }
+        format.json { render action: 'index', status: :created, location: @digital_object }
       else
         format.html { render action: 'new' }
         format.json { render json: @digital_object.errors, status: :unprocessable_entity }
@@ -174,21 +159,15 @@ class DigitalObjectsController < ApplicationController
   # POST /objects/1/import_drive_folder
   def import_drive_folder
 
-    # Find the folder the user wants to import.
+    # Get the specified folder.
     folder = params[:drive_folder]
 
-    # Get the folder's file ID.
-
-    # Query Google Drive for the folder's metadata.
-
-    # For each child:
-
-      # Add the file.
+    # Import folder.
+    GoogleDriveUtils.import_drive_folder(folder, @project.id, session[:access_token])
 
     # Redirect to object listing.
     redirect_to project_digital_objects_path(@project),
       notice: "Google Drive folder successfully imported."
-
   end
 
   private
