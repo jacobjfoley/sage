@@ -5,10 +5,11 @@
 		  </div>
 		</container>
 		<ul class="nav navbar-nav navbar-right">
-		  <% if @logged_in %>
+		  <% if @user_id %>
 			  <li><%= link_to "Projects", projects_path%></li>
 			  <li><%= link_to "Guides", guides_path%></li>
 			  <li><%= link_to "Feedback", feedback_path%></li>
+				<li><%= link_to "Profile", user_path(@user_id)%></li>
 			  <li><%= link_to "Logout", logout_users_path%></li>
 			<% else %>
 			  <li><%= link_to "Guides", guides_path%></li>
