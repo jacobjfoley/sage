@@ -241,7 +241,7 @@ class Project < ActiveRecord::Base
       my_object = DigitalObject.create(
         project_id: id,
         location: other_object.location,
-        thumbnail_base: other_object.thumbnail_base
+        thumbnail_url: other_object.thumbnail_url
       )
 
       # Add to mapping.

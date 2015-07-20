@@ -92,9 +92,11 @@ class DigitalObject < ActiveRecord::Base
   # Get a thumbnail for the specified size and object.
   def thumbnail(x, y)
 
-    # If the thumbnail hasn't been set for this object, use location.
+    # If the thumbnail hasn't been set for this object:
     if thumbnail_url == nil
-      self.update(thumbnail_url: location)
+
+      # Generate thumbnail url.
+      generate_thumbnail_url
     end
 
     # Retrieve a thumbnail for this object.
@@ -216,7 +218,7 @@ class DigitalObject < ActiveRecord::Base
     end
 
     # Accept other object's thumbnail base (e.g. if a custom thumbnail base).
-    thumbnail_base = other_object.thumbnail_base
+    thumbnail_url = other_object.thumbnail_url
 
     # Destroy the flattened object.
     other_object.destroy
@@ -230,14 +232,24 @@ class DigitalObject < ActiveRecord::Base
     thumbnail(400,400)
   end
 
+  # Generates this object's thumbnail URL.
+  def generate_thumbnail_url
+
+    # Initialise to default.
+    self.thumbnail_url = location
+
+    # Check if a Google WebContentLink.
+    check_google_wcl_thumbnail
+
+    # Commit changes.
+    self.save
+  end
+
   # Resets the thumbnail url every time the location changes.
   def reset_thumbnail_url
 
     # Set thumbnail url to nil.
     self.thumbnail_url = nil
-
-    # Check if a Google WebContentLink.
-    check_google_wcl_thumbnail
 
     # Allow save to continue.
     return true
