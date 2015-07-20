@@ -33,7 +33,7 @@ class ProjectsController < ApplicationController
         authorisation = GoogleDriveUtils.exchange_code(code)
 
         # Store authorisation in session.
-        session[:authorisation] = authorisation
+        session[:authorisation] = authorisation.access_token
 
         # Redirect to project with notice.
         redirect_to new_project_digital_object_path(project_id),

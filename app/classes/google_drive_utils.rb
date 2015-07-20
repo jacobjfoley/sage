@@ -35,8 +35,6 @@ class GoogleDriveUtils
 
     # Generate and return authorisation uri.
     return client.authorization.authorization_uri(
-      :approval_prompt => :force,
-      :access_type => :offline,
       :state => state
     ).to_s
   end

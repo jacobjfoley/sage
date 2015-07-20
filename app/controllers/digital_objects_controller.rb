@@ -171,6 +171,26 @@ class DigitalObjectsController < ApplicationController
     redirect_to project_digital_object_path(@project, @digital_object)
   end
 
+  # POST /objects/1/import_drive_folder
+  def import_drive_folder
+
+    # Find the folder the user wants to import.
+    folder = params[:drive_folder]
+
+    # Get the folder's file ID.
+
+    # Query Google Drive for the folder's metadata.
+
+    # For each child:
+
+      # Add the file.
+
+    # Redirect to object listing.
+    redirect_to project_digital_objects_path(@project),
+      notice: "Google Drive folder successfully imported."
+
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_digital_object
@@ -202,11 +222,11 @@ class DigitalObjectsController < ApplicationController
       viewer_pages = ["show", "index"]
       contributor_pages = ["show", "index", "new", "create", "update", "edit",
         "destroy", "add_concept", "remove_concept", "repair_thumbnails",
-        "add_created_concept"
+        "add_created_concept", "import_drive_folder"
       ]
       administrator_pages = ["show", "index", "new", "create", "update", "edit",
          "destroy", "add_concept", "remove_concept", "repair_thumbnails",
-         "add_created_concept"
+         "add_created_concept", "import_drive_folder"
       ]
 
       # Get the currently logged-in user's role in this project, if any.

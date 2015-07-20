@@ -11,6 +11,10 @@ Sage::Application.routes.draw do
         post 'remove_concept'
         post 'repair_thumbnails'
       end
+
+      collection do
+        post 'import_drive_folder'
+      end
     end
 
     # Concepts, part of a project.
