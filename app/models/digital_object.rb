@@ -9,7 +9,7 @@ class DigitalObject < ActiveRecord::Base
 
   # Callbacks.
   after_create :generate_common_thumbnails
-  before_save :check_convertible_location, if: :location_changed?
+  before_save :reset_thumbnail_url, if: :location_changed?
   before_save :check_flatten, if: :location_changed?
 
   # Returns ranked ordering of objects by association count.
@@ -92,7 +92,9 @@ class DigitalObject < ActiveRecord::Base
   def thumbnail(x, y)
 
     # If the thumbnail hasn't been set for this object, use location.
-    self.update(thumbnail_url: location)
+    if thumbnail_url == nil
+      self.update(thumbnail_url: location)
+    end
 
     # Retrieve a thumbnail for this object.
     Thumbnail.find_for(thumbnail_url, x, y)
@@ -141,22 +143,6 @@ class DigitalObject < ActiveRecord::Base
     end
   end
 
-  # Check if the location should be converted.
-  def check_convertible_location
-
-    # Define locations with ID captures.
-    google_location = %r{\Ahttps://drive.google.com/open\?id=(?<file_id>\w+)\z}
-
-    # Check Google locations.
-    if (data = google_location.match location)
-      self.location = "https://docs.google.com/uc?id=#{data[:file_id]}"
-      self.thumbnail_url = "https://www.googleapis.com/drive/v2/files/#{data[:file_id]}"
-    end
-
-    # Allow save to continue.
-    return true
-  end
-
   # Check if two or more objects shall be flattened:
   def check_flatten
 
@@ -178,6 +164,19 @@ class DigitalObject < ActiveRecord::Base
         # Flatten that object into this object.
         flatten(same_object)
       end
+    end
+  end
+
+  # Check if the location should be converted.
+  def check_google_drive_location
+
+    # Define locations with ID captures.
+    drive_location = %r{\Ahttps://drive.google.com/open\?id=(?<file_id>\w+)\z}
+
+    # Check Google locations.
+    if (data = drive_location.match location)
+      self.location = "https://docs.google.com/uc?id=#{data[:file_id]}"
+      self.thumbnail_url = "https://www.googleapis.com/drive/v2/files/#{data[:file_id]}"
     end
   end
 
@@ -206,5 +205,18 @@ class DigitalObject < ActiveRecord::Base
     # Generate the two standard sizes of images.
     thumbnail(150,150)
     thumbnail(400,400)
+  end
+
+  # Resets the thumbnail url every time the location changes.
+  def reset_thumbnail_url
+
+    # Set thumbnail url to nil.
+    self.thumbnail_url = nil
+
+    # Check if a Google Drive location.
+    check_google_drive_location
+
+    # Allow save to continue.
+    return true
   end
 end
