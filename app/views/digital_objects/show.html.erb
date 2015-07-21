@@ -58,7 +58,7 @@
       <tr>
 
         <td>
-          <%= link_to truncate(concept.description, length: 50), [@project, concept] %>
+          <%= link_to truncate(concept.description, length: 40), [@project, concept] %>
 
           <% if !@digital_object.concepts.include? concept %>
             <%= link_to add_concept_project_digital_object_path(@project, @digital_object, concept_id: concept.id), method: :post, title: "Add" do %>
