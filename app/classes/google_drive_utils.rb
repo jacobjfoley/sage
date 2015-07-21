@@ -212,6 +212,7 @@ end
 ##
 # Generic exception for this module.
 class GoogleDriveUtilsError < StandardError
+end
 
 ##
 # Error raised when a code exchange has failed.
