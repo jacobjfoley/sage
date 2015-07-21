@@ -125,7 +125,9 @@ class GoogleDriveUtils
       )
 
       # Check for error.
-      if result.status != 200
+      if result.status == 401
+        raise ExpiredAuthError
+      elsif result.status != 200
         raise FileListError
       end
 
@@ -169,4 +171,9 @@ end
 ##
 # Error raised when an id cannot be extracted for a Google resource.
 class FileIdError < StandardError
+end
+
+##
+# Error raised when the user's auth_token has expired.
+class ExpiredAuthError < StandardError
 end

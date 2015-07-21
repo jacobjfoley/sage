@@ -173,13 +173,19 @@ class DigitalObjectsController < ApplicationController
 
     rescue FileListError
 
-      # Redirect on error.
+      # Set notice.
       notice = "An error prevented the specified folder from being imported."
 
     rescue FileIdError
 
-      # Redirect on error.
+      # Set notice.
       notice = "Link was not a Google Drive URL."
+
+    rescue ExpiredAuthError
+
+      # Set notice and expire access_token.
+      notice = "Your authorisation of SAGE to access Google Drive has expired. Please renew authorisation to continue."
+      session[:access_token].delete
     end
 
     # Redirect to object listing.
