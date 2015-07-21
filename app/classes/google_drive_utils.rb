@@ -94,7 +94,13 @@ class GoogleDriveUtils
     # Get the folder's file ID.
     drive_folder = %r{\Ahttps://drive.google.com/open\?id=(?<file_id>\w+)\z}
     data = drive_folder.match folder
-    folder_id = data[:file_id]
+
+    # Check for ID errors.
+    if data
+      folder_id = data[:file_id]
+    else
+      raise FileIdError
+    end
 
     # Create Google API client.
     client = create_api_client(access_token)
@@ -103,19 +109,36 @@ class GoogleDriveUtils
     drive = client.discovered_api('drive', 'v2')
 
     # Configure parameters.
-    parameters = {folderId: folder_id}
+    parameters = {
+      folderId: folder_id,
+      pageToken: nil
+    }
+    children = []
 
-    # Query Google Drive for the folder's metadata.
-    result = client.execute(
-      :api_method => drive.children.list,
-      :parameters => parameters
-    )
+    # Fetch pages of children.
+    begin
 
-    # Get the folder's children.
-    children = result.data.items
+      # Query Google Drive for the folder's metadata.
+      result = client.execute(
+        :api_method => drive.children.list,
+        :parameters => parameters
+      )
+
+      # Check for error.
+      if result.status != 200
+        raise FileListError
+      end
+
+      # Get the folder's children.
+      children << result.data.items
+
+      # Update page token.
+      parameters[:pageToken] = result.next_page_token
+
+    end while !(parameters[:pageToken].nil?)
 
     # For each child:
-    children.each do |child|
+    children.flatten!.each do |child|
 
       # Add the file.
       DigitalObject.create(
@@ -123,10 +146,27 @@ class GoogleDriveUtils
         location: "https://docs.google.com/uc?id=#{child['id']}"
       )
     end
+
+    # Return notice.
+    if children.count == 0
+      return "No files were found in the specified Google Drive folder."
+    else
+      return "#{children.count} files were successfully imported."
+    end
   end
 end
 
 ##
 # Error raised when a code exchange has failed.
 class CodeExchangeError < StandardError
+end
+
+##
+# Error raised when a folder cannot be listed.
+class FileListError < StandardError
+end
+
+##
+# Error raised when an id cannot be extracted for a Google resource.
+class FileIdError < StandardError
 end

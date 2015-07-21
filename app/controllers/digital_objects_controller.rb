@@ -162,12 +162,29 @@ class DigitalObjectsController < ApplicationController
     # Get the specified folder.
     folder = params[:drive_folder]
 
-    # Import folder.
-    GoogleDriveUtils.import_drive_folder(folder, @project.id, session[:access_token])
+    begin
+
+      # Import folder.
+      notice = GoogleDriveUtils.import_drive_folder(
+        folder,
+        @project.id,
+        session[:access_token]
+      )
+
+    rescue FileListError
+
+      # Redirect on error.
+      notice = "An error prevented the specified folder from being imported."
+
+    rescue FileIdError
+
+      # Redirect on error.
+      notice = "Link was not a Google Drive URL."
+    end
 
     # Redirect to object listing.
     redirect_to project_digital_objects_path(@project),
-      notice: "Google Drive folder successfully imported."
+      notice: notice
   end
 
   private
