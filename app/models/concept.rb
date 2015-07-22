@@ -1,7 +1,7 @@
 class Concept < ActiveRecord::Base
 
   # Associations with other models.
-  has_many :associations
+  has_many :associations, dependent: :destroy
   has_many :digital_objects, through: :associations
   belongs_to :project
 

@@ -1,7 +1,7 @@
 class DigitalObject < ActiveRecord::Base
 
   # Associations with other models.
-  has_many :associations
+  has_many :associations, dependent: :destroy
   has_many :concepts, through: :associations
   belongs_to :project
 

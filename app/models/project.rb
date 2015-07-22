@@ -7,7 +7,7 @@ class Project < ActiveRecord::Base
   has_many :digital_objects, dependent: :destroy
   has_many :user_roles, dependent: :destroy
   has_many :users, through: :user_roles
-  has_many :associations
+  has_many :associations, dependent: :destroy
 
   # Validations.
   validates :name, presence: true, length: { minimum: 1 }
