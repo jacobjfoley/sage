@@ -3,6 +3,7 @@ class User < ActiveRecord::Base
   # Associations with other models.
   has_many :user_roles, dependent: :destroy
   has_many :projects, through: :user_roles
+  has_many :associations
 
   # Ensure the user has a secure password.
   has_secure_password

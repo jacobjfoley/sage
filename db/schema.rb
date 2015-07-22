@@ -11,10 +11,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150720005352) do
+ActiveRecord::Schema.define(version: 20150722062149) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "associations", force: :cascade do |t|
+    t.integer  "digital_object_id"
+    t.integer  "concept_id"
+    t.integer  "project_id"
+    t.integer  "user_id"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+  end
+
+  add_index "associations", ["concept_id"], name: "index_associations_on_concept_id", using: :btree
+  add_index "associations", ["digital_object_id"], name: "index_associations_on_digital_object_id", using: :btree
+  add_index "associations", ["project_id"], name: "index_associations_on_project_id", using: :btree
+  add_index "associations", ["user_id"], name: "index_associations_on_user_id", using: :btree
 
   create_table "concepts", force: :cascade do |t|
     t.text     "description"
@@ -101,4 +115,8 @@ ActiveRecord::Schema.define(version: 20150720005352) do
     t.string   "name"
   end
 
+  add_foreign_key "associations", "concepts"
+  add_foreign_key "associations", "digital_objects"
+  add_foreign_key "associations", "projects"
+  add_foreign_key "associations", "users"
 end

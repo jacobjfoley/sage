@@ -18,4 +18,22 @@ namespace :conversions do
     end
   end
 
+  desc "Converts HABTM associations records to Associations."
+  task habtm_to_associations: :environment do
+
+    # Get every object in the database:
+    DigitalObject.all.each do |object|
+
+      # For each of the object's concepts:
+      object.concepts.each do |concept|
+
+        # Unless the association for this entry already exists:
+        unless Association.exists?(digital_object_id: object.id, concept_id: concept.id)
+
+          # Create association.
+          Association.create(digital_object_id: object.id, concept_id: concept.id)
+        end
+      end
+    end
+  end
 end
