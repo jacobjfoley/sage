@@ -75,7 +75,11 @@ class ConceptsController < ApplicationController
   # POST /concepts/1/add_object
   def add_object
     unless @concept.digital_objects.include? @object
-      @concept.digital_objects << @object
+      Association.create(
+        digital_object_id: @object.id,
+        concept_id: @concept.id,
+        user_id: session[:user_id]
+      )
     end
 
     redirect_to project_concept_path(@project, @concept)

@@ -232,8 +232,9 @@ class Project < ActiveRecord::Base
     # Load the other project.
     other_project = Project.find(other_project_id)
 
-    # Initialise a digital object mapping, original ids -> copy ids.
-    mapping = {}
+    # Initialise mappings, original ids -> copy ids.
+    object_mapping = {}
+    concept_mapping = {}
 
     # For each object in the original project:
     other_project.digital_objects.each do |other_object|
@@ -246,7 +247,7 @@ class Project < ActiveRecord::Base
       )
 
       # Add to mapping.
-      mapping[other_object.id] = my_object.id
+      object_mapping[other_object.id] = my_object.id
     end
 
     # For each concept in the original project:
@@ -258,10 +259,19 @@ class Project < ActiveRecord::Base
         description: other_concept.description
       )
 
-      # Link to new objects.
-      other_concept.digital_objects.each do |link|
-        my_concept.digital_objects << DigitalObject.find(mapping[link.id])
-      end
+      # Add to mapping.
+      concept_mapping[other_concept.id] = my_concept.id
+    end
+
+    # Link new concepts and objects.
+    Association.where(project_id: other_project_id).each do |association|
+
+      # Create new association.
+      Association.create(
+        digital_object_id: object_mapping[association.digital_object_id],
+        concept_id: concept_mapping[association.concept_id],
+        user_id: association.user_id
+      )
     end
   end
 
