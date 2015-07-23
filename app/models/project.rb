@@ -19,7 +19,7 @@ class Project < ActiveRecord::Base
   def disperse(influence, propagations, concept_id)
 
     # Find all similar concepts to the provided description.
-    similar = WordTable.text_similarity(concept_id, id)
+    similar = WordTable.text_similarity(concept_id)
 
     # Determine total weight in results.
     total = 0.0
