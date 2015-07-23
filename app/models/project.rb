@@ -15,47 +15,6 @@ class Project < ActiveRecord::Base
   validates :contributor_key, uniqueness: true, allow_nil: true
   validates :administrator_key, uniqueness: true, allow_nil: true
 
-  # Find suggestions based on concept description.
-  def disperse(influence, propagations, concept_id)
-
-    # Find all similar concepts to the provided description.
-    similar = WordTable.text_similarity(concept_id)
-
-    # Determine total weight in results.
-    total = 0.0
-    similar.values.each do |value|
-      total += value
-    end
-
-    # Create results hash.
-    results = {}
-
-    # If total is greater than zero:
-    if total > 0
-
-      # Distribute influence according to similarity score.
-      similar.keys.each do |key|
-        similar[key] *= influence / total
-      end
-
-      # For each similar result:
-      similar.keys.each do |key|
-
-        # Find concept.
-        concept = Concept.find(key)
-
-        # Call each similar concept with their portion of total influence.
-        response = concept.collaborate(similar[key], propagations, true)
-
-        # Assimilate response.
-        aggregate(results, response)
-      end
-    end
-
-    # Return end result.
-    return results
-  end
-
   # Find most popular concepts.
   def popular_concepts(influence)
 

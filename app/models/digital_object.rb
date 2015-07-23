@@ -34,8 +34,8 @@ class DigitalObject < ActiveRecord::Base
     # Calculate influence to spread.
     influence = project.concepts.count.to_f
 
-    # Default influence, three steps (find concept), hasn't dispersed yet.
-    results = collaborate(influence, 3, false)
+    # Default influence, three steps (find concept).
+    results = collaborate(influence, 3)
 
     # Distribute influence among popular.
     popular = project.popular_concepts(results[:popular])
@@ -68,7 +68,7 @@ class DigitalObject < ActiveRecord::Base
   end
 
   # Collaborate with other agents to detect relationships within the project.
-  def collaborate(influence, propagations, dispersal)
+  def collaborate(influence, propagations)
 
     # Determine what to do.
     # If at the natural end point:
@@ -90,7 +90,7 @@ class DigitalObject < ActiveRecord::Base
       concepts.each do |concept|
 
         # Fetch results from associate.
-        response = concept.collaborate(amount, propagations - 1, dispersal)
+        response = concept.collaborate(amount, propagations - 1)
 
         # Merge response to results.
         aggregate(results, response)

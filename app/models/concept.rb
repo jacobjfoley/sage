@@ -32,8 +32,8 @@ class Concept < ActiveRecord::Base
     # Calculate influence to spread.
     influence = project.digital_objects.count.to_f
 
-    # Default influence, three steps (find object), hasn't dispersed yet.
-    results = collaborate(influence, 3, false)
+    # Default influence, three steps (find object).
+    results = collaborate(influence, 3)
 
     # Distribute minimal influence among popular.
     popular = project.popular_objects(results[:popular])
@@ -50,7 +50,7 @@ class Concept < ActiveRecord::Base
   end
 
   # Collaborate with other agents to detect relationships within the project.
-  def collaborate(influence, propagations, dispersal)
+  def collaborate(influence, propagations)
 
     # Determine what to do.
     # If at the natural end point:
@@ -59,36 +59,70 @@ class Concept < ActiveRecord::Base
       # Assign influence to self and return.
       return { self => influence }
 
-    # If dispersal hasn't occurred yet:
-    elsif dispersal == false
-
-      # Disperse throughout project.
-      return project.disperse(influence, propagations, id)
-
     # Normal propagation step, otherwise.
     else
 
-      # Determine the amount of influence each.
-      amount = influence / (digital_objects.count + 1)
-
-      # Create empty results hash.
-      results = { popular: amount }
-
-      # Query each association.
-      digital_objects.each do |object|
-
-        # Fetch results from associate.
-        response = object.collaborate(amount, propagations - 1, dispersal)
-
-        # Merge response to results.
-        aggregate(results, response)
-
-      end
-
-      # Return results.
-      return results
-
+      # Signal all members of the concept cluster.
+      consult_cluster(influence, propagations)
     end
+  end
+
+  # Signal all concepts within this cluster.
+  def consult_cluster(influence, propagations)
+
+    # Find all similar concepts.
+    similar = WordTable.text_similarity(id)
+
+    # Determine total weight in results.
+    total = 0.0
+    similar.values.each do |value|
+      total += value
+    end
+
+    # Determine portion of influence.
+    portion = influence / total
+
+    # Create results hash.
+    results = {}
+
+    # For each similar result:
+    similar.keys.each do |key|
+
+      # Find concept.
+      concept = Concept.find(key)
+
+      # Call each similar concept with their portion of total influence.
+      response = concept.disperse(similar[key] * portion, propagations)
+
+      # Assimilate response.
+      aggregate(results, response)
+    end
+
+    # Return end result.
+    return results
+  end
+
+  # Disperse influence to objects.
+  def disperse(influence, propagations)
+
+    # Determine the amount of influence each.
+    amount = influence / (digital_objects.count + 1)
+
+    # Create empty results hash.
+    results = { popular: amount }
+
+    # Query each association.
+    digital_objects.each do |object|
+
+      # Fetch results from associate.
+      response = object.collaborate(amount, propagations - 1)
+
+      # Merge response to results.
+      aggregate(results, response)
+    end
+
+    # Return results.
+    return results
   end
 
   # Establish a cutoff point in results.
