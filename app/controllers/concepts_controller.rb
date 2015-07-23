@@ -88,7 +88,7 @@ class ConceptsController < ApplicationController
   # POST /concepts/1/remove_object
   def remove_object
     if @concept.digital_objects.include? @object
-      @concept.digital_objects.delete @object
+      @concept.digital_objects.destroy @object
     end
 
     redirect_to project_concept_path(@project, @concept)

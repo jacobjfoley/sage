@@ -36,7 +36,8 @@ class Concept < ActiveRecord::Base
     results = collaborate(influence, 3, false)
 
     # Distribute minimal influence among popular.
-    popular = project.popular_objects(1.0)
+    popular = project.popular_objects(results[:popular])
+    results.delete :popular
 
     # Merge collaboration results with popular.
     aggregate(results, popular)
@@ -53,7 +54,7 @@ class Concept < ActiveRecord::Base
     if propagations == 0
 
       # Assign influence to self and return.
-      return {self => influence}
+      return { self => influence }
 
     # If dispersal hasn't occurred yet:
     elsif dispersal == false
@@ -61,20 +62,14 @@ class Concept < ActiveRecord::Base
       # Disperse throughout project.
       return project.disperse(influence, propagations, id)
 
-    # If at a termination point due to lack of associations:
-    elsif digital_objects.count == 0
-
-      # Consume influence and return nothing.
-      return {}
-
     # Normal propagation step, otherwise.
     else
 
-      # Create empty results hash.
-      results = {}
-
       # Determine the amount of influence each.
-      amount = influence / digital_objects.count
+      amount = influence / (digital_objects.count + 1)
+
+      # Create empty results hash.
+      results = { popular: amount }
 
       # Query each association.
       digital_objects.each do |object|

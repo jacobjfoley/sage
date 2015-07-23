@@ -160,7 +160,7 @@ class DigitalObjectsController < ApplicationController
   # POST /objects/1/remove_object
   def remove_concept
     if @digital_object.concepts.include? @concept
-      @digital_object.concepts.delete @concept
+      @digital_object.concepts.destroy @concept
     end
 
     redirect_to project_digital_object_path(@project, @digital_object)
