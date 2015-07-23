@@ -24,7 +24,7 @@ class Concept < ActiveRecord::Base
 
     # Return list.
     return concepts
-  end
+  end  
 
   # Find relevant objects.
   def relevant

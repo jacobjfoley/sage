@@ -114,13 +114,11 @@ class DigitalObjectsController < ApplicationController
   # POST /objects/1/add_concept
   def add_concept
     unless @digital_object.concepts.include? @concept
-
       Association.create(
         digital_object_id: @digital_object.id,
         concept_id: @concept.id,
         user_id: session[:user_id]
       )
-
     end
 
     redirect_to project_digital_object_path(@project, @digital_object)

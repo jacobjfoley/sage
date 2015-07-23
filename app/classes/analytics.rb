@@ -124,6 +124,9 @@ class Analytics
     # Determine words if manually annotated.
     statistics[:manually_annotated] = manual_annotation
 
+    # Determine annotation rate.
+    statistics[:annotation_rate] = annotation_rate
+
     # Return statistics.
     return statistics
   end
@@ -151,6 +154,17 @@ class Analytics
 
     # Return result.
     return manual_words
+  end
+
+  # Calculate initial annotation rate.
+  def annotation_rate
+
+    # Establish window timeframe.
+    time = @project.associations.first.created_at + 10.minutes
+
+    # Limit associations to inside window.
+    return @project.associations.where("created_at <= ?", time).count
+
   end
 
   # Capture a project to analyse.
