@@ -44,8 +44,27 @@ class DigitalObject < ActiveRecord::Base
     # Merge collaboration results with popular.
     aggregate(results, popular)
 
+    # Filter weak results.
+    filter_results(results)
+
     # Return filtered, sorted results.
     return results.sort_by {|key, value| value}.reverse.to_h
+  end
+
+  # Establish a cutoff point in results.
+  def filter_results(results)
+
+    # Establish the cutoff value.
+    cutoff = 1.0 - results.values.min
+
+    # Filter based on this value.
+    results.keys.each do |key|
+
+      # If a result is below the cutoff, remove result.
+      if results[key] < cutoff
+        results.delete key
+      end
+    end
   end
 
   # Collaborate with other agents to detect relationships within the project.
