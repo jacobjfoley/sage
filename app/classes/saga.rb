@@ -13,7 +13,7 @@ module SAGA
 
       # Prepare results.
       filter(results)
-      sort(results)
+      results = sort(results)
 
       # Return results.
       return results
@@ -83,13 +83,6 @@ module SAGA
           results.delete key
         end
       end
-    end
-
-    # Sort results.
-    def sort(results)
-
-      # Sort results by score.
-      results.sort_by {|key, value| value}.reverse.to_h
     end
 
     # Aggregate popular elements with the suggestions list.

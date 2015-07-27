@@ -23,4 +23,17 @@ class SimilarityAlgorithm
     return {}
   end
 
+  private
+
+  ##
+  # Sort results.
+  #
+  # @param [Hash] results
+  #   {entity_id: score} pairs to sort.
+  def sort(results)
+
+    # Sort results by score.
+    return results.sort_by {|key, value| value}.reverse.to_h
+  end
+
 end
