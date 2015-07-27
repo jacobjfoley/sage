@@ -53,7 +53,7 @@
     <br>
 
     <table class="table table-hover">
-      <% relevant = @digital_object.relevant %>
+      <% relevant = SAGA::Object.new(@digital_object).suggestions %>
       <% relevant.keys.each do |concept| %>
       <tr>
 
