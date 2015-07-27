@@ -208,7 +208,7 @@ module SAGA
       cluster_id.keys.each do |key|
 
         # Find the specified concept.
-        concept = @element.class.find(key)
+        concept = ::Concept.find(key)
 
         # Wrap concept in a SAGA concept.
         cluster[SAGA::Concept.new(concept)] = cluster_id[key]
