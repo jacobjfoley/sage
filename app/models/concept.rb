@@ -29,20 +29,21 @@ class Concept < ActiveRecord::Base
   # Wrap self in an algorithm.
   def algorithm
 
-    # Find the project algorithm.
-    project_algorithm = project.algorithm
+    # Get algorithm name.
+    name = project.algorithm || 'SAGA'
 
-    # Check each known algorithm.
-    if project_algorithm.eql? "Baseline"
+    # Map algorithms to names.
+    algorithms = {
+      'SAGA' => SAGA::Concept,
+      'Baseline' => Baseline::Concept,
+      'Rank' => Rank::Concept_Rank,
+      'RankPlus' => Rank::Concept_RankPlus,
+      'Sum' => Rank::Concept_Sum,
+      'SumPlus' => Rank::Concept_SumPlus
+    }
 
-      # Cast self into a Baseline concept.
-      return Baseline::Concept.new(self)
-
-    else
-
-      # Cast self into a SAGA concept.
-      return SAGA::Concept.new(self)
-    end
+    # Return object.
+    return algorithms[name].new(self)
   end
 
   # Find relevant objects.

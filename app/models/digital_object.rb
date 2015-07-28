@@ -31,20 +31,21 @@ class DigitalObject < ActiveRecord::Base
   # Wrap self in an algorithm.
   def algorithm
 
-    # Find the project algorithm.
-    project_algorithm = project.algorithm
+    # Get algorithm name.
+    name = project.algorithm || 'SAGA'
 
-    # Check each known algorithm.
-    if project_algorithm.eql? "Baseline"
+    # Map algorithms to names.
+    algorithms = {
+      'SAGA' => SAGA::Object,
+      'Baseline' => Baseline::Object,
+      'Rank' => Rank::Object_Rank,
+      'RankPlus' => Rank::Object_RankPlus,
+      'Sum' => Rank::Object_Sum,
+      'SumPlus' => Rank::Object_SumPlus
+    }
 
-      # Cast self into a Baseline object.
-      return Baseline::Object.new(self)
-
-    else
-
-      # Cast self into a SAGA object.
-      return SAGA::Object.new(self)
-    end
+    # Return object.
+    return algorithms[name].new(self)
   end
 
   # Find relevant objects.
