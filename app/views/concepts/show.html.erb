@@ -36,7 +36,7 @@
       <h1>Object Associations</h1>
       <div class="row">
         <% position = 0 %>
-        <% relevant = SAGA::Concept.new(@concept).suggestions %>
+        <% relevant = @concept.algorithm.suggestions %>
         <% relevant.keys.each do |object| %>
           <% if position == 4 %>
             </div><div class="row">
