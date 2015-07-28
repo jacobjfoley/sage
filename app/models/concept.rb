@@ -24,7 +24,26 @@ class Concept < ActiveRecord::Base
 
     # Return list.
     return concepts
-  end  
+  end
+
+  # Wrap self in an algorithm.
+  def algorithm
+
+    # Find the project algorithm.
+    project_algorithm = project.algorithm
+
+    # Check each known algorithm.
+    if project_algorithm.eql? "Baseline"
+
+      # Cast self into a Baseline concept.
+      return Baseline::Concept.new(self)
+
+    else
+
+      # Cast self into a SAGA concept.
+      return SAGA::Concept.new(self)
+    end
+  end
 
   # Find relevant objects.
   def relevant

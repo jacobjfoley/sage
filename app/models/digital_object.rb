@@ -28,6 +28,25 @@ class DigitalObject < ActiveRecord::Base
     return digital_objects
   end
 
+  # Wrap self in an algorithm.
+  def algorithm
+
+    # Find the project algorithm.
+    project_algorithm = project.algorithm
+
+    # Check each known algorithm.
+    if project_algorithm.eql? "Baseline"
+
+      # Cast self into a Baseline object.
+      return Baseline::Object.new(self)
+
+    else
+
+      # Cast self into a SAGA object.
+      return SAGA::Object.new(self)
+    end
+  end
+
   # Find relevant objects.
   def relevant
 

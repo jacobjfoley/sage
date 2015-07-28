@@ -67,21 +67,6 @@ class Project < ActiveRecord::Base
     return results
   end
 
-  # Get the project's algorithm.
-  def project_algorithm
-
-    # If the algorithm has been defined:
-    if algorithm
-
-      # Provide the custom algorithm.
-      return algorithm
-    else
-
-      # Otherwise, use the default SAGA research algorithm.
-      return "SAGA"
-    end
-  end
-
   # Generate a new access key.
   def generate_key(type)
 
