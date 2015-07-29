@@ -224,13 +224,13 @@ class Project < ActiveRecord::Base
     end
 
     # Link new concepts and objects.
-    other_project.associations.each do |association|
+    other_project.annotations.each do |annotation|
 
-      # Create new association.
-      Association.create(
-        digital_object_id: object_mapping[association.digital_object_id],
-        concept_id: concept_mapping[association.concept_id],
-        user_id: association.user_id
+      # Create new annotation.
+      Annotation.create(
+        digital_object_id: object_mapping[annotation.digital_object_id],
+        concept_id: concept_mapping[annotation.concept_id],
+        user_id: annotation.user_id
       )
     end
   end

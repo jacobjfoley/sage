@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class AssociationTest < ActiveSupport::TestCase
+class AnnotationTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

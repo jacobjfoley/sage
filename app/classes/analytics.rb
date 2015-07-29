@@ -12,7 +12,7 @@ class Analytics
     statistics[:concepts_count] = @concepts.count
 
     # Define initial other counts.
-    statistics[:associations_count] = 0
+    statistics[:annotations_count] = 0
     statistics[:word_count] = 0
 
     # Define initial statistics.
@@ -24,37 +24,37 @@ class Analytics
     # Gather object statistics.
     @digital_objects.each do |object|
 
-      # Get number of associations.
-      associations = object.concepts.count
+      # Get number of annotations.
+      annotations = object.concepts.count
 
-      # Gather associations.
-      statistics[:associations_count] += associations
+      # Gather annotations.
+      statistics[:annotations_count] += annotations
 
       # Check for min.
-      if !(statistics.has_key? :min_objects) || (associations < statistics[:min_objects])
-        statistics[:min_objects] = associations
+      if !(statistics.has_key? :min_objects) || (annotations < statistics[:min_objects])
+        statistics[:min_objects] = annotations
       end
 
       # Check for max.
-      if !(statistics.has_key? :max_objects) || (associations > statistics[:max_objects])
-        statistics[:max_objects] = associations
+      if !(statistics.has_key? :max_objects) || (annotations > statistics[:max_objects])
+        statistics[:max_objects] = annotations
       end
     end
 
     # Gather concept statistics.
     @concepts.each do |concept|
 
-      # Get number of associations.
-      associations = concept.digital_objects.count
+      # Get number of annotations.
+      annotations = concept.digital_objects.count
 
       # Check for min.
-      if !(statistics.has_key? :min_concepts) || (associations < statistics[:min_concepts])
-        statistics[:min_concepts] = associations
+      if !(statistics.has_key? :min_concepts) || (annotations < statistics[:min_concepts])
+        statistics[:min_concepts] = annotations
       end
 
       # Check for max.
-      if !(statistics.has_key? :max_concepts) || (associations > statistics[:max_concepts])
-        statistics[:max_concepts] = associations
+      if !(statistics.has_key? :max_concepts) || (annotations > statistics[:max_concepts])
+        statistics[:max_concepts] = annotations
       end
 
       # Get word count.
@@ -76,13 +76,13 @@ class Analytics
 
     # Determine averages.
     if statistics[:objects_count] > 0
-      statistics[:avg_objects] = statistics[:associations_count].to_f / statistics[:objects_count]
+      statistics[:avg_objects] = statistics[:annotations_count].to_f / statistics[:objects_count]
     else
       statistics[:avg_objects] = 0.0
     end
 
     if statistics[:concepts_count] > 0
-      statistics[:avg_concepts] = statistics[:associations_count].to_f / statistics[:concepts_count]
+      statistics[:avg_concepts] = statistics[:annotations_count].to_f / statistics[:concepts_count]
       statistics[:avg_words] = statistics[:word_count].to_f / statistics[:concepts_count]
     else
       statistics[:avg_concepts] = 0.0
@@ -145,11 +145,11 @@ class Analytics
 
       # Calculate the number of times this concept has been associated with
       # objects.
-      associations = concept.digital_objects.count
+      annotations = concept.digital_objects.count
 
       # Increment manual words by the number of words contributed as
-      # associations.
-      manual_words += words * associations
+      # annotations.
+      manual_words += words * annotations
     end
 
     # Return result.
@@ -160,10 +160,10 @@ class Analytics
   def annotation_rate
 
     # Establish window timeframe.
-    time = @project.associations.first.created_at + 10.minutes
+    time = @project.annotations.first.created_at + 10.minutes
 
-    # Limit associations to inside window.
-    return @project.associations.where("created_at <= ?", time).count
+    # Limit annotations to inside window.
+    return @project.annotations.where("created_at <= ?", time).count
 
   end
 

@@ -21,8 +21,8 @@
     <td><%= @statistics[:concepts_count] || 0 %> </td>
   </tr>
   <tr>
-    <td>Number of Associations</td>
-    <td><%= @statistics[:associations_count] || 0 %> </td>
+    <td>Number of Annotations</td>
+    <td><%= @statistics[:annotations_count] || 0 %> </td>
   </tr>
   <tr>
     <td>Annotation Rate (First 10 Minutes)</td>
@@ -32,15 +32,15 @@
     <td colspan="2"> <strong>Objects</strong> </td>
   <tr>
   <tr>
-    <td>Objects - Minimum Associations</td>
+    <td>Objects - Minimum Annotations</td>
     <td><%= @statistics[:min_objects] || 0 %> </td>
   </tr>
   <tr>
-    <td>Objects - Average Associations</td>
+    <td>Objects - Average Annotations</td>
     <td><%= @statistics[:avg_objects].round(2) || 0 %> </td>
   </tr>
   <tr>
-    <td>Objects - Maximum Associations</td>
+    <td>Objects - Maximum Annotations</td>
     <td><%= @statistics[:max_objects] || 0 %> </td>
   </tr>
   <tr>
@@ -51,15 +51,15 @@
     <td colspan="2"> <strong>Concepts</strong> </td>
   <tr>
   <tr>
-    <td>Concepts - Minimum Associations</td>
+    <td>Concepts - Minimum Annotations</td>
     <td><%= @statistics[:min_concepts] || 0 %> </td>
   </tr>
   <tr>
-    <td>Concepts - Average Associations</td>
+    <td>Concepts - Average Annotations</td>
     <td><%= @statistics[:avg_concepts].round(2) || 0 %> </td>
   </tr>
   <tr>
-    <td>Concepts - Maximum Associations</td>
+    <td>Concepts - Maximum Annotations</td>
     <td><%= @statistics[:max_concepts] || 0 %> </td>
   </tr>
   <tr>

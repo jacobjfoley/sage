@@ -10,13 +10,13 @@ class DigitalObject < ActiveRecord::Base
   before_save :reset_thumbnail_url, if: :location_changed?
   before_save :check_flatten, if: :location_changed?
 
-  # Returns ranked ordering of objects by association count.
+  # Returns ranked ordering of objects by annotation count.
   def self.ranked(project_id)
 
     # Get objects.
     digital_objects = DigitalObject.where(project: project_id).to_a
 
-    # Sort by association count.
+    # Sort by annotation count.
     digital_objects.sort! {
       |a,b| a.concepts.count <=> b.concepts.count
     }
@@ -25,7 +25,7 @@ class DigitalObject < ActiveRecord::Base
     return digital_objects
   end
 
-  # Find entities by association.
+  # Find entities by annotation.
   def related
 
     # Return the entities associated with this element.
@@ -110,7 +110,7 @@ class DigitalObject < ActiveRecord::Base
       # Create results hash.
       results = { popular: amount }
 
-      # Query each association.
+      # Query each annotation.
       concepts.each do |concept|
 
         # Fetch results from associate.

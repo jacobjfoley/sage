@@ -8,13 +8,13 @@ class Concept < ActiveRecord::Base
 
   before_save :check_flatten, if: :description_changed?
 
-  # Returns ranked ordering of concepts by association count.
+  # Returns ranked ordering of concepts by annotation count.
   def self.ranked(project_id)
 
     # Get concepts.
     concepts = Concept.where(project: project_id).to_a
 
-    # Sort by association count.
+    # Sort by annotation count.
     concepts.sort! {
       |a,b| a.digital_objects.count <=> b.digital_objects.count
     }
@@ -23,7 +23,7 @@ class Concept < ActiveRecord::Base
     return concepts
   end
 
-  # Find entities by association.
+  # Find entities by annotation.
   def related
 
     # Return the entities associated with this element.
@@ -135,7 +135,7 @@ class Concept < ActiveRecord::Base
     # Create empty results hash.
     results = { popular: amount }
 
-    # Query each association.
+    # Query each annotation.
     digital_objects.each do |object|
 
       # Fetch results from associate.

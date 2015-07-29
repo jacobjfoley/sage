@@ -11,7 +11,7 @@ class ConceptsController < ApplicationController
   # GET /concepts.json
   def index
 
-    # Fetch the project's concepts sorted by association count.
+    # Fetch the project's concepts sorted by annotation count.
     @concepts = Concept.ranked(@project.id)
   end
 
@@ -75,7 +75,7 @@ class ConceptsController < ApplicationController
   # POST /concepts/1/add_object
   def add_object
     unless @concept.digital_objects.include? @object
-      Association.create(
+      Annotation.create(
         digital_object_id: @object.id,
         concept_id: @concept.id,
         user_id: session[:user_id]

@@ -38,14 +38,14 @@ module Rank
       # Initialize list.
       list = {}
 
-      # Check each member association:
-      @element.related.each do |association|
+      # Check each member annotation:
+      @element.related.each do |annotation|
 
         # Initialize mapping.
         mapping = {}
 
         # For each co_occurring entity:
-        association.related.each do |co_occurring|
+        annotation.related.each do |co_occurring|
 
           # Include it in the mapping.
           mapping[co_occurring] = 1
@@ -79,8 +79,8 @@ module Rank
     # Promote well-annotated entities.
     def stability
 
-      # Find association count.
-      count = @element.associations.count
+      # Find annotation count.
+      count = @element.annotations.count
 
       # Return result.
       return  @ks.to_f / (@ks + (@ks - Math.log(count)).abs)
@@ -89,8 +89,8 @@ module Rank
     # Dampen frequent entities.
     def descriptive(other_entity)
 
-      # Find association count.
-      count = other_entity.associations.count
+      # Find annotation count.
+      count = other_entity.annotations.count
 
       # Return result.
       return  @kd.to_f / (@kd + (@kd - Math.log(count)).abs)
@@ -102,21 +102,21 @@ module Rank
     # Find suggestions.
     def suggestions
 
-      # Perform voting on all associations.
+      # Perform voting on all annotations.
       return sort(vote_each)
     end
 
-    # Vote on each association.
+    # Vote on each annotation.
     def vote_each
 
       # Initialise results.
       results = {}
 
       # For each entity associated with this element:
-      @element.related.each do |association|
+      @element.related.each do |annotation|
 
         # Wrap in algorithm.
-        result = wrap(association).vote
+        result = wrap(annotation).vote
 
         # Aggregate results.
         aggregate(results, result)
@@ -164,21 +164,21 @@ module Rank
     # Find suggestions.
     def suggestions
 
-      # Perform summing on all associations.
+      # Perform summing on all annotations.
       return sort(sum_each)
     end
 
-    # Sum on each association.
+    # Sum on each annotation.
     def sum_each
 
       # Initialise results.
       results = {}
 
       # For each entity associated with this element:
-      @element.related.each do |association|
+      @element.related.each do |annotation|
 
-        # Sum using this association.
-        result = wrap(association).sum
+        # Sum using this annotation.
+        result = wrap(annotation).sum
 
         # Aggregate results.
         aggregate(results, result)
@@ -212,7 +212,7 @@ module Rank
     def sum_score(other_entity, co_occurrence)
 
       # Return result.
-      return co_occurrence.to_f / @element.associations.count
+      return co_occurrence.to_f / @element.annotations.count
     end
 
     # Create a new instance of this class.
@@ -283,7 +283,7 @@ module Rank
     def sum_score(other_entity, co_occurrence)
 
       # Define base.
-      base = co_occurrence.to_f / @element.associations.count
+      base = co_occurrence.to_f / @element.annotations.count
 
       # Return result.
       return base * promotion(other_entity)

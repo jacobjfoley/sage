@@ -48,16 +48,16 @@ module SAGA
     def disperse(influence, propagations)
 
       # Determine the amount of influence each.
-      amount = influence / (@element.associations.count + 1)
+      amount = influence / (@element.annotations.count + 1)
 
       # Create results hash, initialised with influence for popular entities.
       results = { popular_influence: amount }
 
-      # Query each association.
-      associations.each do |association|
+      # Query each annotation.
+      annotations.each do |annotation|
 
         # Fetch results from associate.
-        response = association.receive(amount, propagations - 1)
+        response = annotation.receive(amount, propagations - 1)
 
         # Merge response to results.
         aggregate(results, response)
@@ -103,7 +103,7 @@ module SAGA
     # Find inital influence.
     def initial_influence
 
-      # Return 1.0 point of influence per association.
+      # Return 1.0 point of influence per annotation.
       return @element.project.concepts.count.to_f
     end
 
@@ -114,21 +114,21 @@ module SAGA
       return @element.project.popular_concepts(influence)
     end
 
-    # Find all associations to this entity.
-    def associations
+    # Find all annotations to this entity.
+    def annotations
 
       # Initialise array.
-      associations = []
+      annotations = []
 
       # For each concept:
       @element.concepts.each do |concept|
 
         # Create a new wrapper concept.
-        associations << SAGA::Concept.new(concept)
+        annotations << SAGA::Concept.new(concept)
       end
 
       # Return complete list.
-      return associations
+      return annotations
     end
 
   end
@@ -140,7 +140,7 @@ module SAGA
     # Find inital influence.
     def initial_influence
 
-      # Return 1.0 point of influence per association.
+      # Return 1.0 point of influence per annotation.
       return @element.project.digital_objects.count.to_f
     end
 
@@ -151,21 +151,21 @@ module SAGA
       return @element.project.popular_objects(influence)
     end
 
-    # Find all associations to this entity.
-    def associations
+    # Find all annotations to this entity.
+    def annotations
 
       # Initialise array.
-      associations = []
+      annotations = []
 
       # For each object:
       @element.digital_objects.each do |object|
 
         # Create a new wrapper object.
-        associations << SAGA::Object.new(object)
+        annotations << SAGA::Object.new(object)
       end
 
       # Return complete list.
-      return associations
+      return annotations
     end
 
     # Find this Concept's cluster.

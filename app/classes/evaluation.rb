@@ -117,36 +117,36 @@ class Evaluation
     return truth_hash
   end
 
-  # Removes a number of associations from a test project to establish a
+  # Removes a number of annotations from a test project to establish a
   # training data set, and a test data set.
   def partition(project, testing_partition)
 
-    # Create empty association array.
-    associations = []
+    # Create empty annotation array.
+    annotations = []
 
     # Run through every concept.
     project.concepts.each do |concept|
 
-      # Collect the concept's associations.
+      # Collect the concept's annotations.
       concept.digital_objects.each do |object|
-        associations << [concept, object]
+        annotations << [concept, object]
       end
     end
 
-    # Shuffle the associations array.
-    associations.shuffle!
+    # Shuffle the annotations array.
+    annotations.shuffle!
 
-    # Calculate the number of associations to remove.
-    to_remove = testing_partition * associations.count
+    # Calculate the number of annotations to remove.
+    to_remove = testing_partition * annotations.count
 
     # Round removal number (for accessing indexes).
     to_remove.round
 
-    # Remove associations.
-    associations[0...to_remove].each do |association|
+    # Remove annotations.
+    annotations[0...to_remove].each do |annotation|
 
       # Delete the object from the concept.
-      association[0].digital_objects.delete association[1]
+      annotation[0].digital_objects.delete annotation[1]
     end
   end
 

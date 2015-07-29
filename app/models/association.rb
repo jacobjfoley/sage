@@ -1,4 +1,4 @@
-class Association < ActiveRecord::Base
+class Annotation < ActiveRecord::Base
   belongs_to :digital_object
   belongs_to :concept
   belongs_to :project
