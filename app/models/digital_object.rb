@@ -52,81 +52,6 @@ class DigitalObject < ActiveRecord::Base
     return algorithms[name].new(self)
   end
 
-  # Find relevant objects.
-  def relevant
-
-    # Calculate influence to spread.
-    influence = project.concepts.count.to_f
-
-    # Default influence, three steps (find concept).
-    results = collaborate(influence, 3)
-
-    # Distribute influence among popular.
-    popular = project.popular_concepts(results[:popular])
-    results.delete :popular
-
-    # Merge collaboration results with popular.
-    aggregate(results, popular)
-
-    # Filter weak results.
-    filter_results(results)
-
-    # Return filtered, sorted results.
-    return results.sort_by {|key, value| value}.reverse.to_h
-  end
-
-  # Establish a cutoff point in results.
-  def filter_results(results)
-
-    # Establish the cutoff value.
-    cutoff = 1.0 - results.values.min
-
-    # Filter based on this value.
-    results.keys.each do |key|
-
-      # If a result is below the cutoff, remove result.
-      if results[key] < cutoff
-        results.delete key
-      end
-    end
-  end
-
-  # Collaborate with other agents to detect relationships within the project.
-  def collaborate(influence, propagations)
-
-    # Determine what to do.
-    # If at the natural end point:
-    if propagations == 0
-
-      # Assign influence to self and return.
-      return { self => influence }
-
-    # Normal propagation step, otherwise.
-    else
-
-      # Determine the amount of influence each.
-      amount = influence / (concepts.count + 1)
-
-      # Create results hash.
-      results = { popular: amount }
-
-      # Query each annotation.
-      concepts.each do |concept|
-
-        # Fetch results from associate.
-        response = concept.collaborate(amount, propagations - 1)
-
-        # Merge response to results.
-        aggregate(results, response)
-
-      end
-
-      # Return results.
-      return results
-
-    end
-  end
-
   # Get a thumbnail for the specified size and object.
   def thumbnail(x, y)
 
@@ -164,25 +89,6 @@ class DigitalObject < ActiveRecord::Base
 
   # Private methods.
   private
-
-  # Aggregate a response with the in-progress results hash.
-  def aggregate(results, response)
-
-    # For each element in the response:
-    response.keys.each do |key|
-
-      # If the key is already in the results:
-      if results.key? key
-
-        # Add to the key's influence.
-        results[key] += response[key]
-      else
-
-        # Introduce key to results with its influence.
-        results[key] = response[key]
-      end
-    end
-  end
 
   # Checks if a given location should be changed before saving, particularly
   # when using other services as content providers.
