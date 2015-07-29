@@ -1,12 +1,10 @@
 class User < ActiveRecord::Base
 
-  # Associations with other models.
   has_many :user_roles, dependent: :destroy
   has_many :projects, through: :user_roles
-  has_many :associations
+  has_many :annotations
 
-  # Callback.
-  before_destroy :orphan_associations
+  before_destroy :orphan_annotations
 
   # Regular expression for email validation.
   EMAIL_REGEX = /\A[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\z/i
@@ -20,12 +18,12 @@ class User < ActiveRecord::Base
 
   private
 
-  # Orphan all associations created by this user.
-  def orphan_associations
-    Associations.where(user_id: id).each do |association|
+  # Orphan all annotations created by this user.
+  def orphan_annotations
+    Annotations.where(user_id: id).each do |annotation|
 
-      # Orphan association, but allow it to continue to exist.
-      association.update(user_id: nil)
+      # Orphan annotation, but allow it to continue to exist.
+      annotation.update(user_id: nil)
     end
   end
 end

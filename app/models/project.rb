@@ -2,14 +2,12 @@ require "securerandom"
 
 class Project < ActiveRecord::Base
 
-  # Associations with other models.
   has_many :concepts, dependent: :destroy
   has_many :digital_objects, dependent: :destroy
   has_many :user_roles, dependent: :destroy
   has_many :users, through: :user_roles
-  has_many :associations, dependent: :destroy
+  has_many :annotations, dependent: :destroy
 
-  # Validations.
   validates :name, presence: true, length: { minimum: 1 }
   validates :viewer_key, uniqueness: true, allow_nil: true
   validates :contributor_key, uniqueness: true, allow_nil: true

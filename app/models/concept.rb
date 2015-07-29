@@ -1,14 +1,11 @@
 class Concept < ActiveRecord::Base
 
-  # Associations with other models.
-  has_many :associations, dependent: :destroy
-  has_many :digital_objects, through: :associations
+  has_many :annotations, dependent: :destroy
+  has_many :digital_objects, through: :annotations
   belongs_to :project
 
-  # Validations.
   validates :description, presence: true
 
-  # Callbacks.
   before_save :check_flatten, if: :description_changed?
 
   # Returns ranked ordering of concepts by association count.

@@ -1,14 +1,11 @@
 class DigitalObject < ActiveRecord::Base
 
-  # Associations with other models.
-  has_many :associations, dependent: :destroy
-  has_many :concepts, through: :associations
+  has_many :annotations, dependent: :destroy
+  has_many :concepts, through: :annotations
   belongs_to :project
 
-  # Validations.
   validates :location, presence: true
 
-  # Callbacks.
   before_save :check_conversions, if: :location_changed?
   before_save :reset_thumbnail_url, if: :location_changed?
   before_save :check_flatten, if: :location_changed?
