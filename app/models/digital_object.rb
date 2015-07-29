@@ -28,20 +28,27 @@ class DigitalObject < ActiveRecord::Base
     return digital_objects
   end
 
-  # Wrap self in an algorithm.
-  def algorithm
+  # Find entities by association.
+  def related
 
-    # Get algorithm name.
-    name = project.algorithm || 'SAGA'
+    # Return the entities associated with this element.
+    return concepts.to_a
+  end
+
+  # Wrap self in an algorithm.
+  def algorithm(specific = nil)
+
+    # Get algorithm name. Check specific, then project, then default to SAGA.
+    name = specific || project.algorithm || 'SAGA'
 
     # Map algorithms to names.
     algorithms = {
       'SAGA' => SAGA::Object,
       'Baseline' => Baseline::Object,
-      'Rank' => Rank::Object_Rank,
-      'RankPlus' => Rank::Object_RankPlus,
-      'Sum' => Rank::Object_Sum,
-      'SumPlus' => Rank::Object_SumPlus
+      'Vote' => Rank::Vote,
+      'VotePlus' => Rank::VotePlus,
+      'Sum' => Rank::Sum,
+      'SumPlus' => Rank::SumPlus
     }
 
     # Return object.

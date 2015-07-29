@@ -1,6 +1,8 @@
 class Evaluation
-  
+
   # Process project and report scores.
+  # Testing partition is a value between 0 and 1. For instance, 0.4 means that
+  # the first 40% is training material and remaining 60% is test material.
   def evaluate(project_id, testing_partition)
 
     # Retrieve the desired project.
@@ -20,8 +22,12 @@ class Evaluation
 
     # Initialise algorithm hashes.
     algorithms = []
-    algorithms << { name: "SAGE-A", precision: [], recall: [] }
-    #algorithms << { name: "Random", precision: [], recall: [] }
+    algorithms << { name: "SAGA", precision: [], recall: [] }
+    algorithms << { name: "Baseline", precision: [], recall: [] }
+    algorithms << { name: "Vote", precision: [], recall: [] }
+    algorithms << { name: "VotePlus", precision: [], recall: [] }
+    algorithms << { name: "Sum", precision: [], recall: [] }
+    algorithms << { name: "SumPlus", precision: [], recall: [] }
 
     # For each test concept:
     test_project.concepts.each do |concept|
@@ -30,7 +36,7 @@ class Evaluation
       algorithms.each do |algorithm|
 
         # Use the algorithm to fetch suggestions.
-        suggestions = concept.relevant.keys
+        suggestions = concept.algorithm(algorithm[:name]).suggestions.keys
 
         # Calculate precision.
         algorithm[:precision] << precision(suggestions, truth_hash[concept])

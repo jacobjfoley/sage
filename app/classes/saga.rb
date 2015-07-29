@@ -94,26 +94,6 @@ module SAGA
       # Aggregate them into results.
       aggregate(results, popular_results)
     end
-
-    # Aggregate a response with the in-progress results hash.
-    def aggregate(results, response)
-
-      # For each element in the response:
-      response.keys.each do |key|
-
-        # If the key is already in the results:
-        if results.key? key
-
-          # Add to the key's influence.
-          results[key] += response[key]
-        else
-
-          # Introduce key to results with its influence.
-          results[key] = response[key]
-        end
-      end
-    end
-
   end
 
   class Object < Base

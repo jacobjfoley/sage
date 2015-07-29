@@ -26,20 +26,27 @@ class Concept < ActiveRecord::Base
     return concepts
   end
 
-  # Wrap self in an algorithm.
-  def algorithm
+  # Find entities by association.
+  def related
 
-    # Get algorithm name.
-    name = project.algorithm || 'SAGA'
+    # Return the entities associated with this element.
+    return digital_objects.to_a
+  end
+
+  # Wrap self in an algorithm.
+  def algorithm(specific = nil)
+
+    # Get algorithm name. Check specific, then project, then default to SAGA.
+    name = specific || project.algorithm || 'SAGA'
 
     # Map algorithms to names.
     algorithms = {
       'SAGA' => SAGA::Concept,
       'Baseline' => Baseline::Concept,
-      'Rank' => Rank::Concept_Rank,
-      'RankPlus' => Rank::Concept_RankPlus,
-      'Sum' => Rank::Concept_Sum,
-      'SumPlus' => Rank::Concept_SumPlus
+      'Vote' => Rank::Vote,
+      'VotePlus' => Rank::VotePlus,
+      'Sum' => Rank::Sum,
+      'SumPlus' => Rank::SumPlus
     }
 
     # Return object.

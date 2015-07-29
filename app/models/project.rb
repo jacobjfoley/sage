@@ -226,7 +226,7 @@ class Project < ActiveRecord::Base
     end
 
     # Link new concepts and objects.
-    Association.where(project_id: other_project_id).each do |association|
+    other_project.associations.each do |association|
 
       # Create new association.
       Association.create(
