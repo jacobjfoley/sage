@@ -22,12 +22,12 @@ class Evaluation
 
     # Initialise algorithm hashes.
     algorithms = []
-    algorithms << { name: "SAGA", precision: [], recall: [] }
+    #algorithms << { name: "SAGA", precision: [], recall: [] }
     algorithms << { name: "Baseline", precision: [], recall: [] }
-    algorithms << { name: "Vote", precision: [], recall: [] }
-    algorithms << { name: "VotePlus", precision: [], recall: [] }
-    algorithms << { name: "Sum", precision: [], recall: [] }
-    algorithms << { name: "SumPlus", precision: [], recall: [] }
+    #algorithms << { name: "Vote", precision: [], recall: [] }
+    #algorithms << { name: "VotePlus", precision: [], recall: [] }
+    #algorithms << { name: "Sum", precision: [], recall: [] }
+    #algorithms << { name: "SumPlus", precision: [], recall: [] }
 
     # For each test concept:
     test_project.concepts.each do |concept|

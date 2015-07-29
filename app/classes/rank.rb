@@ -38,14 +38,14 @@ module Rank
       # Initialize list.
       list = {}
 
-      # Check each member annotation:
-      @element.related.each do |annotation|
+      # Check each association:
+      @element.related.each do |association|
 
         # Initialize mapping.
         mapping = {}
 
         # For each co_occurring entity:
-        annotation.related.each do |co_occurring|
+        association.related.each do |co_occurring|
 
           # Include it in the mapping.
           mapping[co_occurring] = 1
@@ -113,10 +113,10 @@ module Rank
       results = {}
 
       # For each entity associated with this element:
-      @element.related.each do |annotation|
+      @element.related.each do |association|
 
         # Wrap in algorithm.
-        result = wrap(annotation).vote
+        result = wrap(association).vote
 
         # Aggregate results.
         aggregate(results, result)
@@ -135,12 +135,13 @@ module Rank
       # For each key in the top list:
       top_co_occurrences.keys.each do |key|
 
-        # Add it to the vote mapping.
+        # Add it to the vote mapping. This ensures entities present in the top
+        # co-occurring list have a value of 1, all other entities are excluded,
+        # thus implicitly having a value of 0 as in the original algorithm.
         results[key] = vote_score(key)
       end
 
-      # Return results. Entities present in the top co-occurring list have a
-      # value of 1, all other entities are excluded, thus implicitly 0.
+      # Return results.
       return results
     end
 
@@ -175,10 +176,10 @@ module Rank
       results = {}
 
       # For each entity associated with this element:
-      @element.related.each do |annotation|
+      @element.related.each do |association|
 
         # Sum using this annotation.
-        result = wrap(annotation).sum
+        result = wrap(association).sum
 
         # Aggregate results.
         aggregate(results, result)
