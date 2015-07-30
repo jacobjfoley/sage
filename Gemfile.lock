@@ -163,6 +163,7 @@ GEM
       netrc (~> 0.7)
     retriable (1.4.1)
     rmagick (2.15.2)
+    rollbar (2.1.0)
     sass (3.4.14)
     sass-rails (5.0.3)
       railties (>= 4.0.0, < 5.0)
@@ -225,6 +226,7 @@ DEPENDENCIES
   rails_12factor
   rest-client
   rmagick
+  rollbar (~> 2.1.0)
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
   spring
