@@ -49,9 +49,6 @@ gem 'aws-sdk'
 # Use the Google API Client for Drive support.
 gem 'google-api-client'
 
-# Use Rollbar for error logging.
-gem 'rollbar', '~> 2.1.0'
-
 # Use Unicorn as the app server
 # gem 'unicorn'
 
@@ -78,6 +75,9 @@ group :development, :test do
 end
 
 group :production do
+
+  # Use Rollbar for error logging.
+  gem 'rollbar', '~> 2.1.0'
 
   # Heroku's gem.
   gem 'rails_12factor'
