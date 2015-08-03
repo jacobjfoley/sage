@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150729060138) do
+ActiveRecord::Schema.define(version: 20150803071537) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,14 +38,6 @@ ActiveRecord::Schema.define(version: 20150729060138) do
   end
 
   add_index "concepts", ["project_id"], name: "index_concepts_on_project_id", using: :btree
-
-  create_table "concepts_digital_objects", id: false, force: :cascade do |t|
-    t.integer "digital_object_id", null: false
-    t.integer "concept_id",        null: false
-  end
-
-  add_index "concepts_digital_objects", ["concept_id", "digital_object_id"], name: "concept_object", using: :btree
-  add_index "concepts_digital_objects", ["digital_object_id", "concept_id"], name: "object_concept", using: :btree
 
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer  "priority",   default: 0, null: false
