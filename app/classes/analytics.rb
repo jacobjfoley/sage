@@ -159,8 +159,18 @@ class Analytics
   # Calculate initial annotation rate.
   def annotation_rate
 
+    # Find the first annotation in this project.
+    first = @project.annotations.first
+
+    # If no annotations exist:
+    if first.nil?
+
+      # Return zero.
+      return 0
+    end
+
     # Establish window timeframe.
-    time = @project.annotations.first.created_at + 10.minutes
+    time = first.created_at + 10.minutes
 
     # Limit annotations to inside window.
     return @project.annotations.where("created_at <= ?", time).count
