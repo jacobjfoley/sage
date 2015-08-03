@@ -12,7 +12,7 @@ module SAGA
       aggregate_popular(results)
 
       # Prepare results.
-      #filter(results)
+      results = filter_weak(results)
       results = sort(results)
 
       # Return results.
@@ -70,19 +70,31 @@ module SAGA
     private
 
     # Establish a cutoff point in results.
-    def filter(results)
+    def filter_weak(results)
 
-      # Establish the cutoff value.
-      cutoff = 1.0 - results.values.min
+      # Define candidates.
+      candidates = results.select { |k, v| v < 1.0 }
 
-      # For each result:
-      results.keys.each do |key|
+      # Sort candidates.
+      candidates = candidates.sort_by {
+        |a, b| candidates[a] <=> candidates[b]
+      }.to_h
 
-        # If a result is below the cutoff, remove result.
-        if results[key] < cutoff
-          results.delete key
-        end
+      # Find cumulative influence held by the candidates.
+      influence = candidates.values.reduce(:+)
+
+      # Find candidates who are to be deleted:
+      weak_candidates = candidates.keys[influence.floor..-1]
+
+      # Delete those results which didn't make it.
+      weak_candidates.each do |candidate|
+
+        # Remove from results.
+        results.delete candidate
       end
+
+      # Return new results hash.
+      return results
     end
 
     # Aggregate popular elements with the suggestions list.
