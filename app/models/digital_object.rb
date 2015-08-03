@@ -9,6 +9,7 @@ class DigitalObject < ActiveRecord::Base
   before_save :check_conversions, if: :location_changed?
   before_save :reset_thumbnail_url, if: :location_changed?
   before_save :check_flatten, if: :location_changed?
+  after_create :create_thumbnails
 
   # Returns ranked ordering of objects by annotation count.
   def self.ranked(project_id)
@@ -189,5 +190,13 @@ class DigitalObject < ActiveRecord::Base
 
     # Allow save to continue.
     return true
+  end
+
+  # Schedule for common thumbnail sizes to be created.
+  def create_thumbnails
+
+    # Create the two common thumbnail sizes.
+    delay.thumbnail(150,150)
+    delay.thumbnail(400,400)
   end
 end
