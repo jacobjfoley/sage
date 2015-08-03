@@ -19,7 +19,7 @@ class DigitalObjectsController < ApplicationController
   def index
 
     # Fetch the project's digital objects sorted by concept count.
-    @digital_objects = DigitalObject.ranked(@project)
+    @digital_objects = @project.object_index
   end
 
   # GET /digital_objects/1

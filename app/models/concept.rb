@@ -8,21 +8,6 @@ class Concept < ActiveRecord::Base
 
   before_save :check_flatten, if: :description_changed?
 
-  # Returns ranked ordering of concepts by annotation count.
-  def self.ranked(project_id)
-
-    # Get concepts.
-    concepts = Concept.where(project: project_id).to_a
-
-    # Sort by annotation count.
-    concepts.sort! {
-      |a,b| a.digital_objects.count <=> b.digital_objects.count
-    }
-
-    # Return list.
-    return concepts
-  end
-
   # Find entities by annotation.
   def related
 

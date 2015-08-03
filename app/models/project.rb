@@ -13,6 +13,16 @@ class Project < ActiveRecord::Base
   validates :contributor_key, uniqueness: true, allow_nil: true
   validates :administrator_key, uniqueness: true, allow_nil: true
 
+  # Retrieve objects, reverse creation order.
+  def object_index
+    return digital_objects.order(:created_at).to_a.reverse
+  end
+
+  # Retrieve concepts, alphabetical order.
+  def concept_index
+    return concepts.order(:description).to_a
+  end
+
   # Find most popular concepts.
   def popular_concepts(influence)
 

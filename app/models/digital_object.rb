@@ -11,21 +11,6 @@ class DigitalObject < ActiveRecord::Base
   before_save :check_flatten, if: :location_changed?
   after_create :create_thumbnails
 
-  # Returns ranked ordering of objects by annotation count.
-  def self.ranked(project_id)
-
-    # Get objects.
-    digital_objects = DigitalObject.where(project: project_id).to_a
-
-    # Sort by annotation count.
-    digital_objects.sort! {
-      |a,b| a.concepts.count <=> b.concepts.count
-    }
-
-    # Return list.
-    return digital_objects
-  end
-
   # Find entities by annotation.
   def related
 

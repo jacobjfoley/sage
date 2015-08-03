@@ -32,7 +32,7 @@
       <%= link_to project_digital_objects_path(@project), title: "Back" do %>
         <div class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Back</div>
       <% end %>
-      <%= link_to project_digital_object_path(@project, DigitalObject.ranked(@project.id).first), title: "Target Least Annotated" do %>
+      <%= link_to project_digital_object_path(@project, @project.object_index.first), title: "Target Least Annotated" do %>
       <div class="btn btn-default"><span class="glyphicon glyphicon-screenshot"></span> Annotation Target</div>
       <% end %>
     </div>

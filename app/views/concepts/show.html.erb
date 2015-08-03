@@ -26,7 +26,7 @@
     <%= link_to project_concepts_path(@project), title: "Back" do %>
       <div class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Back</div>
     <% end %>
-    <%= link_to project_concept_path(@project, Concept.ranked(@project.id).first), title: "Target Least Annotated" do %>
+    <%= link_to project_concept_path(@project, @project.concept_index.first), title: "Target Least Annotated" do %>
       <div class="btn btn-default"><span class="glyphicon glyphicon-screenshot"></span> Annotation Target</div>
     <% end %>
   </div>

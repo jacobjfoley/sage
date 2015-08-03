@@ -12,7 +12,7 @@ class ConceptsController < ApplicationController
   def index
 
     # Fetch the project's concepts sorted by annotation count.
-    @concepts = Concept.ranked(@project.id)
+    @concepts = @project.concept_index
   end
 
   # GET /concepts/1
