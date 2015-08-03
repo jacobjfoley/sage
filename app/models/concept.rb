@@ -39,16 +39,16 @@ class Concept < ActiveRecord::Base
   def check_flatten
 
     # Find all concepts with the same project id.
-    same_project_concepts = Concept.where(
-      project_id: project_id
-    ).to_a
+    same_project_concepts = project.concepts.to_a
 
     # Remove self.
     same_project_concepts.delete(self)
 
+    # Specify the target description to be matched.
+    target_matchable_description = matchable_description
+
     # Create list of matching concepts.
     same_concepts = []
-    target_matchable_description = matchable_description
     same_project_concepts.each do |concept|
 
       # If a duplicate matchable description, add to list.
