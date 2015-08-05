@@ -1,0 +1,28 @@
+<div class="nodecoration text-center">
+
+  <%= link_to project_digital_object_path(id: object.id) do%>
+
+    <div class="object_image" style="height: <%= size %>">
+      <%= image_tag thumbnail_url(object.thumbnail(size,size)) %>
+    </div>
+
+    <div class="truncate ">
+      <%= File.basename(object.location) %>
+    </div>
+  <% end %>
+
+  <% if controls %>
+    <%= link_to object.location, title: "Link" do %>
+      <i class="glyphicon glyphicon-link">
+    </i><% end %>
+
+    <%= link_to edit_project_digital_object_path(id: object.id), title: "Edit" do %>
+      <i class="glyphicon glyphicon-pencil">
+    </i><% end %>
+
+    <%= link_to project_digital_object_path(id: object.id), title: "Delete", method: :delete, data: { confirm: 'Are you sure you wish to delete this object?' } do %>
+      <i class="glyphicon glyphicon-trash">
+    </i><% end %>
+  <% end %>
+
+</div>
