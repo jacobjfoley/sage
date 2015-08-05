@@ -1,3 +1,5 @@
+require 'google/api_client'
+
 class GoogleDriveUtils
 
   CLIENT_ID = ENV["GOOGLE_CLIENT_ID"]
