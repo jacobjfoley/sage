@@ -4,14 +4,14 @@
 
 <h1>Objects</h1>
 
-<div class="col-sm-3 text-center well" style="display: table; height: 200px">
+<div class="col-sm-3 col-xs-6 text-center well" style="display: table; height: 200px">
   <%= link_to new_project_digital_object_path, title: "Create", style: "display: table-cell; vertical-align: middle" do %>
     <i class="glyphicon glyphicon-plus"></i>
   <% end %>
 </div>
 
 <% @digital_objects.each do |digital_object| %>
-  <div class="col-sm-3 col-xs-6">
+  <div class="col-sm-3 col-xs-6" style="height: 240px">
     <%= render partial: "object", locals: {
       object: digital_object,
       size: '150px',

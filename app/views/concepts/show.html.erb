@@ -22,55 +22,42 @@
   </div>
 </div>
 
-  <div class="text-center">
-    <%= link_to project_concepts_path(@project), title: "Back" do %>
-      <div class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Back
-    </div><% end %>
-    <%= link_to project_concept_path(@project, @project.concept_index.first), title: "Target Least Annotated" do %>
-      <div class="btn btn-default"><span class="glyphicon glyphicon-screenshot"></span> Annotation Target
-    </div><% end %>
-  </div>
-
-  <div class="row">
-    <div class="col-md-12">
-      <h1>Object Annotations</h1>
-      <div class="row">
-        <% position = 0 %>
-        <% relevant = @concept.algorithm.suggestions %>
-        <% relevant.keys.each do |object| %>
-          <% if position == 4 %>
-            </div><div class="row">
-            <% position = 0 %>
-          <% end %>
-
-          <div class="col-sm-3 col-xs-6 text-center nodecoration">
-
-            <%= render partial: "digital_objects/object", locals: {
-              object: object,
-              size: '150px',
-              controls: false
-            } %>
-
-            <% if @concept.digital_objects.include? object %>
-              <%= link_to remove_object_project_concept_path(@project, @concept, object_id: object.id), method: :post, title: "Remove" do %>
-              <div class="btn btn-primary">
-                <%= relevant[object].round(2) %> <i class="glyphicon glyphicon-ok"></i>
-              </div>
-              <% end %>
-            <% else %>
-              <%= link_to add_object_project_concept_path(@project, @concept, object_id: object.id), method: :post, title: "Add" do %>
-                <div class="btn btn-default">
-                  <%= relevant[object].round(2) %> <i class="glyphicon glyphicon-ok fade"></i>
-                </div>
-              <% end %>
-            <% end %>
-
-          </div>
-
-        <% end %>
-
-      </div>
-
-    </div>
-  </div>
+<div class="text-center">
+  <%= link_to project_concepts_path(@project), title: "Back" do %>
+    <div class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Back
+  </div><% end %>
+  <%= link_to project_concept_path(@project, @project.concept_index.first), title: "Target Least Annotated" do %>
+    <div class="btn btn-default"><span class="glyphicon glyphicon-screenshot"></span> Annotation Target
+  </div><% end %>
 </div>
+
+<h1>Object Annotations</h1>
+
+<% relevant = @concept.algorithm.suggestions %>
+<% relevant.keys.each do |object| %>
+  <div class="col-sm-3 col-xs-6" style="height: 240px">
+
+    <%= render partial: "digital_objects/object", locals: {
+      object: object,
+      size: '150px',
+      controls: false
+    } %>
+
+    <div class="text-center">
+      <% if @concept.digital_objects.include? object %>
+        <%= link_to remove_object_project_concept_path(@project, @concept, object_id: object.id), method: :post, title: "Remove" do %>
+          <div class="btn btn-primary">
+            <%= relevant[object].round(2) %> <i class="glyphicon glyphicon-ok"></i>
+          </div>
+        <% end %>
+      <% else %>
+        <%= link_to add_object_project_concept_path(@project, @concept, object_id: object.id), method: :post, title: "Add" do %>
+          <div class="btn btn-default">
+            <%= relevant[object].round(2) %> <i class="glyphicon glyphicon-ok fade"></i>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+
+  </div>
+<% end %>
