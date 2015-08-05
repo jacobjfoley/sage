@@ -2,7 +2,7 @@
 
   <%= link_to project_digital_object_path(id: object.id) do%>
 
-    <div class="object_image" style="height: <%= size %>">
+    <div style="height: <%= size %>">
       <%= image_tag thumbnail_url(object.thumbnail(size,size)) %>
     </div>
 
