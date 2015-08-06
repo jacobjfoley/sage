@@ -2,19 +2,37 @@
 
   <%= link_to project_digital_object_path(id: object.id) do%>
 
-    <div style="height: <%= size %>">
-      <%= image_tag thumbnail_url(object.thumbnail(size,size)) %>
+    <% if fixed %>
+      <div style="height: <%= size %>">
+    <% else %>
+      <div>
+    <% end %>
+      <%= image_tag thumbnail_url(object.thumbnail(size, size)),
+        id: "thumbnail_#{object.id}",
+        class: thumbnail_class(object.thumbnail(size, size)),
+        style: "max-width: #{size}; max-height: #{size}"
+      %>
     </div>
 
-    <div class="truncate ">
+    <div class="truncate">
       <%= File.basename(object.location) %>
     </div>
   <% end %>
 
   <% if controls %>
-    <%= link_to object.location, title: "Link" do %>
-      <i class="glyphicon glyphicon-link">
+    <%= link_to "#", title: "Flip Image", onclick: "$('#thumbnail_#{object.id}').toggleClass('flipped')" do %>
+      <i class="glyphicon glyphicon-resize-horizontal">
     </i><% end %>
+
+    <%= link_to repair_thumbnails_project_digital_object_path(@project, object), title: "Repair Thumbnails", method: :post do %>
+      <i class="glyphicon glyphicon-refresh">
+    </i><% end %>
+
+    <% if object.has_uri? %>
+      <%= link_to object.location, title: "Link", target: "_blank" do %>
+        <i class="glyphicon glyphicon-link">
+      </i><% end %>
+    <% end %>
 
     <%= link_to edit_project_digital_object_path(id: object.id), title: "Edit" do %>
       <i class="glyphicon glyphicon-pencil">
@@ -24,4 +42,5 @@
       <i class="glyphicon glyphicon-trash">
     </i><% end %>
   <% end %>
+
 </div>

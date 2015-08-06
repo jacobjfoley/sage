@@ -10,4 +10,15 @@ namespace :thumbnails do
     end
   end
 
+  desc "Regenerate all thumbnails."
+  task regenerate_thumbnails: :environment do
+
+    # Resets all thumbnails.
+    Thumbnail.all.each do |thumbnail|
+
+      # Generate thumbnail image.
+      thumbnail.generate
+    end
+  end
+
 end

@@ -22,6 +22,11 @@
     -ms-filter: "FlipH";
 }
 
+.landscape_thumbnail {
+  width: 100%;
+  height: auto;
+}
+
 .navbar-brand {
   font-family: 'Italianno', cursive;
   font-weight: bold;
@@ -36,6 +41,11 @@
   a:hover {
     text-decoration: none;
   }
+}
+
+.portrait_thumbnail {
+  height: 100%;
+  width: auto;
 }
 
 .truncate {

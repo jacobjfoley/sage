@@ -5,29 +5,16 @@
 <div class="row nodecoration">
   <div class="col-md-6">
     <div class="text-center well">
-      <% if @digital_object.has_uri? %>
-        <%= link_to @digital_object.location do%>
-          <%= image_tag thumbnail_url(@digital_object.thumbnail(400,400)), style: "width: 100%", id: "thumbnail" %><br>
-          <div class="truncate"><%= File.basename(@digital_object.location) %></div>
-        <% end %>
-      <% else %>
-        <%= image_tag thumbnail_url(@digital_object.thumbnail(400,400)), style: "width: 100%" %><br>
-        <div class="truncate"><%= File.basename(@digital_object.location) %></div>
-      <% end %>
-
-      <%= link_to "#", title: "Flip Image", onclick: "$('#thumbnail').toggleClass('flipped')" do %>
-        <i class="glyphicon glyphicon-resize-horizontal"></i>
-      <% end %>
-      <%= link_to repair_thumbnails_project_digital_object_path(@project, @digital_object), title: "Repair Thumbnails", method: :post do %>
-        <i class="glyphicon glyphicon-refresh"></i>
-      <% end %>
-      <%= link_to edit_project_digital_object_path(@project, @digital_object), title: "Edit" do %>
-        <i class="glyphicon glyphicon-pencil"></i>
-      <% end %>
-      <%= link_to project_digital_object_path(@project, @digital_object), title: "Delete", method: :delete, data: { confirm: 'Are you sure?' } do %>
-        <i class="glyphicon glyphicon-trash"></i>
-      <% end %>
+      <%= render partial: "object",
+        locals: {
+          object: @digital_object,
+          size: '400px',
+          controls: true,
+          fixed: false
+        }
+      %>
     </div>
+
     <div class="text-center">
       <%= link_to project_digital_objects_path(@project), title: "Back" do %>
         <div class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Back</div>

@@ -22,4 +22,15 @@ module ThumbnailHelper
       return thumbnail.url
     end
   end
+
+  # Determine style based on thumbnail orientation.
+  def thumbnail_class(thumbnail)
+
+    # Return a style based on orientation.
+    if thumbnail.portrait?
+      return "portrait_thumbnail"
+    else
+      return "landscape_thumbnail"
+    end
+  end
 end

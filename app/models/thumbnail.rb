@@ -38,11 +38,22 @@ class Thumbnail < ActiveRecord::Base
   # Generates a thumbnail's URL.
   def generate
 
-    # Clear any current URL.
-    update(url: nil)
+    # Clear any current URL and details.
+    update(
+      url: nil,
+      actual_x: 0,
+      actual_y: 0
+    )
 
     # Generate the thumbnail image.
     SetThumbnailURLJob.perform_later(id)
+  end
+
+  # Detect if the image is in portrait orientation.
+  def portrait?
+
+    # Determine if the image is taller than wide.
+    return actual_x < actual_y
   end
 
   # Sets a thumbnail url for this thumbnail object.
@@ -133,9 +144,11 @@ class Thumbnail < ActiveRecord::Base
       # Write thumbnail to S3.
       object.put({acl: "public-read", body: image.to_blob})
 
-      # Store URL in thumbnail.
+      # Store URL and actual sizes in thumbnail.
       update(
-        url: "https://s3-ap-southeast-2.amazonaws.com/#{ENV['S3_BUCKET']}/#{digest}_#{x}x#{y}.jpg"
+        url: "https://s3-ap-southeast-2.amazonaws.com/#{ENV['S3_BUCKET']}/#{digest}_#{x}x#{y}.jpg",
+        actual_x: image.columns,
+        actual_y: image.rows
       )
 
     # Rescue in the event of an error.

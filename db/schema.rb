@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150803071537) do
+ActiveRecord::Schema.define(version: 20150806070018) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -85,6 +85,8 @@ ActiveRecord::Schema.define(version: 20150803071537) do
     t.boolean  "local"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer  "actual_x"
+    t.integer  "actual_y"
   end
 
   add_index "thumbnails", ["source", "x", "y"], name: "index_thumbnails_on_source_and_x_and_y", using: :btree
