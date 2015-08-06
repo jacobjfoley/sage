@@ -7,6 +7,8 @@ class Project < ActiveRecord::Base
   has_many :user_roles, dependent: :destroy
   has_many :users, through: :user_roles
   has_many :annotations, dependent: :destroy
+  has_many :children, class_name: "Project", foreign_key: "parent_id"
+  belongs_to :parent, class_name: "Project"
 
   validates :name, presence: true, length: { minimum: 1 }
   validates :viewer_key, uniqueness: true, allow_nil: true
