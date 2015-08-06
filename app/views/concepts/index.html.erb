@@ -24,3 +24,19 @@
   <% end %>
 
 </table>
+
+<div class="col-xs-12 text-center">
+
+  <% if @previous_page %>
+    <%= link_to project_concepts_path(page: @previous_page), title: "Previous" do %>
+      <div class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Previous
+    </div><% end %>
+  <% end %>
+
+  <% if @next_page %>
+    <%= link_to project_concepts_path(page: @next_page), title: "Next" do %>
+      <div class="btn btn-default"><span class="glyphicon glyphicon-arrow-right"></span> Next
+    </div><% end %>
+  <% end %>
+
+</div>

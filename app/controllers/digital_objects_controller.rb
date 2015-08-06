@@ -1,6 +1,5 @@
 class DigitalObjectsController < ApplicationController
 
-  # Callbacks.
   before_action :check_logged_in
   before_action :check_access
   before_action :set_project
@@ -8,18 +7,38 @@ class DigitalObjectsController < ApplicationController
     :add_concept, :remove_concept, :repair_thumbnails, :add_created_concept]
   before_action :set_concept, only: [:add_concept, :remove_concept]
 
-  # Layout.
   layout 'control'
 
-  # Helpers.
   helper ThumbnailHelper
+
+  # Note: minus one for the new object button.
+  PAGE_ITEMS = 39
 
   # GET /digital_objects
   # GET /digital_objects.json
   def index
 
-    # Fetch the project's digital objects sorted by concept count.
-    @digital_objects = @project.object_index
+    # Find the current page.
+    page = current_page
+    start_index = page * PAGE_ITEMS
+    end_index = start_index + PAGE_ITEMS
+
+    # Initialise previous and next pages.
+    @previous_page = nil
+    @next_page = nil
+
+    # Determine if a previous page is possible.
+    if page > 0
+      @previous_page = page - 1
+    end
+
+    # Determine if a next page is possible.
+    if end_index < @project.digital_objects.count
+      @next_page = page + 1
+    end
+
+    # Retrieve a page of results or an empty array if none.
+    @digital_objects = @project.object_index[start_index...end_index] || []
   end
 
   # GET /digital_objects/1
@@ -254,5 +273,22 @@ class DigitalObjectsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def digital_object_params
       params.require(:digital_object).permit(:location)
+    end
+
+    # Find the index of the first object in this page.
+    def current_page
+
+      # Clean and retrieve page param.
+      /(?<page>\d+)/ =~ params[:page]
+
+      # Check for no page.
+      if !page
+
+        # Default to zero.
+        page = 0
+      end
+
+      # Return page.
+      return page.to_i
     end
 end

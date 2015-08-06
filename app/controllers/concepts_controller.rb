@@ -7,12 +7,33 @@ class ConceptsController < ApplicationController
 
   layout 'control'
 
+  PAGE_ITEMS = 100
+
   # GET /concepts
   # GET /concepts.json
   def index
 
-    # Fetch the project's concepts sorted by annotation count.
-    @concepts = @project.concept_index
+    # Find the current page.
+    page = current_page
+    start_index = page * PAGE_ITEMS
+    end_index = start_index + PAGE_ITEMS
+
+    # Initialise previous and next pages.
+    @previous_page = nil
+    @next_page = nil
+
+    # Determine if a previous page is possible.
+    if page > 0
+      @previous_page = page - 1
+    end
+
+    # Determine if a next page is possible.
+    if end_index < @project.concepts.count
+      @next_page = page + 1
+    end
+
+    # Retrieve a page of results or an empty array if none.
+    @concepts = @project.concept_index[start_index...end_index] || []
   end
 
   # GET /concepts/1
@@ -152,5 +173,22 @@ class ConceptsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def concept_params
       params.require(:concept).permit(:description)
+    end
+
+    # Find the index of the first entry in this page.
+    def current_page
+
+      # Clean and retrieve page param.
+      /(?<page>\d+)/ =~ params[:page]
+
+      # Check for no page.
+      if !page
+
+        # Default to zero.
+        page = 0
+      end
+
+      # Return page.
+      return page.to_i
     end
 end
