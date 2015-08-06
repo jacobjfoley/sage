@@ -86,6 +86,7 @@ class Project < ActiveRecord::Base
       all_keys << project.viewer_key
       all_keys << project.contributor_key
       all_keys << project.administrator_key
+      all_keys << project.annotator_key
     end
 
     # Initialise key to not unique.
@@ -107,6 +108,8 @@ class Project < ActiveRecord::Base
       self.viewer_key = key
     elsif (type.eql? "Contributor")
       self.contributor_key = key
+    elsif (type.eql? "Annotator")
+      self.annotator_key = key
     elsif (type.eql? "Administrator")
       self.administrator_key = key
     end
@@ -120,6 +123,8 @@ class Project < ActiveRecord::Base
       self.viewer_key = nil
     elsif (type.eql? "Contributor")
       self.contributor_key = nil
+    elsif (type.eql? "Annotator")
+      self.annotator_key = nil
     elsif (type.eql? "Administrator")
       self.administrator_key = nil
     end
@@ -133,6 +138,7 @@ class Project < ActiveRecord::Base
     Project.all.each do |project|
       all_keys[project.viewer_key] = {project: project, position: "Viewer"}
       all_keys[project.contributor_key] = {project: project, position: "Contributor"}
+      all_keys[project.annotator_key] = {project: project, position: "Contributor"}
       all_keys[project.administrator_key] = {project: project, position: "Administrator"}
     end
 
