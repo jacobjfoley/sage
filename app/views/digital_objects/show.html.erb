@@ -12,11 +12,16 @@
     </div>
 
     <div class="text-center">
-      <%= link_to project_digital_objects_path(@project), title: "Back" do %>
-        <div class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Back
+      <%= link_to project_digital_objects_path(page: @index_page), title: "Back to Index" do %>
+        <div class="btn btn-default"><span class="glyphicon glyphicon-step-backward"></span> Back
       </div><% end %>
-      <%= link_to project_digital_object_path(@project, @project.object_index.first), title: "Target Least Annotated" do %>
-        <div class="btn btn-default"><span class="glyphicon glyphicon-screenshot"></span> Annotation Target
+
+      <%= link_to project_digital_object_path(id: @previous_item), title: "Previous" do %>
+        <div class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Previous
+      </div><% end %>
+
+      <%= link_to project_digital_object_path(id: @next_item), title: "Next" do %>
+        <div class="btn btn-default"><span class="glyphicon glyphicon-arrow-right"></span> Next
       </div><% end %>
     </div>
   </div>

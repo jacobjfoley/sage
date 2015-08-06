@@ -39,6 +39,17 @@ class ConceptsController < ApplicationController
   # GET /concepts/1
   # GET /concepts/1.json
   def show
+
+    # Get item listing.
+    items = @project.concept_index
+
+    # Get index of this item within listing.
+    index = items.find_index(@concept)
+
+    # Determine relative links.
+    @index_page = index / PAGE_ITEMS
+    @previous_item = items[index - 1].id
+    @next_item = items[index + 1].id
   end
 
   # GET /concepts/new

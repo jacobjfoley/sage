@@ -44,7 +44,19 @@ class DigitalObjectsController < ApplicationController
   # GET /digital_objects/1
   # GET /digital_objects/1.json
   def show
+    # New concept for quick create.
     @concept = Concept.new
+
+    # Get object listing.
+    objects = @project.object_index
+
+    # Get index of this object within listing.
+    index = objects.find_index(@digital_object)
+
+    # Determine relative links.
+    @index_page = index / PAGE_ITEMS
+    @previous_item = objects[index - 1].id
+    @next_item = objects[index + 1].id
   end
 
   # GET /digital_objects/new
