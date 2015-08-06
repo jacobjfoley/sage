@@ -4,21 +4,12 @@
 
 <div class="row">
   <div class="col-md-12 well">
-    <%= @concept.description %>
-    <div class="pull-right">
-      <%= link_to "https://www.google.com.au/search?q=#{@concept.description}&tbm=isch", title: "Google Image Search", target: "_blank"  do %>
-        <i class="glyphicon glyphicon-picture">
-      </i><% end %>
-      <%= link_to "https://www.google.com.au/search?q=#{@concept.description}", title: "Google Search", target: "_blank" do %>
-        <i class="glyphicon glyphicon-search">
-      </i><% end %>
-      <%= link_to edit_project_concept_path(@project, @concept), title: "Edit" do %>
-        <i class="glyphicon glyphicon-pencil">
-      </i><% end %>
-      <%= link_to project_concept_path(@project, @concept), title: "Delete", method: :delete, data: { confirm: 'Are you sure?' } do %>
-        <i class="glyphicon glyphicon-trash">
-      </i><% end %>
-    </div>
+    <%= render partial: "concept",
+      locals: {
+        concept: @concept,
+        controls: true
+      }
+    %>
   </div>
 </div>
 
@@ -43,7 +34,7 @@
         size: '150px',
         controls: false,
         fixed: true
-      } 
+      }
     %>
 
     <div class="text-center">
