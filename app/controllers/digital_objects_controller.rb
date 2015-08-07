@@ -48,15 +48,25 @@ class DigitalObjectsController < ApplicationController
     @concept = Concept.new
 
     # Get object listing.
-    objects = @project.object_index
+    items = @project.object_index
 
     # Get index of this object within listing.
-    index = objects.find_index(@digital_object)
+    index = items.find_index(@digital_object)
 
     # Determine relative links.
     @index_page = index / PAGE_ITEMS
-    @previous_item = objects[index - 1].id
-    @next_item = objects[index + 1].id
+    @previous_item = nil
+    @next_item = nil
+
+    # Find previous item.
+    if index > 0
+      @previous_item = items[index - 1].id
+    end
+
+    # Find next item.
+    if index < (items.count - 1)
+      @next_item = items[index + 1].id
+    end
   end
 
   # GET /digital_objects/new

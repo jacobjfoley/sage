@@ -16,13 +16,17 @@
         <div class="btn btn-default"><span class="glyphicon glyphicon-step-backward"></span> Back
       </div><% end %>
 
-      <%= link_to project_digital_object_path(id: @previous_item), title: "Previous" do %>
-        <div class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Previous
-      </div><% end %>
+      <% if @previous_item %>
+        <%= link_to project_digital_object_path(id: @previous_item), title: "Previous" do %>
+          <div class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Previous
+        </div><% end %>
+      <% end %>
 
-      <%= link_to project_digital_object_path(id: @next_item), title: "Next" do %>
-        <div class="btn btn-default"><span class="glyphicon glyphicon-arrow-right"></span> Next
-      </div><% end %>
+      <% if @next_item %>
+        <%= link_to project_digital_object_path(id: @next_item), title: "Next" do %>
+          <div class="btn btn-default"><span class="glyphicon glyphicon-arrow-right"></span> Next
+        </div><% end %>
+      <% end %>
     </div>
   </div>
 

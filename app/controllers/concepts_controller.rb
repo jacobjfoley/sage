@@ -28,7 +28,7 @@ class ConceptsController < ApplicationController
     end
 
     # Determine if a next page is possible.
-    if end_index < @project.concepts.count
+    if end_index < (@project.concepts.count - 1)
       @next_page = page + 1
     end
 
@@ -48,8 +48,18 @@ class ConceptsController < ApplicationController
 
     # Determine relative links.
     @index_page = index / PAGE_ITEMS
-    @previous_item = items[index - 1].id
-    @next_item = items[index + 1].id
+    @previous_item = nil
+    @next_item = nil
+
+    # Find previous item.
+    if index > 0
+      @previous_item = items[index - 1].id
+    end
+
+    # Find next item.
+    if index < (items.count - 1)
+      @next_item = items[index + 1].id
+    end
   end
 
   # GET /concepts/new
