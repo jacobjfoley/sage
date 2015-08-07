@@ -23,14 +23,29 @@ module ThumbnailHelper
     end
   end
 
-  # Determine style based on thumbnail orientation.
-  def thumbnail_class(thumbnail)
+  # Determine class based on thumbnail orientation.
+  def thumbnail_class(thumbnail, gallery)
 
     # Return a style based on orientation.
     if thumbnail.portrait?
-      return "portrait_thumbnail"
+      if gallery
+        return "portrait_thumbnail"
+      else
+        return "landscape_thumbnail"
+      end
     else
       return "landscape_thumbnail"
+    end
+  end
+
+  # Determine style based on thumbnail sizes.
+  def thumbnail_style(thumbnail)
+
+    # Check to see if this has a thumbnail URL.
+    if thumbnail.url && !thumbnail.local
+      return "max-width: #{thumbnail.actual_x}; max-height: #{thumbnail.actual_y}"
+    else
+      return "max-width: #{x}; max-height: #{y}"
     end
   end
 end

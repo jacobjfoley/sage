@@ -2,15 +2,16 @@
 
   <%= link_to project_digital_object_path(id: object.id) do%>
 
-    <% if fixed %>
+    <% if gallery %>
       <div style="height: <%= size %>">
     <% else %>
       <div>
     <% end %>
-      <%= image_tag thumbnail_url(object.thumbnail(size, size)),
+      <% thumbnail = object.thumbnail(size, size) %>
+      <%= image_tag thumbnail_url(thumbnail),
         id: "thumbnail_#{object.id}",
-        class: thumbnail_class(object.thumbnail(size, size)),
-        style: "max-width: #{size}; max-height: #{size}"
+        class: thumbnail_class(thumbnail, gallery),
+        style: thumbnail_style(thumbnail)
       %>
     </div>
 
