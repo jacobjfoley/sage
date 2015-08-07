@@ -15,6 +15,8 @@ class Project < ActiveRecord::Base
   validates :contributor_key, uniqueness: true, allow_nil: true
   validates :administrator_key, uniqueness: true, allow_nil: true
 
+  SAMPLE_SIZE = 5
+
   # Retrieve objects, reverse creation order.
   def object_index
     return digital_objects.order(:created_at).to_a.reverse
@@ -138,12 +140,20 @@ class Project < ActiveRecord::Base
     Project.all.each do |project|
       all_keys[project.viewer_key] = {project: project, position: "Viewer"}
       all_keys[project.contributor_key] = {project: project, position: "Contributor"}
-      all_keys[project.annotator_key] = {project: project, position: "Contributor"}
+      all_keys[project.annotator_key] = {project: project, position: "Annotator"}
       all_keys[project.administrator_key] = {project: project, position: "Administrator"}
     end
 
     # Check if provided key is present.
     if (all_keys.key?(key) && !(key.nil?))
+
+      # Check for annotator key.
+      if all_keys[key][:position].eql? "Annotator"
+
+        # Generate a sample and adjust details to direct to the sample.
+        all_keys[key][:project] = all_keys[key][:project].sample(user)
+        all_keys[key][:position] = "Contributor"
+      end
 
       # Get details.
       project = all_keys[key][:project]
@@ -253,24 +263,66 @@ class Project < ActiveRecord::Base
     end
   end
 
-  private
+  # Create a sample project based on this one.
+  def sample(user)
 
-  # Aggregate a response with the in-progress results hash.
-  def aggregate(results, response)
+    # Define new details.
+    count = children.select { |child| child.users.include? user }.count + 1
+    sample_name = "Sample #{count} of " + name
 
-    # For each element in the response:
-    response.keys.each do |key|
+    # Determine algorithm to use in sample.
+    algorithms = ["SAGA", "VotePlus"].sort_by { |algorithm|
+      children.where(algorithm: algorithm).count
+    }
 
-      # If the key is already in the results:
-      if results.key? key
+    # Create a new project with details.
+    sample = Project.create(
+      name: sample_name,
+      notes: notes,
+      algorithm: algorithms.first,
+      parent: self
+    )
 
-        # Add to the key's influence.
-        results[key] += response[key]
-      else
+    # Assign administrators to sample.
+    UserRole.where(project: self, position: "Administrator").each do |admin|
 
-        # Introduce key to results with its influence.
-        results[key] = response[key]
+      # Create new admin position in sample for the original admins.
+      UserRole.create(
+        user: admin.user,
+        project: sample,
+        position: "Administrator"
+      )
+    end
+
+    # Establish potential locations.
+    potential = []
+    digital_objects.each do |object|
+      potential << object.location
+    end
+
+    # Establish viewed locations.
+    viewed = []
+    children.select { |child| child.users.include? user }.each do |child|
+      child.digital_objects.each do |object|
+        viewed << object.location
       end
     end
+
+    # Find valid locations.
+    locations = (potential - viewed).sort_by { |location|
+
+      # Sort by frequency of allocation.
+      DigitalObject.where(location: location).select {|obj| obj.project.parent == self}.count
+    }
+
+    # Feed select objects to sample.
+    locations[0..SAMPLE_SIZE].each do |location|
+
+      # Create new object in sample.
+      DigitalObject.create(location: location, project: sample)
+    end
+
+    # Return the sample.
+    return sample
   end
 end
