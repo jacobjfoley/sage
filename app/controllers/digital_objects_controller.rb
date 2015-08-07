@@ -94,7 +94,7 @@ class DigitalObjectsController < ApplicationController
     locations.each do |location|
 
       # Create digital object.
-      saved &= DigitalObject.create(
+      saved &= DigitalObject.find_or_create_by(
         project_id: @project.id,
         location: location.chomp
       )
@@ -158,14 +158,15 @@ class DigitalObjectsController < ApplicationController
   # POST /objects/1/add_created_concept
   def add_created_concept
 
-    # Create new concept.
-    @concept = Concept.new(params.require(:concept).permit(:description))
+    # Details.
+    details = params.require(:concept).permit(:description)
+    details[:project_id] = @project.id
 
-    # Set the project ID from the parameters passed to this controller.
-    @concept.project_id = @project.id
+    # Create new concept.
+    @concept = Concept.find_or_create_by(details)
 
     # Attempt to save.
-    if @concept.save
+    if @concept
 
       # Associate new concept with this object.
       unless @digital_object.concepts.include? @concept

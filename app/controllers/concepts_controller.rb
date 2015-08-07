@@ -64,13 +64,16 @@ class ConceptsController < ApplicationController
   # POST /concepts
   # POST /concepts.json
   def create
-    @concept = Concept.new(concept_params)
 
-    # Set the project ID from the parameters passed to this controller.
-    @concept.project_id = @project.id
+    # Fetch and configure params.
+    details = concept_params
+    details[:project_id] = @project.id
+
+    # Find or create concept.
+    @concept = Concept.find_or_create_by(details)
 
     respond_to do |format|
-      if @concept.save
+      if @concept
         format.html { redirect_to new_project_concept_path(@project), notice: 'Concept was successfully created.' }
         format.json { render action: 'show', status: :created, location: @concept }
       else

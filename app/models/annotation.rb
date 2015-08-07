@@ -4,6 +4,9 @@ class Annotation < ActiveRecord::Base
   belongs_to :project
   belongs_to :user
 
+  validates :digital_object, presence: true
+  validates :concept, presence: true
+
   before_create :set_project
 
   private

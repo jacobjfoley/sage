@@ -12,7 +12,7 @@ module SAGA
       aggregate_popular(results)
 
       # Prepare results.
-      results = filter_weak(results)
+      #results = filter_weak(results)
       results = sort(results)
 
       # Return results.
@@ -73,18 +73,16 @@ module SAGA
     def filter_weak(results)
 
       # Define candidates.
-      candidates = results.select { |k, v| v < 1.0 }
+      candidates = results.select { |key, value| value < 1.0 }
 
       # Sort candidates.
-      candidates = candidates.sort_by {
-        |a, b| candidates[a] <=> candidates[b]
-      }.to_h
+      candidates = sort(candidates)
 
       # Find cumulative influence held by the candidates.
       influence = candidates.values.reduce(:+)
 
       # Find candidates who are to be deleted:
-      weak_candidates = candidates.keys[influence.floor..-1]
+      weak_candidates = candidates.keys[influence.ceil..-1]
 
       # Delete those results which didn't make it.
       weak_candidates.each do |candidate|

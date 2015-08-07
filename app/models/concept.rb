@@ -109,12 +109,14 @@ class Concept < ActiveRecord::Base
   # Flatten another concept into this one.
   def flatten(other_concept)
 
-    # Go through the other concepts's objects.
-    other_concept.digital_objects.each do |object|
+    # Go through the other concepts's annotations.
+    Annotation.where(concept: other_concept).each do |prospective|
 
-      # Accept each new object.
-      unless digital_objects.include? object
-        digital_objects << object
+      # Check if already annotated.
+      unless digital_objects.include? prospective.digital_object
+
+        # Modify annotation.
+        prospective.update(concept_id: id)
       end
     end
 
