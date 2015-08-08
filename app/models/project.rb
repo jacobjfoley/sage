@@ -271,7 +271,7 @@ class Project < ActiveRecord::Base
 
     # Define new details.
     count = assigned.count + 1
-    sample_name = "Sample #{count} of " + name + " (#{user.name})"
+    sample_name = "[#{user.name}] Sample #{count} of " + name
 
     # Determine algorithm to use in sample.
     algorithms = ["SAGA", "VotePlus"].sort_by { |algorithm|
