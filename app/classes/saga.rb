@@ -75,6 +75,13 @@ module SAGA
       # Define candidates.
       candidates = results.select { |key, value| value < 1.0 }
 
+      # In the event of no weak candidates:
+      if candidates.empty?
+
+        # Unaltered results.
+        return results
+      end
+
       # Sort candidates.
       candidates = sort(candidates)
 
