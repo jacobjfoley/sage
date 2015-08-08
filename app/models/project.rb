@@ -321,7 +321,7 @@ class Project < ActiveRecord::Base
     }
 
     # Feed select objects to sample.
-    locations[0..SAMPLE_SIZE].each do |location|
+    locations[0...SAMPLE_SIZE].each do |location|
 
       # Create new object in sample.
       DigitalObject.create(location: location, project: sample)

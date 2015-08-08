@@ -12,7 +12,7 @@ class DigitalObjectsController < ApplicationController
   helper ThumbnailHelper
 
   # Note: minus one for the new object button.
-  PAGE_ITEMS = 39
+  PAGE_ITEMS = 27
 
   # GET /digital_objects
   # GET /digital_objects.json
