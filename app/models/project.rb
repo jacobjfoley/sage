@@ -276,8 +276,9 @@ class Project < ActiveRecord::Base
     # Determine algorithm to use in sample.
     algorithms = ["SAGA", "VotePlus"].sort_by { |algorithm|
 
-      samples = children.where(algorithm: algorithm)
-      samples.select { |child| child.users.include? user }.count
+      # Count how often this algorithm has been assigned to samples given to
+      # this user.
+      user.projects.where(parent: self, algorithm: algorithm).count
     }
 
     # Create a new project with details.
@@ -300,28 +301,18 @@ class Project < ActiveRecord::Base
     end
 
     # Establish potential locations.
-    potential = []
-    digital_objects.each do |object|
-      potential << object.location
-    end
+    potential = digital_objects.map { |object| object.location }
 
     # Establish viewed locations.
-    viewed = []
     assigned.each do |child|
-      child.digital_objects.each do |object|
-        viewed << object.location
-      end
+      potential -= child.digital_objects.map { |object| object.location }
     end
 
-    # Find valid locations.
-    locations = (potential - viewed).sort_by { |location|
-
-      # Sort by frequency of allocation.
-      DigitalObject.where(location: location).select {|obj| obj.project.parent == self}.count
-    }
+    # Randomise potential locations.
+    potential.shuffle!
 
     # Feed select objects to sample.
-    locations[0...SAMPLE_SIZE].each do |location|
+    potential[0...SAMPLE_SIZE].each do |location|
 
       # Create new object in sample.
       DigitalObject.create(location: location, project: sample)
