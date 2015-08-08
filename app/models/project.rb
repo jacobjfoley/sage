@@ -275,7 +275,9 @@ class Project < ActiveRecord::Base
 
     # Determine algorithm to use in sample.
     algorithms = ["SAGA", "VotePlus"].sort_by { |algorithm|
-      assigned.where(algorithm: algorithm).count
+
+      samples = children.where(algorithm: algorithm)
+      samples.select { |child| child.users.include? user }.count
     }
 
     # Create a new project with details.
