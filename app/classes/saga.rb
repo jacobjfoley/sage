@@ -12,7 +12,7 @@ module SAGA
       aggregate_popular(results)
 
       # Prepare results.
-      #results = filter_weak(results)
+      results = filter_weak(results)
       results = sort(results)
 
       # Return results.

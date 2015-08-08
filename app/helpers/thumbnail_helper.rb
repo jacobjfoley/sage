@@ -45,7 +45,7 @@ module ThumbnailHelper
     if thumbnail.url && !thumbnail.local
       return "max-width: #{thumbnail.actual_x}; max-height: #{thumbnail.actual_y}"
     else
-      return "max-width: #{x}; max-height: #{y}"
+      return "max-width: #{thumbnail.x}; max-height: #{thumbnail.y}"
     end
   end
 end
