@@ -267,11 +267,11 @@ class Project < ActiveRecord::Base
   def sample(user)
 
     # Find the sample projects assigned to this user.
-    assigned = children.select { |child| child.users.include? user }
+    assigned = user.projects.where(parent: self)
 
     # Define new details.
     count = assigned.count + 1
-    sample_name = "Sample #{count} of " + name
+    sample_name = "Sample #{count} of " + name + " (#{user.name})"
 
     # Determine algorithm to use in sample.
     algorithms = ["SAGA", "VotePlus"].sort_by { |algorithm|
