@@ -43,9 +43,9 @@ module ThumbnailHelper
 
     # Check to see if this has a thumbnail URL.
     if thumbnail.url && !thumbnail.local
-      return "max-width: #{thumbnail.actual_x}; max-height: #{thumbnail.actual_y}"
+      return "max-width: #{thumbnail.actual_x}px; max-height: #{thumbnail.actual_y}px"
     else
-      return "max-width: #{thumbnail.x}; max-height: #{thumbnail.y}"
+      return "max-width: #{thumbnail.x}px; max-height: #{thumbnail.y}px"
     end
   end
 end
