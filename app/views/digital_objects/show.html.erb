@@ -27,6 +27,10 @@
           <div class="btn btn-default"><span class="glyphicon glyphicon-arrow-right"></span> Next
         </div><% end %>
       <% end %>
+
+      <%= link_to project_digital_object_path(id: @random_item), title: "Random" do %>
+        <div class="btn btn-default"><span class="glyphicon glyphicon-step-forward"></span> Random
+      </div><% end %>
     </div>
   </div>
 

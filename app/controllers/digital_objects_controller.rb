@@ -55,6 +55,7 @@ class DigitalObjectsController < ApplicationController
 
     # Determine relative links.
     @index_page = index / PAGE_ITEMS
+    @random_item = items[Random.rand(items.count)].id
     @previous_item = nil
     @next_item = nil
 
