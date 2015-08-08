@@ -56,6 +56,7 @@ Sage::Application.routes.draw do
   match "/guides", via: "get", to: "site#guides"
   match "/feedback", via: "get", to: "site#feedback"
   match "/participant_information", via: "get", to: "site#participant_information"
+  match "/test", via: "get", to: "site#test"
 
   # Oauth controller.
   match "/receive_oauth2", via: "get", to: "projects#receive_oauth2"
