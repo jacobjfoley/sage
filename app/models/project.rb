@@ -15,7 +15,7 @@ class Project < ActiveRecord::Base
   validates :contributor_key, uniqueness: true, allow_nil: true
   validates :administrator_key, uniqueness: true, allow_nil: true
 
-  SAMPLE_SIZE = 50
+  SAMPLE_SIZE = 25
 
   # Retrieve objects, reverse creation order.
   def object_index
