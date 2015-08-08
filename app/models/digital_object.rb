@@ -183,7 +183,7 @@ class DigitalObject < ActiveRecord::Base
   def create_thumbnails
 
     # Create the two common thumbnail sizes.
-    delay.thumbnail(150,150)
-    delay.thumbnail(400,400)
+    thumbnail(150,150)
+    thumbnail(400,400)
   end
 end
