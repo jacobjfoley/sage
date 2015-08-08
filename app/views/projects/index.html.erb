@@ -26,7 +26,7 @@
           <% if leaving? @user, project %>
             <%= link_to project_path(project), title: "Leave", method: :delete,
               data: { confirm: 'Are you sure you wish to leave this project?' } do %>
-              <i class="glyphicon glyphicon-remove-circle"></i>
+              <i class="glyphicon glyphicon-off"></i>
             <% end %>
           <% else %>
             <%= link_to project_path(project), title: "Delete", method: :delete,
