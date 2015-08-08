@@ -15,7 +15,7 @@ class Project < ActiveRecord::Base
   validates :contributor_key, uniqueness: true, allow_nil: true
   validates :administrator_key, uniqueness: true, allow_nil: true
 
-  SAMPLE_SIZE = 5
+  SAMPLE_SIZE = 50
 
   # Retrieve objects, reverse creation order.
   def object_index
@@ -266,29 +266,32 @@ class Project < ActiveRecord::Base
   # Create a sample project based on this one.
   def sample(user)
 
+    # Find the sample projects assigned to this user.
+    assigned = children.select { |child| child.users.include? user }
+
     # Define new details.
-    count = children.select { |child| child.users.include? user }.count + 1
+    count = assigned.count + 1
     sample_name = "Sample #{count} of " + name
 
     # Determine algorithm to use in sample.
     algorithms = ["SAGA", "VotePlus"].sort_by { |algorithm|
-      children.where(algorithm: algorithm).count
+      assigned.where(algorithm: algorithm).count
     }
 
     # Create a new project with details.
     sample = Project.create(
       name: sample_name,
       notes: notes,
-      algorithm: algorithms.first,
-      parent: self
+      parent: self,
+      algorithm: algorithms.first
     )
 
     # Assign administrators to sample.
-    UserRole.where(project: self, position: "Administrator").each do |admin|
+    user_roles.where(position: "Administrator").each do |administrator|
 
       # Create new admin position in sample for the original admins.
       UserRole.create(
-        user: admin.user,
+        user: administrator.user,
         project: sample,
         position: "Administrator"
       )
@@ -302,7 +305,7 @@ class Project < ActiveRecord::Base
 
     # Establish viewed locations.
     viewed = []
-    children.select { |child| child.users.include? user }.each do |child|
+    assigned.each do |child|
       child.digital_objects.each do |object|
         viewed << object.location
       end
