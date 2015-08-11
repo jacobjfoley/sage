@@ -31,7 +31,7 @@ class Evaluation
 
       # Add to measurements.
       measurements[algorithm][:rate] += analytics.annotation_rate
-      measurements[algorithm][:reuse] += analytics.annotation_reuse
+      measurements[algorithm][:reuse] += analytics.reuse_rate
       measurements[algorithm][:count] += 1
     end
 
@@ -39,11 +39,11 @@ class Evaluation
     measurements.keys.each do |key|
 
       # Calculate averages.
-      avg_rate = measurements[algorithm][:rate] / measurements[algorithm][:count]
-      avg_reuse = measurements[algorithm][:reuse] / measurements[algorithm][:count]
+      avg_rate = measurements[key][:rate] / measurements[key][:count]
+      avg_reuse = measurements[key][:reuse] / measurements[key][:count]
 
       # Print results.
-      puts "#{key} has rate #{avg_rate} and reuse #{avg_reuse}%."
+      puts "#{key} averages #{avg_rate.round(2)} annotations/minute and has an annotation reuse rate of #{avg_reuse.round(0)}%."
     end
   end
 
