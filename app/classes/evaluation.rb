@@ -1,9 +1,56 @@
 class Evaluation
 
+  # Evaluate samples produced from a sample collection.
+  def evaluate_samples(project_id)
+
+    # Find all samples.
+    samples = Project.where(parent_id: project_id)
+
+    # Define measurements.
+    measurements = {}
+
+    # Run through each sample.
+    samples.each do |sample|
+
+      # Create new analytics device.
+      analytics = Analytics.new(sample)
+
+      # Get the algorithm.
+      algorithm = sample.algorithm
+
+      # Determine if this algorithm is new.
+      if !measurements.key? algorithm
+
+        # Introduce algorithm.
+        measurements[algorithm] = {
+          rate: 0.0,
+          reuse: 0.0,
+          count: 0
+        }
+      end
+
+      # Add to measurements.
+      measurements[algorithm][:rate] += analytics.annotation_rate
+      measurements[algorithm][:reuse] += analytics.annotation_reuse
+      measurements[algorithm][:count] += 1
+    end
+
+    # For each algorithm:
+    measurements.keys.each do |key|
+
+      # Calculate averages.
+      avg_rate = measurements[algorithm][:rate] / measurements[algorithm][:count]
+      avg_reuse = measurements[algorithm][:reuse] / measurements[algorithm][:count]
+
+      # Print results.
+      puts "#{key} has rate #{avg_rate} and reuse #{avg_reuse}%."
+    end
+  end
+
   # Process project and report scores.
   # Testing partition is a value between 0 and 1. For instance, 0.4 means that
   # the first 40% is training material and remaining 60% is test material.
-  def evaluate(project_id, testing_partition)
+  def evaluate_performance(project_id, testing_partition)
 
     # Retrieve the desired project.
     project = Project.find(project_id)
