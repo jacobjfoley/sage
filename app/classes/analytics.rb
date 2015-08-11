@@ -188,7 +188,7 @@ class Analytics
     end
 
     # Filter clusters with only one annotation.
-    clusters.delete_if {|cluster| cluster[:count] == 1}
+    clusters.delete_if { |cluster| cluster[:count] == 1 }
 
     # Return results.
     return clusters
@@ -208,7 +208,7 @@ class Analytics
     clusters.each do |cluster|
 
       # Increment totals.
-      time += cluster[:end_time] - cluster[:start_time]
+      time += (cluster[:end_time] - cluster[:start_time]).abs
       annotations += cluster[:count]
     end
 
