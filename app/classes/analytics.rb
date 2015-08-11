@@ -156,25 +156,64 @@ class Analytics
     return manual_words
   end
 
-  # Calculate initial annotation rate.
-  def annotation_rate
+  # Returns an array of annotation clusters.
+  def cluster_annotations
 
-    # Find the first annotation in this project.
-    first = @project.annotations.first
+    # Get annotations.
+    annotations = @project.annotations
 
-    # If no annotations exist:
-    if first.nil?
+    # Initialise results array.
+    clusters = []
 
-      # Return zero.
-      return 0
+    # Pass through annotations.
+    annotations.each do |annotation|
+
+      # If a new cluster:
+      if clusters.empty? || (annotation.created_at > (clusters.last[:end_time] + 2.minutes))
+
+        # Create new in-progress hash.
+        clusters << {
+          start_time: annotation.created_at,
+          end_time: annotation.created_at,
+          count: 1
+        }
+
+      # Use existing.
+      else
+
+        # Append to cluster.
+        clusters.last[:end_time] = annotation.created_at
+        clusters.last[:count] += 1
+      end
     end
 
-    # Establish window timeframe.
-    time = first.created_at + 10.minutes
+    # Filter clusters with only one annotation.
+    clusters.delete_if {|cluster| cluster[:count] == 1}
 
-    # Limit annotations to inside window.
-    return @project.annotations.where("created_at <= ?", time).count
+    # Return results.
+    return clusters
+  end
 
+  # Finds the average annotation rate.
+  def annotation_rate
+
+    # Get clusters.
+    clusters = cluster_annotations
+
+    # Define values.
+    time = 0.0
+    annotations = 0.0
+
+    # Pass through clusters.
+    clusters.each do |cluster|
+
+      # Increment totals.
+      time += cluster[:end_time] - cluster[:start_time]
+      annotations += cluster[:count]
+    end
+
+    # Return average annotations/minute.
+    return annotations * 60 / time
   end
 
   # Capture a project to analyse.
