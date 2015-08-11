@@ -160,7 +160,7 @@ class Analytics
   def cluster_annotations
 
     # Get annotations.
-    annotations = @project.annotations
+    annotations = @project.annotations.order(:created_at)
 
     # Initialise results array.
     clusters = []
