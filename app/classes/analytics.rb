@@ -127,6 +127,9 @@ class Analytics
     # Determine annotation rate.
     statistics[:annotation_rate] = annotation_rate
 
+    # Determine reuse rate.
+    statistics[:annotation_reuse] = reuse_rate
+
     # Return statistics.
     return statistics
   end
@@ -214,6 +217,20 @@ class Analytics
 
     # Return average annotations/minute.
     return annotations * 60 / time
+  end
+
+  # Find the proportion of reused concepts vs single concepts.
+  def reuse_rate
+
+    # Find the number of concepts that were used in multiple annotations.
+    reused = @concepts.select { |concept| concept.annotations.count > 1 }.count
+
+    # Return the percentage, or 0 if no concepts.
+    if @concepts.count > 0
+      return reused.to_f * 100 / @concepts.count
+    else
+      return 0
+    end
   end
 
   # Capture a project to analyse.
