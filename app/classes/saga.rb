@@ -214,20 +214,33 @@ module SAGA
       # Find all cluster members.
       cluster = find_cluster(@element.id)
 
-      # Determine portion of influence.
-      portion = influence / cluster.values.reduce(:+)
+      # Find sum of cluster values.
+      total = cluster.values.reduce(:+)
 
       # Create results hash.
       results = {}
 
-      # For each cluster member:
-      cluster.keys.each do |key|
+      # If there are useful text similarity results:
+      if total > 0
 
-        # Call each member with their portion of total influence.
-        response = key.disperse(cluster[key] * portion, propagations)
+        # Divide influence into portions.
+        portion = influence / total
 
-        # Assimilate response.
-        aggregate(results, response)
+        # For each cluster member:
+        cluster.keys.each do |key|
+
+          # Call each member with their portion of total influence.
+          response = key.disperse(cluster[key] * portion, propagations)
+
+          # Assimilate response.
+          aggregate(results, response)
+        end
+
+      # If there are no useful text similarity results:
+      else
+
+        # Disperse via own associations only.
+        results = disperse(influence, propagations)
       end
 
       # Return end result.
