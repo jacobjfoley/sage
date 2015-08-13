@@ -258,7 +258,8 @@ class Project < ActiveRecord::Base
       Annotation.create(
         digital_object_id: object_mapping[annotation.digital_object_id],
         concept_id: concept_mapping[annotation.concept_id],
-        user_id: annotation.user_id
+        user_id: annotation.user_id,
+        provenance: "Pulled"
       )
     end
   end
@@ -274,7 +275,7 @@ class Project < ActiveRecord::Base
     sample_name = "[#{user.name}] Sample #{count} of " + name
 
     # Determine algorithm to use in sample.
-    algorithms = ["SAGA", "VotePlus"].sort_by { |algorithm|
+    algorithms = ["SAGA", "VotePlus"].shuffle!.sort_by { |algorithm|
 
       # Count how often this algorithm has been assigned to samples given to
       # this user.

@@ -159,7 +159,8 @@ class DigitalObjectsController < ApplicationController
       Annotation.create(
         digital_object_id: @digital_object.id,
         concept_id: @concept.id,
-        user_id: session[:user_id]
+        user_id: session[:user_id],
+        provenance: "Existing"
       )
     end
 
@@ -184,7 +185,8 @@ class DigitalObjectsController < ApplicationController
         Annotation.create(
           digital_object_id: @digital_object.id,
           concept_id: @concept.id,
-          user_id: session[:user_id]
+          user_id: session[:user_id],
+          provenance: "New"
         )
       end
 
