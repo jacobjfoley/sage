@@ -3,7 +3,7 @@ class ConceptsController < ApplicationController
   before_action :check_access
   before_action :set_project
   before_action :set_concept, only: [:show, :edit, :update, :destroy, :add_object, :remove_object]
-  before_action :set_object, only: [:add_object, :remove_object, :create_from_object]
+  before_action :set_object, only: [:add_object, :remove_object]
 
   layout 'control'
 
