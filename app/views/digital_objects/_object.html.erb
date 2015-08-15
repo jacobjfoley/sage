@@ -10,7 +10,7 @@
       <% thumbnail = object.thumbnail(size, size) %>
       <%= image_tag thumbnail_url(thumbnail),
         id: "thumbnail_#{object.id}",
-        class: thumbnail_class(thumbnail, gallery),
+        class: thumbnail_class(thumbnail, gallery) + " rounded",
         style: thumbnail_style(thumbnail)
       %>
     </div>
