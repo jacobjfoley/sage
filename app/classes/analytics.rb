@@ -197,39 +197,75 @@ class Analytics
     return clusters
   end
 
-  # Finds the average annotation rate.
-  def annotation_rate
+  # Finds the number of annotations in clusters.
+  def annotation_count
+
+    # Get clusters.
+    clusters = cluster_annotations
+
+    # Define values.
+    count = 0
+
+    # Pass through clusters.
+    clusters.each do |cluster|
+
+      # Increment totals.
+      count += cluster[:count]
+    end
+
+    # Return total.
+    return count
+  end
+
+  # Finds the length of time spent annotating.
+  def annotation_period
 
     # Get clusters.
     clusters = cluster_annotations
 
     # Define values.
     time = 0.0
-    annotations = 0.0
 
     # Pass through clusters.
     clusters.each do |cluster|
 
       # Increment totals.
       time += (cluster[:end_time] - cluster[:start_time]).abs
-      annotations += cluster[:count]
     end
 
+    # Return total.
+    return time
+  end
+
+  # Finds the average annotation rate in annotations/minute.
+  def annotation_rate
+
     # Return average annotations/minute.
-    return annotations * 60 / time
+    return annotation_count * 60 / annotation_period
+  end
+
+  # Find the number of concepts with one annotation.
+  def one_rate
+
+    # Return the number.
+    return @concepts.select { |concept| concept.annotations.count == 1 }.count
+  end
+
+  # Find the number of concepts with many annotations.
+  def many_rate
+
+    # Return the number.
+    return @concepts.select { |concept| concept.annotations.count > 1 }.count
   end
 
   # Find the proportion of reused concepts vs single concepts.
   def reuse_rate
 
-    # Find the number of concepts that were used in multiple annotations.
-    reused = @concepts.select { |concept| concept.annotations.count > 1 }.count
-
     # Return the percentage, or 0 if no concepts.
     if @concepts.count > 0
-      return reused.to_f * 100 / @concepts.count
+      return many_rate.to_f * 100 / @concepts.count
     else
-      return 0
+      return 0.0
     end
   end
 

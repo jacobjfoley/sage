@@ -23,14 +23,22 @@ class Evaluation
 
         # Introduce algorithm.
         measurements[algorithm] = {
-          rate: 0.0,
+          annotation_count: 0,
+          annotation_period: 0.0,
+          annotation_rate: 0.0,
+          one: 0,
+          many: 0,
           reuse: 0.0,
           count: 0
         }
       end
 
       # Add to measurements.
-      measurements[algorithm][:rate] += analytics.annotation_rate
+      measurements[algorithm][:annotation_count] += analytics.annotation_count
+      measurements[algorithm][:annotation_period] += analytics.annotation_period
+      measurements[algorithm][:annotation_rate] += analytics.annotation_rate
+      measurements[algorithm][:one] += analytics.one_rate
+      measurements[algorithm][:many] += analytics.many_rate
       measurements[algorithm][:reuse] += analytics.reuse_rate
       measurements[algorithm][:count] += 1
     end
@@ -38,12 +46,25 @@ class Evaluation
     # For each algorithm:
     measurements.keys.each do |key|
 
+      # Fetch hash for this algoritm.
+      m = measurements[key]
+
       # Calculate averages.
-      avg_rate = measurements[key][:rate] / measurements[key][:count]
-      avg_reuse = measurements[key][:reuse] / measurements[key][:count]
+      avg_annotation_count = m[:annotation_count] / m[:count]
+      avg_annotation_period = m[:annotation_period] / (60 * m[:count])
+      avg_annotation_rate = m[:annotation_rate] / m[:count]
+      avg_one = m[:one] / m[:count]
+      avg_many = m[:many] / m[:count]
+      avg_reuse = m[:reuse] / m[:count]
 
       # Print results.
-      puts "#{key} averages #{avg_rate.round(2)} annotations/minute and has an annotation reuse rate of #{avg_reuse.round(0)}%."
+      puts "Algorithm: #{key}"
+      puts "-- Averages #{avg_annotation_count} annotations per sample."
+      puts "-- Averages #{avg_annotation_period.round(2)} minutes per sample."
+      puts "-- Averages #{avg_annotation_rate.round(2)} annotations/minute."
+      puts "-- #{avg_one} one-shot annotations and #{avg_many} reused anntoations."
+      puts "-- Annotation reuse rate of #{avg_reuse.round(0)}%."
+      #puts "-- Accepted: #{}, Created: #{}, Proportion: #{}%."
     end
   end
 
