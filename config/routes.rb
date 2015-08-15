@@ -53,7 +53,6 @@ Sage::Application.routes.draw do
   # Site pages.
   match "/welcome", via: "get", to: "site#welcome"
   match "/application", via: "get", to: "site#application"
-  match "/guides", via: "get", to: "site#guides"
   match "/feedback", via: "get", to: "site#feedback"
   match "/participant_information", via: "get", to: "site#participant_information"
   match "/test", via: "get", to: "site#test"
