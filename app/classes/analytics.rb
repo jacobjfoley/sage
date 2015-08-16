@@ -163,7 +163,7 @@ class Analytics
   def cluster_annotations
 
     # Get annotations.
-    annotations = @project.annotations.order(:created_at)
+    annotations = @annotations.order(:created_at)
 
     # Initialise results array.
     clusters = []
@@ -195,6 +195,20 @@ class Analytics
 
     # Return results.
     return clusters
+  end
+
+  # Find the number of annotations created via the add button.
+  def accepted
+
+    # Return the number of annotations created via this provenance.
+    return @annotations.where(provenance: "Existing").count
+  end
+
+  # Find the number of annotations created via the quick create button.
+  def created
+
+    # Return the number of annotations created via this provenance.
+    return @annotations.where(provenance: "New").count
   end
 
   # Finds the number of annotations in clusters.
@@ -279,5 +293,6 @@ class Analytics
     @users = @project.users
     @digital_objects = @project.digital_objects
     @concepts = @project.concepts
+    @annotations = @project.annotations
   end
 end
