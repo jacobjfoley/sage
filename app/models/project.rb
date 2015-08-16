@@ -270,6 +270,16 @@ class Project < ActiveRecord::Base
     # Find the sample projects assigned to this user.
     assigned = user.projects.where(parent: self)
 
+    # Check for incomplete sample.
+    incomplete = assigned.select { |p| p.annotations.count == 0 }.first
+
+    # If incomplete sample:
+    if incomplete
+
+      # Return the incomplete sample.
+      return incomplete
+    end
+
     # Define new details.
     count = assigned.count + 1
     sample_name = "[#{user.name}] Sample #{count} of " + name
