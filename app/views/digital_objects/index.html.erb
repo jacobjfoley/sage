@@ -1,12 +1,14 @@
 <h1>Objects</h1>
 
-<div class="col-sm-3 col-xs-6 text-center" style="height: 220px">
-  <%= link_to new_project_digital_object_path, title: "Create" do %>
-    <div class="btn btn-default" style="height: 150px; width: 150px">
-      <%= image_tag asset_path("add_file.png"), style: "height: 100%; width: auto;" %>
-    </div>
-  <% end %>
-</div>
+<% if !@user_role.position.eql? "Viewer" %>
+  <div class="col-sm-3 col-xs-6 text-center" style="height: 220px">
+    <%= link_to new_project_digital_object_path, title: "Create" do %>
+      <div class="btn btn-default" style="height: 150px; width: 150px">
+        <%= image_tag asset_path("add_file.png"), style: "height: 100%; width: auto;" %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
 
 <% @digital_objects.each do |digital_object| %>
   <div class="col-sm-3 col-xs-6" style="height: 220px">

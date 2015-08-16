@@ -1,6 +1,6 @@
 class DigitalObjectsController < ApplicationController
-
   before_action :check_logged_in
+  before_action :set_user_role
   before_action :check_access
   before_action :set_project
   before_action :set_digital_object, only: [:show, :edit, :update, :destroy,
@@ -11,8 +11,8 @@ class DigitalObjectsController < ApplicationController
 
   helper ThumbnailHelper
 
-  # Note: minus one for the new object button.
-  PAGE_ITEMS = 27
+  # Four images per row, seven rows.
+  DEFAULT_PAGE_ITEMS = 28
 
   # GET /digital_objects
   # GET /digital_objects.json
@@ -20,8 +20,8 @@ class DigitalObjectsController < ApplicationController
 
     # Find the current page.
     page = current_page
-    start_index = page * PAGE_ITEMS
-    end_index = start_index + PAGE_ITEMS
+    start_index = page * page_items
+    end_index = start_index + page_items
 
     # Initialise previous and next pages.
     @previous_page = nil
@@ -54,7 +54,7 @@ class DigitalObjectsController < ApplicationController
     index = items.find_index(@digital_object)
 
     # Determine relative links.
-    @index_page = index / PAGE_ITEMS
+    @index_page = index / page_items
     @random_item = items[Random.rand(items.count)].id
     @previous_item = nil
     @next_item = nil
@@ -251,6 +251,24 @@ class DigitalObjectsController < ApplicationController
       @project = Project.find(params[:project_id])
     end
 
+    # Get the role of the user in this project.
+    def set_user_role
+      @user_role = UserRole.find_by(user_id: session[:user_id], project_id: params[:project_id])
+    end
+
+    # Find the number of page items.
+    def page_items
+
+      # Check if the user is a viewer.
+      if @user_role.position.eql? "Viewer"
+        return DEFAULT_PAGE_ITEMS
+      else
+
+        # Leave room for create button.
+        return DEFAULT_PAGE_ITEMS - 1
+      end
+    end
+
     # Ensure that the user is currently logged in.
     def check_logged_in
       if !session.has_key? :user_id
@@ -275,20 +293,17 @@ class DigitalObjectsController < ApplicationController
          "add_created_concept", "import_drive_folder"
       ]
 
-      # Get the currently logged-in user's role in this project, if any.
-      @role = UserRole.find_by(user_id: session[:user_id], project_id: params[:project_id])
-
       # Check if a role exists.
-      if @role.nil?
+      if @user_role.nil?
 
         # User doesn't have a role in this project.
         redirect_to "/403.html"
       else
 
         # Filter incorrect permissions.
-        if (@role.position.eql? "Viewer") && (viewer_pages.include? params[:action])
-        elsif (@role.position.eql? "Contributor") && (contributor_pages.include? params[:action])
-        elsif (@role.position.eql? "Administrator") && (administrator_pages.include? params[:action])
+        if (@user_role.position.eql? "Viewer") && (viewer_pages.include? params[:action])
+        elsif (@user_role.position.eql? "Contributor") && (contributor_pages.include? params[:action])
+        elsif (@user_role.position.eql? "Administrator") && (administrator_pages.include? params[:action])
         else
           # No permissions.
           redirect_to "/403.html"

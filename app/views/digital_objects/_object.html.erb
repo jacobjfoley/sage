@@ -20,7 +20,7 @@
     </div>
   <% end %>
 
-  <% if controls %>
+  <% if controls && (!@user_role.position.eql? "Viewer") %>
     <%= link_to "#", title: "Flip Image", onclick: "$('#thumbnail_#{object.id}').toggleClass('flipped')" do %>
       <i class="glyphicon glyphicon-resize-horizontal">
     </i><% end %>

@@ -1,6 +1,7 @@
 <h1>Concepts</h1>
 
 <table class="table table-striped">
+  <% if !@user_role.position.eql? "Viewer" %>
   <tr>
     <td class="text-center">
       <%= link_to new_project_concept_path, title: "Create" do %>
@@ -9,6 +10,7 @@
       </div><% end %>
     </td>
   </tr>
+  <% end %>
 
   <% @concepts.each do |concept| %>
     <tr>

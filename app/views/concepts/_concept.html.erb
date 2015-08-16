@@ -4,7 +4,7 @@
   <% end %>
 </span>
 
-<% if controls %>
+<% if controls && (!@user_role.position.eql? "Viewer") %>
   <div class="pull-right">
 
     <%= link_to "https://www.google.com.au/search?q=#{concept.description}&tbm=isch", title: "Google Image Search", target: "_blank"  do %>
