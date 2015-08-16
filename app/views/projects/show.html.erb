@@ -28,32 +28,23 @@
 
   <br>
 
-  <div class="row">
-    <div class="col-md-3"><strong>Administrator key:</strong></div>
-    <div class="col-md-5"><%= @project.administrator_key %></div>
-    <div class="col-md-4"><%= link_to "Generate Key", generate_key_project_path(@project, type: "Administrator"), method: :post %> |
-    <%= link_to "Remove Key", reset_key_project_path(@project, type: "Administrator"), method: :post %></div>
-  </div>
+  <%= render partial: "key",
+    locals: { position: "Administrator", key: @project.administrator_key }
+  %>
 
-  <div class="row">
-    <div class="col-md-3"><strong>Contributor key:</strong></div>
-    <div class="col-md-5"><%= @project.contributor_key %></div>
-    <div class="col-md-4"><%= link_to "Generate Key", generate_key_project_path(@project, type: "Contributor"), method: :post %> |
-    <%= link_to "Remove Key", reset_key_project_path(@project, type: "Contributor"), method: :post %></div>
-  </div>
+  <%= render partial: "key",
+    locals: { position: "Contributor", key: @project.contributor_key }
+  %>
 
-  <div class="row">
-    <div class="col-md-3"><strong>Viewer key:</strong></div>
-    <div class="col-md-5"><%= @project.viewer_key %></div>
-    <div class="col-md-4"><%= link_to "Generate Key", generate_key_project_path(@project, type: "Viewer"), method: :post %> |
-    <%= link_to "Remove Key", reset_key_project_path(@project, type: "Viewer"), method: :post %></div>
-  </div>
+  <%= render partial: "key",
+    locals: { position: "Viewer", key: @project.viewer_key }
+  %>
 
 <% else %>
 
   <div class="row">
     <div class="col-md-3"></div>
-    
+
     <%= link_to projects_path do%>
       <div class="col-md-2 btn btn-default"><i class="glyphicon glyphicon-arrow-left"></i> Back</div>
     <% end %>
