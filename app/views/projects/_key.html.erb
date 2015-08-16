@@ -2,13 +2,17 @@
 
   <div class="col-md-3"><strong><%= position %> Key:</strong></div>
 
-  <div class="col-md-6 text-center"> <%= key %> </div>
+  <div class="col-md-5 text-center"> <%= key %> </div>
 
-  <div class="col-md-3">
+  <div class="col-md-4">
     <%= link_to generate_key_project_path(@project, type: position), method: :post do %>
-      <div class="btn btn-default">Generate</div><% end %>
+      <div class="btn btn-default">
+        <i class="glyphicon glyphicon-certificate"></i> Generate
+      </div><% end %>
     <%= link_to reset_key_project_path(@project, type: position), method: :post do %>
-      <div class="btn btn-default">Remove</div><% end %>
+      <div class="btn btn-default">
+        <i class="glyphicon glyphicon-erase"></i> Remove
+      </div><% end %>
   </div>
 
 </div>
