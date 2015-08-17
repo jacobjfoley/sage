@@ -29,6 +29,10 @@ class Thumbnail < ActiveRecord::Base
 
       # Create a thumbnail.
       thumbnail.generate
+    else
+
+      # Check thumbnail later.
+      thumbnail.delay.check_thumbnail
     end
 
     # Return the thumbnail.
@@ -47,6 +51,27 @@ class Thumbnail < ActiveRecord::Base
 
     # Generate the thumbnail image.
     SetThumbnailURLJob.perform_later(id)
+  end
+
+  # Check that the thumbnail image still exists.
+  def check_thumbnail
+
+    # Unless a local file or not a URI:
+    unless local || (url !~ URI_REGEXP)
+
+      # Begin attempt.
+      begin
+
+        # Fetch the resource's metadata.
+        response = RestClient.head(url)
+
+      # Rescue on exception.
+      rescue RestClient::ResourceNotFound
+
+        # Re-generate thumbnail.
+        generate
+      end
+    end
   end
 
   # Detect if the image is in portrait orientation.

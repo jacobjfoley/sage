@@ -1,6 +1,6 @@
 namespace :thumbnails do
-  desc "Resets all object thumbnail urls."
-  task reset_thumbnail_urls: :environment do
+  desc "Clears all object thumbnail urls."
+  task clear_object_thumbnail_urls: :environment do
 
     # Reset every object's location.
     DigitalObject.all.each do |object|
