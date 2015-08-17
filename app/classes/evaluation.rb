@@ -26,6 +26,7 @@ class Evaluation
           annotation_count: 0,
           annotation_period: 0.0,
           annotation_rate: 0.0,
+          annotation_count_total: 0,
           one: 0,
           many: 0,
           reuse: 0.0,
@@ -39,9 +40,10 @@ class Evaluation
 
       # Add to measurements.
       measurements[algorithm][:count] += 1
-      measurements[algorithm][:annotation_count] += analytics.annotation_count
-      measurements[algorithm][:annotation_period] += analytics.annotation_period
-      measurements[algorithm][:annotation_rate] += analytics.annotation_rate
+      measurements[algorithm][:annotation_count] += analytics.cluster_annotation_count
+      measurements[algorithm][:annotation_count_total] += analytics.annotation_count
+      measurements[algorithm][:annotation_period] += analytics.cluster_annotation_period
+      measurements[algorithm][:annotation_rate] += analytics.cluster_annotation_rate
       measurements[algorithm][:one] += analytics.one_rate
       measurements[algorithm][:many] += analytics.many_rate
       measurements[algorithm][:reuse] += analytics.reuse_rate
@@ -58,6 +60,7 @@ class Evaluation
       m = measurements[algorithm]
 
       # Calculate averages.
+      avg_annotation_count_total = m[:annotation_count_total].to_f / m[:count]
       avg_annotation_count = m[:annotation_count].to_f / m[:count]
       avg_annotation_period = m[:annotation_period] / (60 * m[:count])
       avg_annotation_rate = m[:annotation_rate] / m[:count]
@@ -86,7 +89,8 @@ class Evaluation
       # Print results.
       puts "Algorithm: #{algorithm}"
       puts "\n"
-      puts "-- Averages #{avg_annotation_count} annotations per sample."
+      puts "-- Averages #{avg_annotation_count_total} annotations per sample."
+      puts "-- Averages #{avg_annotation_count} annotations in clusters per sample."
       puts "\n"
       puts "-- Averages #{avg_annotation_period.round(2)} minutes per sample."
       puts "-- Averages #{avg_annotation_rate.round(2)} annotations/minute."

@@ -219,7 +219,7 @@ class Analytics
   end
 
   # Finds the number of annotations in clusters.
-  def annotation_count
+  def cluster_annotation_count
 
     # Get clusters.
     clusters = cluster_annotations
@@ -238,8 +238,15 @@ class Analytics
     return count
   end
 
+  # Find the number of annotations.
+  def annotation_count
+
+    # Return count.
+    return @annotations.count
+  end
+
   # Finds the length of time spent annotating.
-  def annotation_period
+  def cluster_annotation_period
 
     # Get clusters.
     clusters = cluster_annotations
@@ -259,10 +266,10 @@ class Analytics
   end
 
   # Finds the average annotation rate in annotations/minute.
-  def annotation_rate
+  def cluster_annotation_rate
 
     # Return average annotations/minute.
-    return annotation_count * 60 / annotation_period
+    return cluster_annotation_count * 60 / cluster_annotation_period
   end
 
   # Find the number of annotations which link to a well-annotated concept.
