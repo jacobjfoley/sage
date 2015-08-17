@@ -84,7 +84,7 @@ class Evaluation
       end
 
       # Print results.
-      puts "Algorithm: #{key}"
+      puts "Algorithm: #{algorithm}"
       puts "\n"
       puts "-- Averages #{avg_annotation_count} annotations per sample."
       puts "\n"
@@ -93,7 +93,7 @@ class Evaluation
       puts "\n"
       puts "-- Annotations to one-off concepts: #{avg_one}"
       puts "-- Annotations to hub concepts: #{avg_to_many}."
-      puts "-- Distribution of hub to one-off: #{avg_to_hub_rate}%."
+      puts "-- Hub annotation proportion: #{avg_to_hub_rate}%."
       puts "\n"
       puts "-- Averages #{avg_concepts} concepts."
       puts "-- One-off concept: #{avg_one}"
