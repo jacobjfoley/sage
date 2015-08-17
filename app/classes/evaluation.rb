@@ -31,6 +31,7 @@ class Evaluation
           reuse: 0.0,
           count: 0,
           accepted: 0,
+          concept_count: 0,
           created: 0
         }
       end
@@ -45,6 +46,7 @@ class Evaluation
       measurements[algorithm][:count] += 1
       measurements[algorithm][:accepted] += analytics.accepted
       measurements[algorithm][:created] += analytics.created
+      measurements[algorithm][:concept_count] += analytics.concept_count
     end
 
     # For each algorithm:
@@ -62,6 +64,7 @@ class Evaluation
       avg_reuse = m[:reuse] / m[:count]
       avg_accepted = m[:accepted].to_f / m[:count]
       avg_created = m[:created].to_f / m[:count]
+      avg_concepts = m[:concept_count].to_f / m[:count]
 
       # Calculate proportion.
       if (avg_accepted > 0 || avg_created > 0)
@@ -72,11 +75,15 @@ class Evaluation
 
       # Print results.
       puts "Algorithm: #{key}"
+      puts "\n"
       puts "-- Averages #{avg_annotation_count} annotations per sample."
       puts "-- Averages #{avg_annotation_period.round(2)} minutes per sample."
       puts "-- Averages #{avg_annotation_rate.round(2)} annotations/minute."
-      puts "-- #{avg_one} one-shot annotations and #{avg_many} reused anntoations."
+      puts "\n"
+      puts "-- #{avg_concepts} concepts, on average."
+      puts "-- #{avg_one} one-shot annotations and #{avg_many} reused annotations."
       puts "-- Annotation reuse rate of #{avg_reuse.round(0)}%."
+      puts "\n"
       puts "-- Accepted: #{avg_accepted}, Created: #{avg_created}."
       puts "-- Proportion (Accepted/All): #{proportion.round(2)}%."
     end

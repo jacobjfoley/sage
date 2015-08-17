@@ -159,6 +159,13 @@ class Analytics
     return manual_words
   end
 
+  # Returns the number of concepts in this project.
+  def concept_count
+
+    # Return concept count.
+    return @concepts.count
+  end
+
   # Returns an array of annotation clusters.
   def cluster_annotations
 
