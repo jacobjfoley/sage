@@ -32,28 +32,30 @@ class Evaluation
           count: 0,
           accepted: 0,
           concept_count: 0,
+          to_many: 0,
           created: 0
         }
       end
 
       # Add to measurements.
+      measurements[algorithm][:count] += 1
       measurements[algorithm][:annotation_count] += analytics.annotation_count
       measurements[algorithm][:annotation_period] += analytics.annotation_period
       measurements[algorithm][:annotation_rate] += analytics.annotation_rate
       measurements[algorithm][:one] += analytics.one_rate
       measurements[algorithm][:many] += analytics.many_rate
       measurements[algorithm][:reuse] += analytics.reuse_rate
-      measurements[algorithm][:count] += 1
       measurements[algorithm][:accepted] += analytics.accepted
       measurements[algorithm][:created] += analytics.created
       measurements[algorithm][:concept_count] += analytics.concept_count
+      measurements[algorithm][:to_many] += analytics.to_many_rate
     end
 
     # For each algorithm:
-    measurements.keys.each do |key|
+    measurements.keys.each do |algorithm|
 
       # Fetch hash for this algoritm.
-      m = measurements[key]
+      m = measurements[algorithm]
 
       # Calculate averages.
       avg_annotation_count = m[:annotation_count].to_f / m[:count]
@@ -65,6 +67,7 @@ class Evaluation
       avg_accepted = m[:accepted].to_f / m[:count]
       avg_created = m[:created].to_f / m[:count]
       avg_concepts = m[:concept_count].to_f / m[:count]
+      avg_to_many = m[:to_many].to_f / m[:count]
 
       # Calculate proportion.
       if (avg_accepted > 0 || avg_created > 0)
@@ -73,19 +76,33 @@ class Evaluation
         proportion = 0.0
       end
 
+      # Calculate hub rate.
+      if (avg_to_many > 0 || avg_one > 0)
+        avg_to_hub_rate = avg_to_many * 100.0 / (avg_to_many + avg_one)
+      else
+        avg_to_hub_rate = 0.0
+      end
+
       # Print results.
       puts "Algorithm: #{key}"
       puts "\n"
       puts "-- Averages #{avg_annotation_count} annotations per sample."
+      puts "\n"
       puts "-- Averages #{avg_annotation_period.round(2)} minutes per sample."
       puts "-- Averages #{avg_annotation_rate.round(2)} annotations/minute."
       puts "\n"
-      puts "-- #{avg_concepts} concepts, on average."
-      puts "-- #{avg_one} one-shot annotations and #{avg_many} reused annotations."
-      puts "-- Annotation reuse rate of #{avg_reuse.round(0)}%."
+      puts "-- Annotations to one-off concepts: #{avg_one}"
+      puts "-- Annotations to hub concepts: #{avg_to_many}."
+      puts "-- Distribution of hub to one-off: #{avg_to_hub_rate}%."
+      puts "\n"
+      puts "-- Averages #{avg_concepts} concepts."
+      puts "-- One-off concept: #{avg_one}"
+      puts "-- Hub concepts: #{avg_many}."
+      puts "-- Hub concept proportion: #{avg_reuse.round(0)}%."
       puts "\n"
       puts "-- Accepted: #{avg_accepted}, Created: #{avg_created}."
       puts "-- Proportion (Accepted/All): #{proportion.round(2)}%."
+      puts "\n"
     end
   end
 

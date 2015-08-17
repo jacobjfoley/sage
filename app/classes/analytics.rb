@@ -265,6 +265,22 @@ class Analytics
     return annotation_count * 60 / annotation_period
   end
 
+  # Find the number of annotations which link to a well-annotated concept.
+  def to_many_rate
+
+    # Find the "hub" concepts with > 1 annotation.
+    hubs = @concepts.select { |concept| concept.annotations.count == 1 }
+
+    # Accumulate annotation count within these hubs.
+    count = 0
+    hubs.each do |hub|
+      count += hub.annotations.count
+    end
+
+    # Return the number.
+    return count
+  end
+
   # Find the number of concepts with one annotation.
   def one_rate
 
