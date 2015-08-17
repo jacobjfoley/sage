@@ -276,7 +276,7 @@ class Analytics
   def to_many_rate
 
     # Find the "hub" concepts with > 1 annotation.
-    hubs = @concepts.select { |concept| concept.annotations.count == 1 }
+    hubs = @concepts.select { |concept| concept.annotations.count > 1 }
 
     # Accumulate annotation count within these hubs.
     count = 0
