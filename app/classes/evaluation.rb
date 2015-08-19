@@ -111,205 +111,221 @@ class Evaluation
   end
 
   # Process project and report scores.
-  # Testing partition is a value between 0 and 1. For instance, 0.4 means that
-  # the first 40% is training material and remaining 60% is test material.
-  def evaluate_performance(project_id, testing_partition)
+  # Training proportion is a value between 0.0 and 1.0. For instance, 0.4 means
+  # that the first 40% is training data and remaining 60% is testing data.
+  def evaluate_performance(project_id, training_proportion)
 
     # Retrieve the desired project.
     project = Project.find(project_id)
 
-    # Clone the project and capture the clone's ID.
-    clone_id = project.clone(1)
+    # Create a training project based on the original project.
+    training = training_project(project, training_proportion)
 
-    # Retrieve the clone of the provided project.
-    test_project = Project.find(clone_id)
+    # Get the items to evaluate.
+    domain = project.concepts
+    range = project.digital_objects
 
     # Get the truth hash for the project.
-    truth_hash = create_truth_hash(test_project)
+    truth_hash = create_truth_hash(project, domain)
 
-    # Partition the data in the test project.
-    partition(test_project, testing_partition)
+    # List algorithm names.
+    algorithm_names = ["Baseline"]
 
-    # Initialise algorithm hashes.
-    algorithms = []
-    #algorithms << { name: "SAGA", precision: [], recall: [] }
-    algorithms << { name: "Baseline", precision: [], recall: [] }
-    #algorithms << { name: "Vote", precision: [], recall: [] }
-    #algorithms << { name: "VotePlus", precision: [], recall: [] }
-    #algorithms << { name: "Sum", precision: [], recall: [] }
-    #algorithms << { name: "SumPlus", precision: [], recall: [] }
+    # Initialise algorithm records.
+    algorithms = {}
+    algorithm_names.each do |algorithm|
 
-    # For each test concept:
-    test_project.concepts.each do |concept|
+      # Create the algorithm's record.
+      algorithms[algorithm] = {
+        precision: [],
+        recall: [],
+        f05: [],
+        f1: [],
+        f2: [],
+        phi: [],
+      }
+    end
 
-      # Test each algorithm.
-      algorithms.each do |algorithm|
+    # For each item in the project:
+    domain.each do |item|
+
+      # Cycle through each algorithm.
+      algorithms.keys.each do |algorithm_name|
+
+        # Retrieve the algorithm's record.
+        record = algorithms[algorithm_name]
 
         # Use the algorithm to fetch suggestions.
-        suggestions = concept.algorithm(algorithm[:name]).suggestions.keys
+        suggestions = item.algorithm(algorithm_name).suggestions.keys
 
-        # Calculate precision.
-        algorithm[:precision] << precision(suggestions, truth_hash[concept])
+        # Get the scores of these suggestions
+        score = binary_classification(suggestions, truth_hash[item], range)
+        precision_score = precision(score)
+        recall_score = recall(score)
 
-        # Calculate recall.
-        algorithm[:recall] << recall(suggestions, truth_hash[concept])
+        # Record scores.
+        record[:precision] << precision_score
+        record[:recall] << recall_score
+        record[:phi] << phi_coefficient(score)
+        record[:f05] << f_score(precision_score, recall_score, 0.5)
+        record[:f1] << f_score(precision_score, recall_score, 1.0)
+        record[:f2] << f_score(precision_score, recall_score, 2.0)
       end
     end
 
-    # Calculate average scores.
-    algorithms.each do |algorithm|
+    # Cycle through each algorithm.
+    algorithms.keys.each do |algorithm_name|
 
-      # Introduce total precision variable.
-      total_precision = 0.0
+      # Retrieve the algorithm's record.
+      record = algorithms[algorithm_name]
 
-      # Accumulate precision.
-      algorithm[:precision].each do |score|
-        total_precision += score
-      end
+      # For each score in the record:
+      record.keys.each do |score|
 
-      # Find mean average precision.
-      if algorithm[:precision].count > 0
-        algorithm[:average_precision] = total_precision / algorithm[:precision].count
-      else
-        algorithm[:average_precision] = 0
-      end
-
-      # Introduce total recall (heh) variable.
-      total_recall = 0.0
-
-      # Accumulate recall.
-      algorithm[:recall].each do |score|
-        total_recall += score
-      end
-
-      # Find mean average recall.
-      if algorithm[:recall].count > 0
-        algorithm[:average_recall] = total_recall / algorithm[:recall].count
-      else
-        algorithm[:average_recall] = 0
+        # Replace the scores array with the average.
+        record[score] = record[score].reduce(:+) / record[score].count
       end
     end
 
-    # Calculate composite scores.
-    algorithms.each do |algorithm|
-
-      algorithm[:f05] = f_beta(algorithm[:average_precision],
-        algorithm[:average_recall], 0.5)
-
-      algorithm[:f1] = f_beta(algorithm[:average_precision],
-        algorithm[:average_recall], 1.0)
-
-      algorithm[:f2] = f_beta(algorithm[:average_precision],
-        algorithm[:average_recall], 2)
-    end
-
-    # Remove clone project.
-    test_project.destroy
+    # Remove training project.
+    training.destroy
 
     # Return results hash.
     return algorithms
   end
 
-  # Create a hash of each concept id to associated objects.
-  def create_truth_hash(project)
+  # Create a hash of each item mapped to its associated entities.
+  def create_truth_hash(project, items)
 
     # Create hash.
     truth_hash = {}
 
-    # For each concept in the test project:
-    project.concepts.each do |concept|
+    # For each item in the project:
+    items.each do |item|
 
-      # Create truth array for that concept.
-      truth_hash[concept] = concept.digital_objects
+      # Create truth array for that item.
+      truth_hash[item] = item.related
     end
 
     # Return truth hash.
     return truth_hash
   end
 
-  # Removes a number of annotations from a test project to establish a
-  # training data set, and a test data set.
-  def partition(project, testing_partition)
+  # Establish training data set.
+  def training_project(project, training_proportion)
 
-    # Create empty annotation array.
-    annotations = []
+    # Clone the project and capture the clone's ID.
+    clone_id = project.clone(1)
 
-    # Run through every concept.
-    project.concepts.each do |concept|
+    # Retrieve the clone of the provided project.
+    training_project = Project.find(clone_id)
 
-      # Collect the concept's annotations.
-      concept.digital_objects.each do |object|
-        annotations << [concept, object]
-      end
+    # Create shuffled annotation array.
+    annotations = training_project.annotations.shuffle
+
+    # Calculate the number of annotations to preserve.
+    preserve = (training_proportion * annotations.count).round
+
+    # Remove annotations in the testing subset.
+    annotations[preserve..-1].each do |annotation|
+
+      # Destroy the testing subset annotation.
+      annotation.destroy
     end
 
-    # Shuffle the annotations array.
-    annotations.shuffle!
-
-    # Calculate the number of annotations to remove.
-    to_remove = testing_partition * annotations.count
-
-    # Round removal number (for accessing indexes).
-    to_remove.round
-
-    # Remove annotations.
-    annotations[0...to_remove].each do |annotation|
-
-      # Delete the object from the concept.
-      annotation[0].digital_objects.delete annotation[1]
-    end
+    # Return training project.
+    return training_project
   end
 
-  # Calculate precision of results.
-  def precision(found, truth)
+  # Find the binary classification of results.
+  def binary_classification(found, truth, all)
 
     # Determine how many true positives were found.
-    correct = 0.0
-    found.each do |item|
-      if truth.include?(item)
-        correct += 1
-      end
-    end
+    tp = (found & truth).count
 
-    # Return precision.
-    if found.count > 0
-      return correct / found.count
+    # Determine how many false positives were found.
+    fp = (found - truth).count
+
+    # Determine how many false negatives were found.
+    fn = (truth - found).count
+
+    # Determine how many true negatives were found.
+    tn = all.count - (tp + fp + fn)
+
+    # Return results.
+    return {
+      true_positives: tp,
+      false_positives: fp,
+      true_negatives: tn,
+      false_negatives: fn,
+    }
+  end
+
+  # Find the phi coefficient given binary classification.
+  def phi_coefficient(binary_classification)
+
+    # Extract values.
+    tp = binary_classification[:true_positives]
+    tn = binary_classification[:true_negatives]
+    fp = binary_classification[:false_positives]
+    fn = binary_classification[:false_negatives]
+
+    # Calculate products.
+    true_product = tp * tn
+    false_product = fp * fn
+    dot_product = (tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)
+
+    # Return result.
+    if dot_product != 0.0
+      return (true_product - false_product).to_f / Math.sqrt(dot_product)
+    else
+      return (true_product - false_product).to_f
+    end
+  end
+
+  # Find the precision given the binary classification.
+  def precision(binary_classification)
+
+    # Extract values.
+    tp = binary_classification[:true_positives]
+    fp = binary_classification[:false_positives]
+
+    # Return result.
+    if (tp + fp) > 0
+      return tp.to_f / (tp + fp)
     else
       return 0.0
     end
   end
 
-  # Calculate recall of results.
-  def recall(found, truth)
+  # Find the recall given the binary classification.
+  def recall(binary_classification)
 
-    # Determine how many were found.
-    correct = 0.0
-    found.each do |item|
-      if truth.include?(item)
-        correct += 1
-      end
-    end
+    # Extract values.
+    tp = binary_classification[:true_positives]
+    fn = binary_classification[:false_negatives]
 
-    # Return recall.
-    if found.count > 0
-      return correct / truth.count
+    # Return result.
+    if (tp + fn) > 0
+      return tp.to_f / (tp + fn)
     else
       return 0.0
     end
   end
 
-  # Calculate f1 score of results.
-  def f_beta(precision, recall, beta)
+  # Calculate F score of results given precision, recall and beta.
+  def f_score(precision, recall, beta)
 
     # Ensure a positive denominator.
-    if (precision > 0 || recall > 0) && (beta != 0)
+    if (precision > 0.0 || recall > 0.0) && (beta != 0.0)
 
-      # Return f1 score.
+      # Return F score.
       return (1 + beta ** 2) * (precision * recall) / (beta ** 2 * precision + recall)
     else
 
-      # Zero denominator, so return 0 for f1 score.
-      return 0
+      # Zero denominator, so return 0 for F score.
+      return 0.0
     end
   end
+
 end

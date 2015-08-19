@@ -125,7 +125,7 @@ class Analytics
     statistics[:manually_annotated] = manual_annotation
 
     # Determine annotation rate.
-    statistics[:annotation_rate] = annotation_rate
+    statistics[:annotation_rate] = cluster_annotation_rate
 
     # Determine reuse rate.
     statistics[:annotation_reuse] = reuse_rate
