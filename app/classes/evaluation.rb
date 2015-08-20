@@ -113,23 +113,29 @@ class Evaluation
   # Process project and report scores.
   # Training proportion is a value between 0.0 and 1.0. For instance, 0.4 means
   # that the first 40% is training data and remaining 60% is testing data.
-  def evaluate_performance(project_id, training_proportion)
+  def evaluate_performance(project_id, training_proportion, testing_number)
 
     # Retrieve the desired project.
     project = Project.find(project_id)
 
-    # Create a training project based on the original project.
-    training = training_project(project, training_proportion)
+    # Clone the project and capture the clone's ID.
+    clone_id = project.clone(1)
+
+    # Retrieve the clone of the provided project.
+    clone = Project.find(clone_id)
 
     # Get the items to evaluate.
-    domain = project.concepts
-    range = project.digital_objects
+    domain = clone.concepts.shuffle[0..testing_number]
+    range = clone.digital_objects
 
     # Get the truth hash for the project.
-    truth_hash = create_truth_hash(project, domain)
+    truth_hash = create_truth_hash(clone, domain)
+
+    # Create a training project based on the clone project.
+    training = training_project(clone, training_proportion)
 
     # List algorithm names.
-    algorithm_names = ["Baseline"]
+    algorithm_names = ["SAGA", "VotePlus"]
 
     # Initialise algorithm records.
     algorithms = {}
@@ -212,16 +218,10 @@ class Evaluation
   end
 
   # Establish training data set.
-  def training_project(project, training_proportion)
-
-    # Clone the project and capture the clone's ID.
-    clone_id = project.clone(1)
-
-    # Retrieve the clone of the provided project.
-    training_project = Project.find(clone_id)
+  def training_project(training, training_proportion)
 
     # Create shuffled annotation array.
-    annotations = training_project.annotations.shuffle
+    annotations = training.annotations.shuffle
 
     # Calculate the number of annotations to preserve.
     preserve = (training_proportion * annotations.count).round
@@ -234,7 +234,7 @@ class Evaluation
     end
 
     # Return training project.
-    return training_project
+    return training
   end
 
   # Find the binary classification of results.
