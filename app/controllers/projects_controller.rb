@@ -249,19 +249,19 @@ class ProjectsController < ApplicationController
       ]
 
       # Get the currently logged-in user's role in this project, if any.
-      @role = UserRole.find_by(user_id: session[:user_id], project_id: params[:id])
+      set_user_role
 
       # Check if a role exists.
-      if @role.nil?
+      if @user_role.nil?
 
         # User doesn't have a role in this project.
         redirect_to "/403.html"
       else
 
         # Filter incorrect permissions.
-        if (@role.position.eql? "Viewer") && (viewer_pages.include? params[:action])
-        elsif (@role.position.eql? "Contributor") && (contributor_pages.include? params[:action])
-        elsif (@role.position.eql? "Administrator") && (administrator_pages.include? params[:action])
+        if (@user_role.position.eql? "Viewer") && (viewer_pages.include? params[:action])
+        elsif (@user_role.position.eql? "Contributor") && (contributor_pages.include? params[:action])
+        elsif (@user_role.position.eql? "Administrator") && (administrator_pages.include? params[:action])
         else
           # No permissions.
           redirect_to "/403.html"
