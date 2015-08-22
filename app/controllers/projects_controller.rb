@@ -2,8 +2,6 @@ class ProjectsController < ApplicationController
   before_action :set_project, only: [:show, :edit, :update, :destroy, :generate_key, :reset_key, :analytics, :remove_user]
   before_action :check_logged_in
   before_action :set_user, only: [:show, :create, :index, :destroy, :check_key, :check_access]
-  before_action :set_user_role, only: [:show, :destroy]
-  before_action :set_user_lists, only: [:show]
   before_action :check_access, except: [:new, :create, :index, :redeem_key, :check_key, :receive_oauth2]
 
   layout 'control', except: [:new, :create, :index, :redeem_key, :check_key]
@@ -59,6 +57,23 @@ class ProjectsController < ApplicationController
   # GET /projects/1.json
   def show
     @admins = administrator_count
+    set_user_role
+
+    @administrators = []
+    @contributors = []
+    @viewers = []
+
+    UserRole.where(project_id: @project.id, position: "Administrator").each do |role|
+      @administrators << User.find(role.user_id)
+    end
+
+    UserRole.where(project_id: @project.id, position: "Contributor").each do |role|
+      @contributors << User.find(role.user_id)
+    end
+
+    UserRole.where(project_id: @project.id, position: "Viewer").each do |role|
+      @viewers << User.find(role.user_id)
+    end
   end
 
   # GET /projects/new
@@ -126,6 +141,8 @@ class ProjectsController < ApplicationController
   # DELETE /projects/1
   # DELETE /projects/1.json
   def destroy
+
+    set_user_role
 
     # Remove the user's role from this project.
     @user_role.destroy
@@ -208,26 +225,6 @@ class ProjectsController < ApplicationController
 
       # Return the number of administrators.
       return UserRole.where(project_id: @project.id, position:"Administrator").count
-    end
-
-    # Set listings of users.
-    def set_user_lists
-
-      @administrators = []
-      @contributors = []
-      @viewers = []
-
-      UserRole.where(project_id: @project.id, position: "Administrator").each do |role|
-        @administrators << User.find(role.user_id)
-      end
-
-      UserRole.where(project_id: @project.id, position: "Contributor").each do |role|
-        @contributors << User.find(role.user_id)
-      end
-
-      UserRole.where(project_id: @project.id, position: "Viewer").each do |role|
-        @viewers << User.find(role.user_id)
-      end
     end
 
     # Ensure that the user is currently logged in.

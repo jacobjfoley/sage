@@ -5,7 +5,6 @@ class DigitalObjectsController < ApplicationController
   before_action :set_project
   before_action :set_digital_object, only: [:show, :edit, :update, :destroy,
     :add_concept, :remove_concept, :repair_thumbnails, :add_created_concept]
-  before_action :set_concept, only: [:add_concept, :remove_concept]
 
   layout 'control'
 
@@ -155,6 +154,8 @@ class DigitalObjectsController < ApplicationController
 
   # POST /objects/1/add_concept
   def add_concept
+    set_concept
+
     unless @digital_object.concepts.include? @concept
       Annotation.create(
         digital_object_id: @digital_object.id,
@@ -202,6 +203,8 @@ class DigitalObjectsController < ApplicationController
 
   # POST /objects/1/remove_object
   def remove_concept
+    set_concept
+
     if @digital_object.concepts.include? @concept
       @digital_object.concepts.destroy @concept
     end

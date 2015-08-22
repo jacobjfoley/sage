@@ -4,7 +4,6 @@ class ConceptsController < ApplicationController
   before_action :check_access
   before_action :set_project
   before_action :set_concept, only: [:show, :edit, :update, :destroy, :add_object, :remove_object]
-  before_action :set_object, only: [:add_object, :remove_object]
 
   layout 'control'
 
@@ -121,6 +120,8 @@ class ConceptsController < ApplicationController
 
   # POST /concepts/1/add_object
   def add_object
+    set_object
+
     unless @concept.digital_objects.include? @object
       Annotation.create(
         digital_object_id: @object.id,
@@ -135,6 +136,8 @@ class ConceptsController < ApplicationController
 
   # POST /concepts/1/remove_object
   def remove_object
+    set_object
+
     if @concept.digital_objects.include? @object
       @concept.digital_objects.destroy @object
     end
