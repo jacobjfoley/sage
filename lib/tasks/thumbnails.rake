@@ -10,15 +10,25 @@ namespace :thumbnails do
     end
   end
 
-  desc "Regenerate all thumbnails."
-  task regenerate_thumbnails: :environment do
+  desc "Generate all thumbnails."
+  task generate_all: :environment do
 
-    # Resets all thumbnails.
+    # For all thumbnails:
     Thumbnail.all.each do |thumbnail|
 
-      # Generate thumbnail image.
+      # Generate thumbnail.
       thumbnail.generate
     end
   end
 
+  desc "Set all thumbnail filenames."
+  task set_filenames: :environment do
+
+    # For all thumbnails:
+    Thumbnail.all.each do |thumbnail|
+
+      # Set filename.
+      thumbnail.delay.set_filename
+    end
+  end
 end

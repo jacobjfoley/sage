@@ -50,7 +50,7 @@ class Thumbnail < ActiveRecord::Base
       actual_y: 0
     )
 
-    # Generate the thumbnail image.
+    # Generate the thumbnail details.
     SetThumbnailURLJob.perform_later(id)
   end
 
@@ -89,7 +89,7 @@ class Thumbnail < ActiveRecord::Base
     if source !~ URI_REGEXP
 
       # Thumbnail refers to plain text.
-      update(url: TEXT_THUMBNAIL, filename: source)
+      update(url: TEXT_THUMBNAIL)
 
     # The source is a URI.
     else
@@ -103,22 +103,11 @@ class Thumbnail < ActiveRecord::Base
           # Fetch the resource's metadata using key.
           response = RestClient.head source, {params: {key: ENV["GOOGLE_API_KEY"], alt: "media"}}
 
-          # Fetch resource's information using key.
-          information = RestClient.get(
-            source, { params: { key: ENV["GOOGLE_API_KEY"] } }
-          )
-
-          # Update filename based on resource information.
-          update(filename: JSON.parse(information)["title"])
-
         # Otherwise, does not need an access key.
         else
 
           # Fetch the resource's metadata.
           response = RestClient.head(source)
-
-          # Update filename based on resource information.
-          update(filename: File.basename(source))
         end
 
         # Check if an image file.
@@ -138,7 +127,49 @@ class Thumbnail < ActiveRecord::Base
       rescue RestClient::Exception
 
         # Use a missing file thumbnail.
-        update(url: MISSING_THUMBNAIL, filename: "Missing")
+        update(url: MISSING_THUMBNAIL)
+      end
+    end
+  end
+
+  # Set the filename for the thumbnail.
+  def set_filename
+
+    # If the source is not a URI:
+    if source !~ URI_REGEXP
+
+      # Filename should be text.
+      update(filename: source)
+
+    # The source is a URI.
+    else
+
+      # Attempt to fetch resource data.
+      begin
+
+        # Check if Google resource.
+        if source =~ GOOGLE_REGEXP
+
+          # Fetch resource's information using key.
+          information = RestClient.get(
+            source, { params: { key: ENV["GOOGLE_API_KEY"] } }
+          )
+
+          # Update filename based on resource information.
+          update(filename: JSON.parse(information)["title"])
+
+        # Otherwise, does not need an access key.
+        else
+
+          # Update filename based on resource information.
+          update(filename: File.basename(source))
+        end
+
+      # Rescue in the event of an error.
+      rescue RestClient::Exception
+
+        # Use a missing filename.
+        update(filename: "Missing")
       end
     end
   end
