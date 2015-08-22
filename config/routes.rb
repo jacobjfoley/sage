@@ -9,7 +9,6 @@ Sage::Application.routes.draw do
         post 'add_concept'
         post 'add_created_concept'
         post 'remove_concept'
-        post 'repair_thumbnails'
       end
 
       collection do

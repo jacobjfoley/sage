@@ -79,16 +79,6 @@ class DigitalObjectsController < ApplicationController
   def edit
   end
 
-  # POST /digital_object/1/repair_thumbnails
-  def repair_thumbnails
-
-    # Call method on object.
-    @digital_object.repair_thumbnails
-
-    # Redirect back to object.
-    redirect_to project_digital_object_path(@project, @digital_object)
-  end
-
   # POST /digital_objects
   # POST /digital_objects.json
   def create

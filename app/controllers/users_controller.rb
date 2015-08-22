@@ -6,7 +6,6 @@ class UsersController < ApplicationController
   def index
 
     # Users listing not available. Redirect to error.
-    #@users = User.all
     redirect_to "/403.html"
   end
 

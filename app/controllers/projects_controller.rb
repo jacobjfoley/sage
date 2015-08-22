@@ -141,6 +141,7 @@ class ProjectsController < ApplicationController
   # DELETE /projects/1.json
   def destroy
 
+    # Set the user's role.
     set_user_role
 
     # Remove the user's role from this project.
@@ -243,7 +244,9 @@ class ProjectsController < ApplicationController
       # Define the pages which can be accessed using each level of security.
       viewer_pages = ["show", "destroy", "analytics"]
       contributor_pages = viewer_pages
-      administrator_pages = contributor_pages + ["update", "edit", "generate_key", "reset_key", "remove_user"]
+      administrator_pages = contributor_pages + ["update", "edit",
+        "generate_key", "reset_key", "remove_user"
+      ]
 
       # Get the currently logged-in user's role in this project, if any.
       @role = UserRole.find_by(user_id: session[:user_id], project_id: params[:id])
