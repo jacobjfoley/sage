@@ -1,7 +1,6 @@
 class ProjectsController < ApplicationController
-  before_action :set_project, only: [:show, :edit, :update, :destroy, :generate_key, :reset_key, :analytics, :remove_user]
   before_action :check_logged_in
-  before_action :set_user, only: [:show, :create, :index, :destroy, :check_key, :check_access]
+  before_action :set_project, only: [:show, :edit, :update, :destroy, :generate_key, :reset_key, :analytics, :remove_user]
   before_action :check_access, except: [:new, :create, :index, :redeem_key, :check_key, :receive_oauth2]
 
   layout 'control', except: [:new, :create, :index, :redeem_key, :check_key]
@@ -208,11 +207,6 @@ class ProjectsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_project
       @project = Project.find(params[:id])
-    end
-
-    # Set the user.500
-    def set_user
-      @user = User.find(session[:user_id])
     end
 
     # Set the user role.

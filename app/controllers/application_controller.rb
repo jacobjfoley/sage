@@ -4,13 +4,13 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   # Check if a user is logged in.
-  before_action :set_user_id
+  before_action :set_user
 
   # Private methods.
   private
 
-  # Sets the user, if the user is logged in.
-  def set_user_id
-    @user_id = session[:user_id]
+  # Set the user.
+  def set_user
+    @user = User.find(session[:user_id])
   end
 end
