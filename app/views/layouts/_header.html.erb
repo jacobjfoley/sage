@@ -5,7 +5,7 @@
 		  </div>
 		</container>
 		<ul class="nav navbar-nav navbar-right">
-		  <% if @user %>
+		  <% if @user && !@user.new_record? %>
 			  <li><%= link_to "Projects", projects_path%></li>
 			  <li><%= link_to "Guides", "https://github.com/Thaumajig/sage/wiki" %></li>
 			  <li><%= link_to "Feedback", feedback_path%></li>

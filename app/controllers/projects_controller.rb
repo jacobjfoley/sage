@@ -1,6 +1,6 @@
 class ProjectsController < ApplicationController
   before_action :check_logged_in
-  before_action :set_project, only: [:show, :edit, :update, :destroy, :generate_key, :reset_key, :analytics, :remove_user]
+  before_action :set_project
   before_action :check_access, except: [:new, :create, :index, :redeem_key, :check_key, :receive_oauth2]
 
   layout 'control', except: [:new, :create, :index, :redeem_key, :check_key]
@@ -206,7 +206,13 @@ class ProjectsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_project
-      @project = Project.find(params[:id])
+
+      # If the params contains an id:
+      if params[:id]
+
+        # Set the project.
+        @project = Project.find(params[:id])
+      end
     end
 
     # Set the user role.
@@ -237,7 +243,7 @@ class ProjectsController < ApplicationController
       # Define the pages which can be accessed using each level of security.
       viewer_pages = ["show", "destroy", "analytics"]
       contributor_pages = viewer_pages
-      administrator_pages = contributer_pages + ["update", "edit", "generate_key", "reset_key", "remove_user"]
+      administrator_pages = contributor_pages + ["update", "edit", "generate_key", "reset_key", "remove_user"]
 
       # Get the currently logged-in user's role in this project, if any.
       @role = UserRole.find_by(user_id: session[:user_id], project_id: params[:id])

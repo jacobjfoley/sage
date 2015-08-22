@@ -3,8 +3,7 @@ class DigitalObjectsController < ApplicationController
   before_action :set_user_role
   before_action :check_access
   before_action :set_project
-  before_action :set_digital_object, only: [:show, :edit, :update, :destroy,
-    :add_concept, :remove_concept, :repair_thumbnails, :add_created_concept]
+  before_action :set_digital_object
 
   layout 'control'
 
@@ -243,7 +242,13 @@ class DigitalObjectsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_digital_object
-      @digital_object = DigitalObject.find(params[:id])
+
+      # If params contains an id:
+      if params[:id]
+
+        # Set the digital object.
+        @digital_object = DigitalObject.find(params[:id])
+      end
     end
 
     def set_concept
@@ -291,7 +296,7 @@ class DigitalObjectsController < ApplicationController
         "destroy", "add_concept", "remove_concept", "repair_thumbnails",
         "add_created_concept", "import_drive_folder"
       ]
-      administrator_pages = contributer_pages
+      administrator_pages = contributor_pages
 
       # Check if a role exists.
       if @user_role.nil?

@@ -3,7 +3,7 @@ class ConceptsController < ApplicationController
   before_action :set_user_role
   before_action :check_access
   before_action :set_project
-  before_action :set_concept, only: [:show, :edit, :update, :destroy, :add_object, :remove_object]
+  before_action :set_concept
 
   layout 'control'
 
@@ -148,7 +148,13 @@ class ConceptsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_concept
-      @concept = Concept.find(params[:id])
+
+      # If the params contains an id.
+      if params[:id]
+
+        # Set the concept.
+        @concept = Concept.find(params[:id])
+      end
     end
 
     # Get the digital object object.
@@ -183,7 +189,7 @@ class ConceptsController < ApplicationController
       viewer_pages = ["show", "index"]
       contributor_pages = viewer_pages + ["new", "create", "update", "edit",
         "destroy", "add_object", "remove_object", "create_from_object"]
-      administrator_pages = contributer_pages
+      administrator_pages = contributor_pages
 
       # Check if a role exists.
       if @user_role.nil?

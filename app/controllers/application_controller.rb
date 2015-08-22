@@ -11,6 +11,12 @@ class ApplicationController < ActionController::Base
 
   # Set the user.
   def set_user
-    @user = User.find(session[:user_id])
+
+    # If a user id has been stored in the session:
+    if session[:user_id]
+
+      # Set the user based on the session info.
+      @user = User.find(session[:user_id])
+    end
   end
 end
