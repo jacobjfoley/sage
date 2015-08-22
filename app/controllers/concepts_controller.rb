@@ -1,9 +1,9 @@
 class ConceptsController < ApplicationController
+  before_action :set_project
+  before_action :set_concept
   before_action :check_logged_in
   before_action :set_user_role
   before_action :check_access
-  before_action :set_project
-  before_action :set_concept
 
   layout 'control'
 

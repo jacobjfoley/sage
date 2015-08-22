@@ -1,6 +1,6 @@
 class ProjectsController < ApplicationController
-  before_action :check_logged_in
   before_action :set_project
+  before_action :check_logged_in
   before_action :check_access, except: [:new, :create, :index, :redeem_key, :check_key, :receive_oauth2]
 
   layout 'control', except: [:new, :create, :index, :redeem_key, :check_key]

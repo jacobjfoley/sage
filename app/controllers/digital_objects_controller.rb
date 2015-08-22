@@ -1,9 +1,9 @@
 class DigitalObjectsController < ApplicationController
+  before_action :set_project
+  before_action :set_digital_object
   before_action :check_logged_in
   before_action :set_user_role
   before_action :check_access
-  before_action :set_project
-  before_action :set_digital_object
 
   layout 'control'
 
