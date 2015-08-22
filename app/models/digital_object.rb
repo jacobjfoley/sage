@@ -42,7 +42,7 @@ class DigitalObject < ActiveRecord::Base
   def thumbnail(x, y)
 
     # If the thumbnail hasn't been set for this object:
-    if thumbnail_url == nil
+    if thumbnail_url.nil?
 
       # Generate thumbnail url.
       generate_thumbnail_url
@@ -52,8 +52,8 @@ class DigitalObject < ActiveRecord::Base
     Thumbnail.find_for(thumbnail_url, x, y)
   end
 
-  # Attempts to repair thumbnails.
-  def repair_thumbnails()
+  # Repair thumbnails.
+  def repair_thumbnails
 
     # Fetch all thumbnails sharing the broken source.
     thumbnails = Thumbnail.where(source: location)

@@ -125,8 +125,8 @@ class Evaluation
     clone = Project.find(clone_id)
 
     # Get the items to evaluate.
-    domain = clone.concepts.shuffle[0..testing_number]
-    range = clone.digital_objects
+    range = clone.concepts
+    domain = clone.digital_objects.shuffle[0..testing_number]
 
     # Get the truth hash for the project.
     truth_hash = create_truth_hash(clone, domain)
@@ -135,7 +135,7 @@ class Evaluation
     training = training_project(clone, training_proportion)
 
     # List algorithm names.
-    algorithm_names = ["SAGA", "VotePlus"]
+    algorithm_names = ["VotePlus", "SAGA"]
 
     # Initialise algorithm records.
     algorithms = {}

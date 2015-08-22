@@ -1,5 +1,18 @@
 class Analytics
 
+  # Capture a project to analyse.
+  def initialize(project)
+
+    # Store the provided project.
+    @project = project
+
+    # Capture information from the project.
+    @users = @project.users
+    @digital_objects = @project.digital_objects
+    @concepts = @project.concepts
+    @annotations = @project.annotations
+  end
+
   # Generate project statistics.
   def analyse
 
@@ -311,18 +324,5 @@ class Analytics
     else
       return 0.0
     end
-  end
-
-  # Capture a project to analyse.
-  def initialize(project)
-
-    # Store the provided project.
-    @project = project
-
-    # Capture information from the project.
-    @users = @project.users
-    @digital_objects = @project.digital_objects
-    @concepts = @project.concepts
-    @annotations = @project.annotations
   end
 end

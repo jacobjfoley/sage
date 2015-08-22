@@ -45,6 +45,7 @@ class Thumbnail < ActiveRecord::Base
     # Clear any current URL and details.
     update(
       url: nil,
+      filename: nil,
       actual_x: 0,
       actual_y: 0
     )
@@ -88,7 +89,7 @@ class Thumbnail < ActiveRecord::Base
     if source !~ URI_REGEXP
 
       # Thumbnail refers to plain text.
-      update(url: TEXT_THUMBNAIL)
+      update(url: TEXT_THUMBNAIL, filename: source)
 
     # The source is a URI.
     else
@@ -102,11 +103,22 @@ class Thumbnail < ActiveRecord::Base
           # Fetch the resource's metadata using key.
           response = RestClient.head source, {params: {key: ENV["GOOGLE_API_KEY"], alt: "media"}}
 
+          # Fetch resource's information using key.
+          information = RestClient.get(
+            source, { params: { key: ENV["GOOGLE_API_KEY"] } }
+          )
+
+          # Update filename based on resource information.
+          update(filename: JSON.parse(information)["title"])
+
         # Otherwise, does not need an access key.
         else
 
           # Fetch the resource's metadata.
           response = RestClient.head(source)
+
+          # Update filename based on resource information.
+          update(filename: File.basename(source))
         end
 
         # Check if an image file.
@@ -126,7 +138,7 @@ class Thumbnail < ActiveRecord::Base
       rescue RestClient::Exception
 
         # Use a missing file thumbnail.
-        update(url: MISSING_THUMBNAIL)
+        update(url: MISSING_THUMBNAIL, filename: "Missing")
       end
     end
   end
