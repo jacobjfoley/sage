@@ -284,14 +284,11 @@ class DigitalObjectsController < ApplicationController
 
       # Define the pages which can be accessed using each level of security.
       viewer_pages = ["show", "index"]
-      contributor_pages = ["show", "index", "new", "create", "update", "edit",
+      contributor_pages = viewer_pages + ["new", "create", "update", "edit",
         "destroy", "add_concept", "remove_concept", "repair_thumbnails",
         "add_created_concept", "import_drive_folder"
       ]
-      administrator_pages = ["show", "index", "new", "create", "update", "edit",
-         "destroy", "add_concept", "remove_concept", "repair_thumbnails",
-         "add_created_concept", "import_drive_folder"
-      ]
+      administrator_pages = contributer_pages
 
       # Check if a role exists.
       if @user_role.nil?

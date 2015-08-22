@@ -245,8 +245,8 @@ class ProjectsController < ApplicationController
 
       # Define the pages which can be accessed using each level of security.
       viewer_pages = ["show", "destroy", "analytics"]
-      contributor_pages = ["show", "destroy", "analytics"]
-      administrator_pages = ["show", "update", "edit", "destroy", "generate_key", "reset_key", "analytics", "remove_user"]
+      contributor_pages = viewer_pages
+      administrator_pages = contributer_pages + ["update", "edit", "generate_key", "reset_key", "remove_user"]
 
       # Get the currently logged-in user's role in this project, if any.
       @role = UserRole.find_by(user_id: session[:user_id], project_id: params[:id])

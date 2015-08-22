@@ -178,8 +178,9 @@ class ConceptsController < ApplicationController
 
       # Define the pages which can be accessed using each level of security.
       viewer_pages = ["show", "index"]
-      contributor_pages = ["show", "index", "new", "create", "update", "edit", "destroy", "add_object", "remove_object", "create_from_object"]
-      administrator_pages = ["show", "index", "new", "create", "update", "edit", "destroy", "add_object", "remove_object", "create_from_object"]
+      contributor_pages = viewer_pages + ["new", "create", "update", "edit",
+        "destroy", "add_object", "remove_object", "create_from_object"]
+      administrator_pages = contributer_pages
 
       # Check if a role exists.
       if @user_role.nil?

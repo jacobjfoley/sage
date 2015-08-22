@@ -1,14 +1,11 @@
 class Thumbnail < ActiveRecord::Base
 
-  # Validations.
   validates :source, presence: true
   validates :x, presence: true
   validates :y, presence: true
 
-  # Callbacks.
   before_save :set_local, if: :url_changed?
 
-  # Constants.
   PROCESSING_THUMBNAIL = "processing.svg"
   GENERIC_THUMBNAIL = "generic.svg"
   TEXT_THUMBNAIL = "text.svg"
