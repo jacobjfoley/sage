@@ -1,12 +1,9 @@
 class UsersController < ApplicationController
-  before_action :check_access, except: [:new, :create, :index, :login, :logout]
+  before_action :check_access
 
   # GET /users
   # GET /users.json
   def index
-
-    # Users listing not available. Redirect to error.
-    redirect_to "/403.html"
   end
 
   # GET /users/1
@@ -117,14 +114,34 @@ class UsersController < ApplicationController
   end
 
   private
+
     # Callback to check authorisation before access.
     def check_access
 
-      # Unless the user is logged in:
-      unless session[:user_id].to_s.eql? params[:id]
-        flash[:notice] = "You are not permitted to access this page. Please log in to continue."
+      # Define public pages.
+      public_pages = ["new", "create", "login", "logout"]
+
+      # Allow user to access public pages.
+      if public_pages.include? params[:action]
+        return true
+      end
+
+      # Check if the user is logged in.
+      if !@user
+        flash[:notice] = "You are not logged in. Please log in to continue."
         redirect_to login_users_path
       end
+
+      # Define private pages.
+      private_pages = ["show", "edit", "update", "destroy"]
+
+      # Allow the user to access private user pages.
+      if (private_pages.include? params[:action]) && (@user.id.to_s.eql? params[:id])
+        return true
+      end
+
+      # Otherwise, no permissions.
+      redirect_to "/403.html"
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

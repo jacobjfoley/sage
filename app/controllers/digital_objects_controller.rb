@@ -1,8 +1,6 @@
 class DigitalObjectsController < ApplicationController
   before_action :set_project
   before_action :set_digital_object
-  before_action :check_logged_in
-  before_action :set_user_role
   before_action :check_access
 
   layout 'control'
@@ -267,43 +265,47 @@ class DigitalObjectsController < ApplicationController
       end
     end
 
-    # Ensure that the user is currently logged in.
-    def check_logged_in
-      if !session.has_key? :user_id
-
-        # Provide error message and redirect to login page.
-        flash[:notice] = "You are not permitted to access this page. Please log in to continue."
-        redirect_to login_users_path
-      end
-    end
-
     # Ensure that the user has appropriate access privileges for what they are accessing.
     def check_access
 
-      # Define the pages which can be accessed using each level of security.
-      viewer_pages = ["show", "index"]
-      contributor_pages = viewer_pages + ["new", "create", "update", "edit",
-        "destroy", "add_concept", "remove_concept", "repair_thumbnails",
-        "add_created_concept", "import_drive_folder"
-      ]
-      administrator_pages = contributor_pages
+      # Check if the user is logged in.
+      if !@user
+        flash[:notice] = "You are not logged in. Please log in to continue."
+        redirect_to login_users_path
+      end
 
-      # Check if a role exists.
+      # Get the user's role in this project.
+      set_user_role
+
+      # Check user's role.
       if @user_role.nil?
 
         # User doesn't have a role in this project.
-        redirect_to "/403.html"
-      else
-
-        # Filter incorrect permissions.
-        if (@user_role.position.eql? "Viewer") && (viewer_pages.include? params[:action])
-        elsif (@user_role.position.eql? "Contributor") && (contributor_pages.include? params[:action])
-        elsif (@user_role.position.eql? "Administrator") && (administrator_pages.include? params[:action])
-        else
-          # No permissions.
-          redirect_to "/403.html"
-        end
+        flash[:notice] = "You don't have access to this project."
+        redirect_to projects_path
       end
+
+      # Define priviledges.
+      view = ["show", "index"]
+      edit = ["new", "create", "update", "edit", "destroy", "add_concept",
+        "remove_concept", "repair_thumbnails", "add_created_concept",
+        "import_drive_folder"
+      ]
+
+      # Allocate priviledges to roles.
+      priviledges = {
+        "Viewer" => view,
+        "Contributor" => view + edit,
+        "Administrator" => view + edit
+      }
+
+      # Allow requests with correct permissions.
+      if priviledges[@user_role.position].include? params[:action]
+        return true
+      end
+
+      # Otherwise, no permissions.
+      redirect_to "/403.html"
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

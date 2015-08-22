@@ -1,7 +1,6 @@
 class ProjectsController < ApplicationController
   before_action :set_project
-  before_action :check_logged_in
-  before_action :check_access, except: [:new, :create, :index, :redeem_key, :check_key, :receive_oauth2]
+  before_action :check_access
 
   layout 'control', except: [:new, :create, :index, :redeem_key, :check_key]
 
@@ -228,45 +227,52 @@ class ProjectsController < ApplicationController
       return UserRole.where(project_id: @project.id, position:"Administrator").count
     end
 
-    # Ensure that the user is currently logged in.
-    def check_logged_in
-      if !session.has_key? :user_id
-
-        # Provide error message and redirect to login page.
-        flash[:notice] = "You are not permitted to access this page. Please log in to continue."
-        redirect_to login_users_path
-      end
-    end
-
     # Ensure that the user has appropriate access privileges for what they are accessing.
     def check_access
 
-      # Define the pages which can be accessed using each level of security.
-      viewer_pages = ["show", "destroy", "analytics"]
-      contributor_pages = viewer_pages
-      administrator_pages = contributor_pages + ["update", "edit",
-        "generate_key", "reset_key", "remove_user"
-      ]
+      # Check if the user is logged in.
+      if !@user
+        flash[:notice] = "You are not logged in. Please log in to continue."
+        redirect_to login_users_path
+      end
 
-      # Get the currently logged-in user's role in this project, if any.
+      # Define public (for logged in users) pages.
+      public_pages = ["new", "create", "index", "redeem_key", "check_key", "receive_oauth2"]
+
+      # Allow user to access public pages.
+      if public_pages.include? params[:action]
+        return true
+      end
+
+      # Get the user's role in this project.
       set_user_role
 
-      # Check if a role exists.
+      # Check user's role.
       if @user_role.nil?
 
         # User doesn't have a role in this project.
-        redirect_to "/403.html"
-      else
-
-        # Filter incorrect permissions.
-        if (@user_role.position.eql? "Viewer") && (viewer_pages.include? params[:action])
-        elsif (@user_role.position.eql? "Contributor") && (contributor_pages.include? params[:action])
-        elsif (@user_role.position.eql? "Administrator") && (administrator_pages.include? params[:action])
-        else
-          # No permissions.
-          redirect_to "/403.html"
-        end
+        flash[:notice] = "You don't have access to this project."
+        redirect_to projects_path
       end
+
+      # Define priviledges.
+      view = ["show", "destroy", "analytics"]
+      admin = ["update", "edit", "generate_key", "reset_key", "remove_user"]
+
+      # Allocate priviledges to roles.
+      priviledges = {
+        "Viewer" => view,
+        "Contributor" => view,
+        "Administrator" => view + admin
+      }
+
+      # Allow requests with correct permissions.
+      if priviledges[@user_role.position].include? params[:action]
+        return true
+      end
+
+      # Otherwise, no permissions.
+      redirect_to "/403.html"
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
