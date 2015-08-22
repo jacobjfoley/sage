@@ -55,7 +55,6 @@ class ProjectsController < ApplicationController
   # GET /projects/1.json
   def show
     @admins = administrator_count
-    set_user_role
 
     @administrators = []
     @contributors = []
@@ -139,9 +138,6 @@ class ProjectsController < ApplicationController
   # DELETE /projects/1
   # DELETE /projects/1.json
   def destroy
-
-    # Set the user's role.
-    set_user_role
 
     # Remove the user's role from this project.
     @user_role.destroy
@@ -227,7 +223,7 @@ class ProjectsController < ApplicationController
       return UserRole.where(project_id: @project.id, position:"Administrator").count
     end
 
-    # Ensure that the user has appropriate access privileges for what they are accessing.
+    # Check authorisation before access.
     def check_access
 
       # Check if the user is logged in.
@@ -237,7 +233,8 @@ class ProjectsController < ApplicationController
       end
 
       # Define public (for logged in users) pages.
-      public_pages = ["new", "create", "index", "redeem_key", "check_key", "receive_oauth2"]
+      public_pages = ["new", "create", "index", "redeem_key", "check_key",
+        "receive_oauth2"]
 
       # Allow user to access public pages.
       if public_pages.include? params[:action]

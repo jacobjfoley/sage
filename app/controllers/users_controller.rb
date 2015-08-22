@@ -115,7 +115,7 @@ class UsersController < ApplicationController
 
   private
 
-    # Callback to check authorisation before access.
+    # Check authorisation before access.
     def check_access
 
       # Define public pages.

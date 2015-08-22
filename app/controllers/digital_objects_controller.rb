@@ -265,7 +265,7 @@ class DigitalObjectsController < ApplicationController
       end
     end
 
-    # Ensure that the user has appropriate access privileges for what they are accessing.
+    # Check authorisation before access.
     def check_access
 
       # Check if the user is logged in.
@@ -289,8 +289,7 @@ class DigitalObjectsController < ApplicationController
       view = ["show", "index"]
       edit = ["new", "create", "update", "edit", "destroy", "add_concept",
         "remove_concept", "repair_thumbnails", "add_created_concept",
-        "import_drive_folder"
-      ]
+        "import_drive_folder"]
 
       # Allocate priviledges to roles.
       priviledges = {

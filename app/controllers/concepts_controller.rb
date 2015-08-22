@@ -170,7 +170,7 @@ class ConceptsController < ApplicationController
       @user_role = UserRole.find_by(user_id: session[:user_id], project_id: params[:project_id])
     end
 
-    # Ensure that the user has appropriate access privileges for what they are accessing.
+    # Check authorisation before access.
     def check_access
 
       # Check if the user is logged in.
