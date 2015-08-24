@@ -15,13 +15,6 @@ class SetThumbnailURLJob < ActiveJob::Base
         # Set the thumbnail's URL.
         thumbnail.set_url
       end
-
-      # If the thumbnail doesn't already have a filename:
-      if thumbnail.filename.nil?
-
-        # Set the thumbnail's filename.
-        thumbnail.set_filename
-      end
     end
   end
 end

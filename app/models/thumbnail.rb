@@ -12,9 +12,6 @@ class Thumbnail < ActiveRecord::Base
   ERROR_THUMBNAIL = "bug.svg"
   MISSING_THUMBNAIL = "missing.svg"
 
-  URI_REGEXP = %r{\A#{URI::regexp}\z}
-  GOOGLE_REGEXP = %r{\Ahttps://www.googleapis.com/drive/v2/files/}
-
   # Retrieve a thumbnail for a given resource.
   def self.find_for(source, x, y)
 
@@ -42,7 +39,6 @@ class Thumbnail < ActiveRecord::Base
     # Clear any current URL and details.
     update(
       url: nil,
-      filename: nil,
       actual_x: 0,
       actual_y: 0
     )
@@ -55,7 +51,7 @@ class Thumbnail < ActiveRecord::Base
   def check_thumbnail
 
     # Unless a local file or not a URI:
-    unless local || (url !~ URI_REGEXP)
+    unless local || (url !~ GoogleDriveUtils::URI_REGEXP)
 
       # Begin attempt.
       begin
@@ -83,7 +79,7 @@ class Thumbnail < ActiveRecord::Base
   def set_url
 
     # If the source is not a URI:
-    if source !~ URI_REGEXP
+    if source !~ GoogleDriveUtils::URI_REGEXP
 
       # Thumbnail refers to plain text.
       update(url: TEXT_THUMBNAIL)
@@ -95,7 +91,7 @@ class Thumbnail < ActiveRecord::Base
       begin
 
         # Check if Google resource.
-        if source =~ GOOGLE_REGEXP
+        if source =~ GoogleDriveUtils::GOOGLE_REGEXP
 
           # Fetch the resource's metadata using key.
           response = RestClient.head source, {params: {key: ENV["GOOGLE_API_KEY"], alt: "media"}}
@@ -129,48 +125,6 @@ class Thumbnail < ActiveRecord::Base
     end
   end
 
-  # Set the filename for the thumbnail.
-  def set_filename
-
-    # If the source is not a URI:
-    if source !~ URI_REGEXP
-
-      # Filename should be text.
-      update(filename: source)
-
-    # The source is a URI.
-    else
-
-      # Attempt to fetch resource data.
-      begin
-
-        # Check if Google resource.
-        if source =~ GOOGLE_REGEXP
-
-          # Fetch resource's information using key.
-          information = RestClient.get(
-            source, { params: { key: ENV["GOOGLE_API_KEY"] } }
-          )
-
-          # Update filename based on resource information.
-          update(filename: JSON.parse(information)["title"])
-
-        # Otherwise, does not need an access key.
-        else
-
-          # Update filename based on resource information.
-          update(filename: File.basename(source))
-        end
-
-      # Rescue in the event of an error.
-      rescue RestClient::Exception
-
-        # Use a missing filename.
-        update(filename: "Missing")
-      end
-    end
-  end
-
   # Private methods.
   private
 
@@ -181,7 +135,7 @@ class Thumbnail < ActiveRecord::Base
     begin
 
       # Check if Google resource.
-      if source =~ GOOGLE_REGEXP
+      if source =~ GoogleDriveUtils::GOOGLE_REGEXP
 
         # Fetch blob using key.
         blob = RestClient.get source, {params: {key: ENV["GOOGLE_API_KEY"], alt: "media"}}

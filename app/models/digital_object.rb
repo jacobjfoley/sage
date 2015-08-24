@@ -9,6 +9,7 @@ class DigitalObject < ActiveRecord::Base
   before_save :check_conversions, if: :location_changed?
   before_save :reset_thumbnail_url, if: :location_changed?
   before_save :check_flatten, if: :location_changed?
+  before_save :set_filename, if: :location_changed?
   after_create :create_thumbnails
 
   # Find entities by annotation.
@@ -52,6 +53,48 @@ class DigitalObject < ActiveRecord::Base
     Thumbnail.find_for(thumbnail_url, x, y)
   end
 
+  # Set the filename for the object.
+  def set_filename
+
+    # If the source is not a URI:
+    if location !~ GoogleDriveUtils::URI_REGEXP
+
+      # Filename should be text.
+      update(filename: location)
+
+    # The source is a URI.
+    else
+
+      # Attempt to fetch resource data.
+      begin
+
+        # Check if Google resource.
+        if location =~ GoogleDriveUtils::GOOGLE_REGEXP
+
+          # Fetch resource's information using key.
+          information = RestClient.get(
+            location, { params: { key: ENV["GOOGLE_API_KEY"] } }
+          )
+
+          # Update filename based on resource information.
+          update(filename: JSON.parse(information)["title"])
+
+        # Otherwise, does not need an access key.
+        else
+
+          # Update filename based on resource information.
+          update(filename: File.basename(location))
+        end
+
+      # Rescue in the event of an error.
+      rescue RestClient::Exception
+
+        # Use a missing filename.
+        update(filename: "Missing")
+      end
+    end
+  end
+
   # Repair thumbnails.
   def repair_thumbnails
 
@@ -70,7 +113,7 @@ class DigitalObject < ActiveRecord::Base
   def has_uri?
 
     # Compare location with a valid URI's regexp.
-    return location =~ /\A#{URI::regexp}\z/
+    return location =~ GoogleDriveUtils::URI_REGEXP
   end
 
   # Private methods.
