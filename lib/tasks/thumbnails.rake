@@ -20,26 +20,4 @@ namespace :thumbnails do
       thumbnail.generate
     end
   end
-
-  desc "Set all object filenames."
-  task set_filenames: :environment do
-
-    # For all thumbnails:
-    DigitalObject.all.each do |object|
-
-      # Set filename.
-      object.delay.set_filename
-    end
-  end
-
-  desc "Carry over all object filenames."
-  task convert_filenames: :environment do
-
-    # For all thumbnails:
-    DigitalObject.all.each do |object|
-
-      # Set filename.
-      object.update(filename: object.thumbnail(150,150).filename)
-    end
-  end
 end
