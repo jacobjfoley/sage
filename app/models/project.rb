@@ -228,11 +228,12 @@ class Project < ActiveRecord::Base
     other_project.digital_objects.each do |other_object|
 
       # Create a copy of the object.
-      my_object = DigitalObject.create(
+      my_object = DigitalObject.find_or_create_by(
         project_id: id,
-        location: other_object.location,
-        thumbnail_url: other_object.thumbnail_url
-      )
+        location: other_object.location
+      ) do |new_object|
+        new_object.thumbnail_url = other_object.thumbnail_url
+      end
 
       # Add to mapping.
       object_mapping[other_object.id] = my_object.id
@@ -242,7 +243,7 @@ class Project < ActiveRecord::Base
     other_project.concepts.each do |other_concept|
 
       # Create a copy of the concept.
-      my_concept = Concept.create(
+      my_concept = Concept.find_or_create_by(
         project_id: id,
         description: other_concept.description
       )
@@ -255,12 +256,13 @@ class Project < ActiveRecord::Base
     other_project.annotations.each do |annotation|
 
       # Create new annotation.
-      Annotation.create(
+      Annotation.find_or_create_by(
         digital_object_id: object_mapping[annotation.digital_object_id],
-        concept_id: concept_mapping[annotation.concept_id],
-        user_id: annotation.user_id,
-        provenance: "Pulled"
-      )
+        concept_id: concept_mapping[annotation.concept_id]
+      ) do |new_annotation|
+        new_annotation.user_id = annotation.user_id
+        new_annotation.provenance = "Pulled"
+      end
     end
   end
 
