@@ -266,6 +266,20 @@ class Project < ActiveRecord::Base
     end
   end
 
+  # Pull all samples from a given ancestor project.
+  def pull_samples(ancestor_project)
+
+    # Find all samples.
+    samples = Project.where(parent: ancestor_project)
+
+    # For each sample:
+    samples.each do |sample|
+
+      # Pull the sample.
+      pull(sample)
+    end
+  end
+
   # Create a sample project based on this one.
   def sample(user)
 
