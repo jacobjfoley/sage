@@ -1,5 +1,34 @@
 <h1> Import Annotations </h1>
 
-<%= form_tag %>
+<%= form_tag import_annotations_project_path(@project) do %>
+
+  <h3> CSV Data </h3>
+  <%= text_area_tag "data", nil, rows: 15, class: "form-control" %>
+
+  <br>
+
+  <h3> Import Type </h3>
+
+  <div class="radio">
+    <label>
+      <%= radio_button_tag "import_method", "normal", class:"active" %>
+      Normal Import -- The value provided for the object is a URL or plain text.
+    </label>
+  </div>
+
+  <div class="radio">
+    <label>
+      <%= radio_button_tag "import_method", "filename" %>
+      Filename Import -- The value provided for the object is only the file's name (not a full URL).
+    </label>
+  </div>
+
+  <br>
+
+  <%= link_to project_path(@project) do %><div class="btn btn-default">
+    <span class="glyphicon glyphicon-arrow-left"></span> Back
+  </div><% end %>
+
+  <%= submit_tag "Import", class: "btn btn-primary" %>
 
 <% end %>
