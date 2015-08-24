@@ -26,6 +26,7 @@ Sage::Application.routes.draw do
 
     member do
       get 'analytics'
+      get 'import_annotations'
       post 'generate_key'
       post 'reset_key'
       post 'remove_user'

@@ -45,6 +45,10 @@ class ProjectsController < ApplicationController
     redirect_to new_project_digital_object_path(project_id), notice: notice
   end
 
+  # GET /projects/1/import_annotations
+  def import_annotations
+  end
+
   # GET /projects
   # GET /projects.json
   def index
@@ -254,7 +258,8 @@ class ProjectsController < ApplicationController
 
       # Define priviledges.
       view = ["show", "destroy", "analytics"]
-      admin = ["update", "edit", "generate_key", "reset_key", "remove_user"]
+      admin = ["update", "edit", "generate_key", "reset_key", "remove_user",
+      "import_annotations"]
 
       # Allocate priviledges to roles.
       priviledges = {
