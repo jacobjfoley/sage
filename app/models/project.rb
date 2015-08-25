@@ -1,4 +1,5 @@
 require "securerandom"
+require 'csv'
 
 class Project < ActiveRecord::Base
 
@@ -212,6 +213,82 @@ class Project < ActiveRecord::Base
 
     # Return the clone to caller.
     return clone.id
+  end
+
+  # Import annotations from data.
+  def import_annotations(raw_data, raw_mode, user)
+
+    # Parse user data.
+    data = CSV.parse(raw_data)
+
+    # Retrieve mode.
+    if raw_mode.eql? "complete"
+      mode = :complete
+    elsif raw_mode.eql? "selective"
+      mode = :selective
+    elsif raw_mode.eql? "filename"
+      mode = :filename
+    else
+      raise "No import method was provided."
+    end
+
+    # For each line of data:
+    data.each do |line|
+
+      # Get the digital object.
+      if line[0].nil?
+
+        # No object.
+        object = nil
+      elsif mode == :complete
+
+        # Find or create the object.
+        object = DigitalObject.find_or_create_by(
+          project_id: id,
+          location: line[0]
+        )
+      elsif mode == :selective
+
+        # Only find the object.
+        object = DigitalObject.find_by(
+          project_id: id,
+          location: line[0]
+        )
+      elsif mode == :filename
+
+        # Only find the object using filename.
+        object = DigitalObject.find_by(
+          project_id: id,
+          filename: line[0]
+        )
+      end
+
+      # Get the concept.
+      if line[1].nil?
+
+        # No concept.
+        concept = nil
+      else
+
+        # Find or create concept.
+        concept = Concept.find_or_create_by(
+          project_id: id,
+          description: line[1]
+        )
+      end
+
+      # If both an object and concept have been found, add annotation.
+      if object && concept
+        Annotation.find_or_create_by(
+          project_id: id,
+          digital_object_id: object.id,
+          concept_id: concept.id
+        ) do |new_annotation|
+          new_annotation.user_id = user.id
+          new_annotation.provenance = "Imported"
+        end
+      end
+    end
   end
 
   # Merge a copy of the contents of another project with this one.

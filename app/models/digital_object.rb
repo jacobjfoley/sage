@@ -60,7 +60,7 @@ class DigitalObject < ActiveRecord::Base
     if location !~ GoogleDriveUtils::URI_REGEXP
 
       # Filename should be text.
-      update(filename: location)
+      self.filename = location
 
     # The source is a URI.
     else
@@ -77,20 +77,20 @@ class DigitalObject < ActiveRecord::Base
           )
 
           # Update filename based on resource information.
-          update(filename: JSON.parse(information)["title"])
+          self.filename = JSON.parse(information)["title"]
 
         # Otherwise, does not need an access key.
         else
 
           # Update filename based on resource information.
-          update(filename: File.basename(location))
+          self.filename = File.basename(location)
         end
 
       # Rescue in the event of an error.
       rescue RestClient::Exception
 
         # Use a missing filename.
-        update(filename: "Missing")
+        self.filename = "Missing"
       end
     end
   end

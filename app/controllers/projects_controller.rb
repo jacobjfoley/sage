@@ -47,6 +47,33 @@ class ProjectsController < ApplicationController
 
   # GET /projects/1/import_annotations
   def import_annotations
+
+    # If receiving data:
+    if request.post?
+
+      # Process data.
+      begin
+
+        # Call method.
+        @project.import_annotations(params[:data], params[:import_method], @user)
+
+        # Redirect back to project path.
+        flash.notice = "You have successfully imported the annotations."
+        redirect_to project_path(@project)
+
+      rescue CSV::MalformedCSVError
+
+        # Rescue from malformed CSV data.
+        flash.alert = "The supplied data was not in valid CSV format."
+        redirect_to import_annotations_project_path(@project)
+
+      rescue RuntimeError => e
+
+        # Rescue from error.
+        flash.alert = e.message
+        redirect_to import_annotations_project_path(@project)
+      end
+    end
   end
 
   # GET /projects
