@@ -5,25 +5,34 @@
   <h3> CSV Data </h3>
   <%= text_area_tag "data", nil, rows: 15, class: "form-control" %>
 
-  <br>
-
   <h3> Import Type </h3>
 
   <div class="radio">
     <label>
-      <%= radio_button_tag "import_method", "normal", class:"active" %>
-      Normal Import -- The value provided for the object is a URL or plain text.
+      <%= radio_button_tag "import_method", "complete", class:"active" %>
+      Complete Import: Matches objects using URLs or plain text. Adds to existing objects when found, or creates new objects.
+    </label>
+  </div>
+
+  <div class="radio">
+    <label>
+      <%= radio_button_tag "import_method", "selective" %>
+      Selective Import: Matches objects using URLs or plain text. Adds only to existing objects.
     </label>
   </div>
 
   <div class="radio">
     <label>
       <%= radio_button_tag "import_method", "filename" %>
-      Filename Import -- The value provided for the object is only the file's name (not a full URL).
+      Filename Import: Matches objects using their filename. Adds only to existing objects.
     </label>
   </div>
 
-  <br>
+  <p><i>
+    * Note that filename imports are likely to be somewhat unpredictable unless
+    the original objects that have been added to the project have been named in
+    such a way as to avoid duplicate filenames.
+  </i></p>
 
   <%= link_to project_path(@project) do %><div class="btn btn-default">
     <span class="glyphicon glyphicon-arrow-left"></span> Back
