@@ -76,8 +76,7 @@ class Concept < ActiveRecord::Base
   def matchable_description
 
     # Lower case, punctuation stripped.
-    return description.downcase.gsub(/[^a-z0-9\s]/i, '')
-
+    return description.downcase.chomp.gsub(/[^a-z0-9\s]/i, '')
   end
 
   # Merge with other concepts.

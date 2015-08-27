@@ -235,58 +235,65 @@ class Project < ActiveRecord::Base
     # For each line of data:
     data.each do |line|
 
-      # Get the digital object.
-      if line[0].nil?
+      # Import.
+      self.delay.import_annotation(line, mode, user)
+    end
+  end
 
-        # No object.
-        object = nil
-      elsif mode == :complete
+  # Imports an annotation.
+  def import_annotation(line, mode, user)
 
-        # Find or create the object.
-        object = DigitalObject.find_or_create_by(
-          project_id: id,
-          location: line[0]
-        )
-      elsif mode == :selective
+    # Get the digital object.
+    if line[0].nil?
 
-        # Only find the object.
-        object = DigitalObject.find_by(
-          project_id: id,
-          location: line[0]
-        )
-      elsif mode == :filename
+      # No object.
+      object = nil
+    elsif mode == :complete
 
-        # Only find the object using filename.
-        object = DigitalObject.find_by(
-          project_id: id,
-          filename: line[0]
-        )
-      end
+      # Find or create the object.
+      object = DigitalObject.find_or_create_by(
+        project_id: id,
+        location: line[0]
+      )
+    elsif mode == :selective
 
-      # Get the concept.
-      if line[1].nil?
+      # Only find the object.
+      object = DigitalObject.find_by(
+        project_id: id,
+        location: line[0]
+      )
+    elsif mode == :filename
 
-        # No concept.
-        concept = nil
-      else
+      # Only find the object using filename.
+      object = DigitalObject.find_by(
+        project_id: id,
+        filename: line[0]
+      )
+    end
 
-        # Find or create concept.
-        concept = Concept.find_or_create_by(
-          project_id: id,
-          description: line[1]
-        )
-      end
+    # Get the concept.
+    if line[1].nil?
 
-      # If both an object and concept have been found, add annotation.
-      if object && concept
-        Annotation.find_or_create_by(
-          project_id: id,
-          digital_object_id: object.id,
-          concept_id: concept.id
-        ) do |new_annotation|
-          new_annotation.user_id = user.id
-          new_annotation.provenance = "Imported"
-        end
+      # No concept.
+      concept = nil
+    else
+
+      # Find or create concept.
+      concept = Concept.find_or_create_by(
+        project_id: id,
+        description: line[1]
+      )
+    end
+
+    # If both an object and concept have been found, add annotation.
+    if object && concept
+      Annotation.find_or_create_by(
+        project_id: id,
+        digital_object_id: object.id,
+        concept_id: concept.id
+      ) do |new_annotation|
+        new_annotation.user_id = user.id
+        new_annotation.provenance = "Imported"
       end
     end
   end
