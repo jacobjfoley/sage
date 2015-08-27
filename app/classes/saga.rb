@@ -98,8 +98,14 @@ module SAGA
       #   results.delete candidate
       # end
 
+      # Find strong results.
+      strong = results.select { |key, value| value >= 1.0 }
+
+      # Find confirmed results.
+      confirmed = results.select { |key, value| @element.related.include? key }
+
       # Return new results hash.
-      return results.select { |key, value| value >= 1.0 }
+      return strong.merge(confirmed)
     end
 
     # Aggregate popular elements with the suggestions list.
