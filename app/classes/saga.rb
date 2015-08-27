@@ -72,34 +72,34 @@ module SAGA
     # Establish a cutoff point in results.
     def filter_weak(results)
 
-      # Define candidates.
-      candidates = results.select { |key, value| value < 1.0 }
-
-      # In the event of no weak candidates:
-      if candidates.empty?
-
-        # Unaltered results.
-        return results
-      end
-
-      # Sort candidates.
-      candidates = sort(candidates)
-
-      # Find cumulative influence held by the candidates.
-      influence = candidates.values.reduce(:+)
-
-      # Find candidates who are to be deleted:
-      weak_candidates = candidates.keys[influence.ceil..-1]
-
-      # Delete those results which didn't make it.
-      weak_candidates.each do |candidate|
-
-        # Remove from results.
-        results.delete candidate
-      end
+      # # Define candidates.
+      # candidates = results.select { |key, value| value < 1.0 }
+      #
+      # # In the event of no weak candidates:
+      # if candidates.empty?
+      #
+      #   # Unaltered results.
+      #   return results
+      # end
+      #
+      # # Sort candidates.
+      # candidates = sort(candidates)
+      #
+      # # Find cumulative influence held by the candidates.
+      # influence = candidates.values.reduce(:+)
+      #
+      # # Find candidates who are to be deleted:
+      # weak_candidates = candidates.keys[influence.ceil..-1]
+      #
+      # # Delete those results which didn't make it.
+      # weak_candidates.each do |candidate|
+      #
+      #   # Remove from results.
+      #   results.delete candidate
+      # end
 
       # Return new results hash.
-      return results
+      return results.select { |key, value| value >= 1.0 }
     end
 
     # Aggregate popular elements with the suggestions list.
