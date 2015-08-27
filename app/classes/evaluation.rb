@@ -149,6 +149,10 @@ class Evaluation
         f1: [],
         f2: [],
         phi: [],
+        precision5: [],
+        success1: [],
+        success5: [],
+        mrr: [],
       }
     end
 
@@ -166,16 +170,18 @@ class Evaluation
 
         # Get the scores of these suggestions
         score = binary_classification(suggestions, truth_hash[item], range)
-        precision_score = precision(score)
-        recall_score = recall(score)
 
         # Record scores.
-        record[:precision] << precision_score
-        record[:recall] << recall_score
+        record[:precision] << precision(score)
+        record[:recall] << recall(score)
         record[:phi] << phi_coefficient(score)
         record[:f05] << f_score(precision_score, recall_score, 0.5)
         record[:f1] << f_score(precision_score, recall_score, 1.0)
         record[:f2] << f_score(precision_score, recall_score, 2.0)
+        record[:success1] << success_at(suggestions, 1, truth_hash[item])
+        record[:success1] << success_at(suggestions, 5, truth_hash[item])
+        record[:precision5] << precision_at(suggestions, 5, truth_hash[item])
+        record[:mrr] << reciprocal_rank(suggestions, truth_hash[item])
       end
     end
 
@@ -198,6 +204,54 @@ class Evaluation
 
     # Return results hash.
     return algorithms
+  end
+
+  # Find the success at a given interval.
+  def success_at(suggestions, interval, truth)
+
+    # Determine if any precision at the given interval.
+    if precision_at(suggestions, interval, truth) > 0
+      return 1.0
+    else
+      return 0.0
+    end
+  end
+
+  # Find the precision at a given interval.
+  def precision_at(suggestions, interval, truth)
+
+    # Determine set.
+    set = suggestions[0...interval]
+
+    # Find precision.
+    if set.empty?
+      return 0.0
+    else
+      return (set & truth).count.to_f / set.count
+    end
+  end
+
+  # Find the reciprocal rank.
+  def reciprocal_rank(suggestions, truth)
+
+    # Run through all suggestions.
+    suggestions.each do |suggestion|
+
+      # Check if this is a hit.
+      if truth.include? suggestion
+
+        # Found. Set rank and break.
+        rank = suggestions.index(suggestion) + 1.0
+        break
+      end
+    end
+
+    # Return result.
+    if rank.nil?
+      return 0.0
+    else
+      return 1.0 / rank
+    end
   end
 
   # Create a hash of each item mapped to its associated entities.
