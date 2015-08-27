@@ -276,7 +276,7 @@ class Project < ActiveRecord::Base
 
       # No concept.
       concept = nil
-    else
+    elsif (mode == :complete) || object
 
       # Find or create concept.
       concept = Concept.find_or_create_by(
