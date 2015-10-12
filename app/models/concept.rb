@@ -24,6 +24,7 @@ class Concept < ActiveRecord::Base
     # Map algorithms to names.
     algorithms = {
       'SAGA' => SAGA::Concept,
+      'SAGA-Refined' => SAGA::Concept_Refined,
       'Baseline' => Baseline::Concept,
       'Vote' => Rank::Vote,
       'VotePlus' => Rank::VotePlus,

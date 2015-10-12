@@ -28,6 +28,7 @@ class DigitalObject < ActiveRecord::Base
     # Map algorithms to names.
     algorithms = {
       'SAGA' => SAGA::Object,
+      'SAGA-Refined' => SAGA::Object_Refined,
       'Baseline' => Baseline::Object,
       'Vote' => Rank::Vote,
       'VotePlus' => Rank::VotePlus,
