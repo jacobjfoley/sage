@@ -15,7 +15,3 @@
 /log/*
 !/log/.keep
 /tmp
-
-# Ignore thumbnails.
-/public/thumbnails/*
-!/public/thumbnails/.keep
