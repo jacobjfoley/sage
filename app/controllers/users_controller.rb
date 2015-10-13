@@ -33,7 +33,11 @@ class UsersController < ApplicationController
           # Log in as new user.
           session[:user_id] = @user.id
 
-          format.html { redirect_to projects_path, notice: I18n.t(:user_welcome_message) }
+          format.html { redirect_to projects_path, notice: "Welcome aboard! Now
+            that you've registered, you may wish to create a project, or redeem
+            a key you've been provided. You can do that from here. Think of this
+             page as your control center, it can be reached at any time by
+             pressing the Projects link in the top bar." }
           format.json { render action: 'show', status: :created, location: @user }
         else
           format.html { render action: 'new' }
