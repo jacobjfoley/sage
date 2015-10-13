@@ -52,14 +52,14 @@ Sage::Application.routes.draw do
   root "site#welcome"
 
   # Site pages.
-  match "/welcome", via: "get", to: "site#welcome"
-  match "/application", via: "get", to: "site#application"
-  match "/feedback", via: "get", to: "site#feedback"
-  match "/participant_information", via: "get", to: "site#participant_information"
-  match "/test", via: "get", to: "site#test"
+  get "/welcome" => "site#welcome"
+  get "/application" => "site#application"
+  get "/feedback" => "site#feedback"
+  get "/participant_information" => "site#participant_information"
+  get "/test" => "site#test"
 
   # Oauth controller.
-  match "/receive_oauth2", via: "get", to: "projects#receive_oauth2"
+  get "/receive_oauth2" => "projects#receive_oauth2"
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
