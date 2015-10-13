@@ -1,3 +1,7 @@
+# This file contains some modified code from the Google Drive API reference,
+# which is licenced by Google under an Apache 2.0 licence.
+# This licence can be viewed at http://www.apache.org/licenses/LICENSE-2.0
+
 require 'google/api_client'
 
 class GoogleDriveUtils
