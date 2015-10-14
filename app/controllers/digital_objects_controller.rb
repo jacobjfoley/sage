@@ -234,8 +234,17 @@ class DigitalObjectsController < ApplicationController
       # If params contains an id:
       if params[:id]
 
-        # Set the digital object.
-        @digital_object = DigitalObject.find(params[:id])
+        # Check if the object exists.
+        if DigitalObject.exists?(params[:id])
+
+          # Set the digital object.
+          @digital_object = DigitalObject.find(params[:id])
+        else
+
+          # Redirect on error.
+          flash[:alert] = "The specified object was not found."
+          redirect_to project_digital_objects_path(@project)
+        end
       end
     end
 
@@ -244,7 +253,18 @@ class DigitalObjectsController < ApplicationController
     end
 
     def set_project
-      @project = Project.find(params[:project_id])
+      
+      # Check if the project exists.
+      if Project.exists?(params[:project_id])
+
+        # Set the project.
+        @project = Project.find(params[:project_id])
+      else
+
+        # Redirect on error.
+        flash[:alert] = "The specified project was not found."
+        redirect_to projects_path
+      end
     end
 
     # Get the role of the user in this project.

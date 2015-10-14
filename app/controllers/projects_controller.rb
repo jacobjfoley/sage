@@ -237,8 +237,17 @@ class ProjectsController < ApplicationController
       # If the params contains an id:
       if params[:id]
 
-        # Set the project.
-        @project = Project.find(params[:id])
+        # Check if the project exists.
+        if Project.exists?(params[:id])
+
+          # Set the project.
+          @project = Project.find(params[:id])
+        else
+
+          # Redirect on error.
+          flash[:alert] = "The specified project was not found."
+          redirect_to projects_path
+        end
       end
     end
 

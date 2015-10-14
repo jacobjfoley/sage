@@ -150,8 +150,17 @@ class ConceptsController < ApplicationController
       # If the params contains an id.
       if params[:id]
 
-        # Set the concept.
-        @concept = Concept.find(params[:id])
+        # Check if the concept exists.
+        if Concept.exists?(params[:id])
+
+          # Set the concept.
+          @concept = Concept.find(params[:id])
+        else
+
+          # Redirect on error.
+          flash[:alert] = "The specified concept was not found."
+          redirect_to project_concepts_path(@project)
+        end
       end
     end
 
@@ -162,7 +171,18 @@ class ConceptsController < ApplicationController
 
     # Get the project that the concept belongs to.
     def set_project
-      @project = Project.find(params[:project_id])
+      
+      # Check if the project exists.
+      if Project.exists?(params[:project_id])
+
+        # Set the project.
+        @project = Project.find(params[:project_id])
+      else
+
+        # Redirect on error.
+        flash[:alert] = "The specified project was not found."
+        redirect_to projects_path
+      end
     end
 
     # Get the role of the user in this project.
