@@ -1,16 +1,17 @@
 == README
 
-=== Ruby version
-This project uses ruby version 2.1.6.
+== About
+SAGE (Semantic Annotation by Group Exploration) is a web application that allows the hidden relationships between items in a collection of resources to be discovered, captured and explored. SAGE uses the SAGA algorithm (Semantically Annotated Graph Analysis) to detect these similarities, but can also be easily customised to use a different similarity measure in other research projects. The analytics and evaluation suites included in SAGE can then be used for comparisons between similarity measures.
 
-=== System dependencies
-You will need to set up the database and install gems before setting up SAGE.
+SAGE was developed as part of the PhD candidature of Jacob Foley at the University of New England in New South Wales, Australia. This project was supervised by Associate Professor Paul Kwan and Dr. Mitchell Welch, and was conducted in collaboration with William Oates of the UNE Heritage Centre.
 
-=== Database creation
-Create databases using rake db:setup.
+The primary aim of this research is to apply and evaluate multiagent computing techniques to the field of information management and retrieval in digital heritage, then develop a novel specialised algorithm with characteristics appropriate to this application area.
 
-=== How to run the test suite
-Test suite coming soon.
+== Code Usage
+SAGE and SAGA can be used in other research projects with similar aims to this project, but can also be used as a starting point for a modified web application if the SAGE aspect is more useful to you than the SAGA aspect. If you're interested in using or contributing to this software, we'd love to hear from you.
 
-=== Deployment instructions
-SAGE is easily deployed via Heroku.
+=== Setup and Instructions
+For information on setting up and using SAGE, refer to the GitHub Wiki pages. If you'd like to try a live version, a link to the application running on Heroku is available in the GitHub repository's tagline.
+
+== Required Services
+To run SAGE, you'll need to have an Amazon S3 account for persistent storage of object thumbnails, as well as a Google Developers account if you wish to use the Google Drive Import features, which are highly recommended unless your data is already hosted on the web.
