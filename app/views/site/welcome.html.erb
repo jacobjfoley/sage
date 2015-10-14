@@ -1,21 +1,12 @@
 <% provide :title, " | Welcome" %>
 <div class="container">
-  <div class="jumbotron">
-	  <h1 class="text-center">Welcome to SAGE!</h1>
+
+  <div class="text-center panel panel-default">
+    <h1><strong>SAGE: Semantic Annotation by Group Exploration</strong></h1>
+    <h3>Discover and explore the hidden relationships in a collection of resources.</h3>
+
+    <%= image_tag "splash.png" %>
   </div>
-  <p> SAGE ("Semantic Annotation by Group Exploration") is currently in beta release. Experimentation is ongoing, and a number of community projects have commenced.</p>
-  <p> Things to try: </p>
-  <ul>
-    <li>Create a <%= link_to new_user_path do %>new user<% end %> account.</li>
-    <li>Make a new project</li>
-    <li>Add a group of objects to your project.</li>
-    <li>Start adding and associating concepts.</li>
-    <li>Expand your objects or concepts to include new material.</li>
-    <li>See what SAGE gives you as suggestions as it begins to learn more about your data.</li>
-    <li>Invite friends with similar interests to collaborate on your project!</li>
-  </ul>
-  <p></p>
-  <p>If you would like to become more familiar with SAGE, take a look at the <%= link_to "https://github.com/Thaumajig/sage/wiki" do %>guides<% end %> page.</p>
-  <p>If you have feedback, ideas, suggestions, or have found a bug, contact me via the details on the <%= link_to feedback_path do %>feedback<% end %> page.</p>
-  <p>The icons used in this web application are unmodified, and were created by <a href="https://www.iconfinder.com/Vecteezy">Vecteezy</a> and <a href="https://icons8.com/">icons8</a>, and have been made available under a <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike</a> licence.
+
+  <p>Using the semantic network formed by annotations contributed by you and your team, SAGE helps find and collect relevant material in your large or complex data set made up of any web-accessible resource, including websites, photographs, and text snippets. SAGE is free to use for personal or research projects. To begin, create a <%= link_to new_user_path do %>new user<% end %> account.</p>
 </div>

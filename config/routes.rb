@@ -54,9 +54,8 @@ Sage::Application.routes.draw do
   # Site pages.
   get "/welcome" => "site#welcome"
   get "/application" => "site#application"
-  get "/feedback" => "site#feedback"
+  get "/about" => "site#about"
   get "/participant_information" => "site#participant_information"
-  get "/test" => "site#test"
 
   # Oauth controller.
   get "/receive_oauth2" => "projects#receive_oauth2"
