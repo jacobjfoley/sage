@@ -19,73 +19,37 @@ class Analytics
     # Create a hash to store individual statistics.
     statistics = {}
 
-    # Get objects, concepts and user counts.
+    # Get objects, concepts, annotations and user counts.
     statistics[:user_count] = @users.count
     statistics[:objects_count] = @digital_objects.count
     statistics[:concepts_count] = @concepts.count
+    statistics[:annotations_count] = @annotations.count
 
-    # Define initial other counts.
-    statistics[:annotations_count] = 0
-    statistics[:word_count] = 0
+    # Create hashes for object and concept annotation counts.
+    object_counts = @digital_objects.map {|k| [k.id, 0]}.to_h
+    concept_counts = @concepts.map {|k| [k.id, 0]}.to_h
 
-    # Define initial statistics.
-    statistics[:total_object_variance] = 0.0
-    statistics[:total_concept_variance] = 0.0
-    statistics[:object_std_deviation] = 0.0
-    statistics[:concept_std_deviation] = 0.0
+    # Explore annotation distribution.
+    @annotations.each do |annotation|
 
-    # Gather object statistics.
-    @digital_objects.each do |object|
-
-      # Get number of annotations.
-      annotations = object.concepts.count
-
-      # Gather annotations.
-      statistics[:annotations_count] += annotations
-
-      # Check for min.
-      if !(statistics.has_key? :min_objects) || (annotations < statistics[:min_objects])
-        statistics[:min_objects] = annotations
-      end
-
-      # Check for max.
-      if !(statistics.has_key? :max_objects) || (annotations > statistics[:max_objects])
-        statistics[:max_objects] = annotations
-      end
+      # Increment counts.
+      object_counts[annotation.digital_object_id] += 1
+      concept_counts[annotation.concept_id] += 1
     end
 
-    # Gather concept statistics.
-    @concepts.each do |concept|
+    # Find max and min values.
+    statistics[:min_objects] = object_counts.values.min
+    statistics[:max_objects] = object_counts.values.max
+    statistics[:min_concepts] = concept_counts.values.min
+    statistics[:max_concepts] = concept_counts.values.max
 
-      # Get number of annotations.
-      annotations = concept.digital_objects.count
+    # Create word count array.
+    word_counts = @concepts.map {|k| k.description.split.size}
 
-      # Check for min.
-      if !(statistics.has_key? :min_concepts) || (annotations < statistics[:min_concepts])
-        statistics[:min_concepts] = annotations
-      end
-
-      # Check for max.
-      if !(statistics.has_key? :max_concepts) || (annotations > statistics[:max_concepts])
-        statistics[:max_concepts] = annotations
-      end
-
-      # Get word count.
-      words = concept.description.split.size
-
-      # Gather words.
-      statistics[:word_count] += words
-
-      # Check for min words.
-      if !(statistics.has_key? :min_words) || (words < statistics[:min_words])
-        statistics[:min_words] = words
-      end
-
-      # Check for max.
-      if !(statistics.has_key? :max_words) || (words > statistics[:max_words])
-        statistics[:max_words] = words
-      end
-    end
+    # Find total, max and min values.
+    statistics[:word_count] = word_counts.reduce(:+)
+    statistics[:min_words] = word_counts.min
+    statistics[:max_words] = word_counts.max
 
     # Determine averages.
     if statistics[:objects_count] > 0
@@ -102,11 +66,17 @@ class Analytics
       statistics[:avg_words] = 0.0
     end
 
+    # Define initial statistics.
+    statistics[:total_object_variance] = 0.0
+    statistics[:total_concept_variance] = 0.0
+    statistics[:object_std_deviation] = 0.0
+    statistics[:concept_std_deviation] = 0.0
+
     # Calculate object variance.
     @digital_objects.each do |object|
 
       # Calculate summed variance.
-      statistics[:total_object_variance] += (object.concepts.count -
+      statistics[:total_object_variance] += (object_counts[object.id] -
         statistics[:avg_objects]) ** 2
     end
 
@@ -114,7 +84,7 @@ class Analytics
     @concepts.each do |concept|
 
       # Calculate summed variance.
-      statistics[:total_concept_variance] += (concept.digital_objects.count -
+      statistics[:total_concept_variance] += (concept_counts[concept.id] -
         statistics[:avg_concepts]) ** 2
     end
 
@@ -134,42 +104,8 @@ class Analytics
       )
     end
 
-    # Determine words if manually annotated.
-    statistics[:manually_annotated] = manual_annotation
-
-    # Determine annotation rate.
-    statistics[:annotation_rate] = cluster_annotation_rate
-
-    # Determine reuse rate.
-    statistics[:annotation_reuse] = reuse_rate
-
     # Return statistics.
     return statistics
-  end
-
-  # The number of words if manually annotated.
-  def manual_annotation
-
-    # Initialise words if manually annotated.
-    manual_words = 0
-
-    # For each concept:
-    @concepts.each do |concept|
-
-      # Calculate the number of words in the concept.
-      words = concept.description.split.size
-
-      # Calculate the number of times this concept has been associated with
-      # objects.
-      annotations = concept.digital_objects.count
-
-      # Increment manual words by the number of words contributed as
-      # annotations.
-      manual_words += words * annotations
-    end
-
-    # Return result.
-    return manual_words
   end
 
   # Returns the number of concepts in this project.
