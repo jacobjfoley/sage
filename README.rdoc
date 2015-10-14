@@ -10,7 +10,7 @@ The primary aim of this research is to apply and evaluate multiagent computing t
 == Code Usage
 SAGE and SAGA can be used in other research projects with similar aims to this project, but can also be used as a starting point for a modified web application if the SAGE aspect is more useful to you than the SAGA aspect. If you're interested in using or contributing to this software, we'd love to hear from you.
 
-=== Setup and Instructions
+== Setup and Instructions
 For information on setting up and using SAGE, refer to the GitHub Wiki pages. If you'd like to try a live version, a link to the application running on Heroku is available in the GitHub repository's tagline.
 
 == Required Services
