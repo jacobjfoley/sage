@@ -1,68 +1,35 @@
-<ul class="nav nav-tabs" role="tablist">
-  <li role="presentation" class="active"><a href="#url" role="tab" data-toggle="tab">
-    Add URLs <span class="glyphicon glyphicon-globe"></span>
-  </a></li>
-  <li role="presentation"><a href="#drive" role="tab" data-toggle="tab">
-    Google Drive Import <%= image_tag "drive_icon.png", size: "16" %>
-  </a></li>
-</ul>
+<%= form_for([@project, @digital_object]) do |f| %>
 
-<div class="tab-content">
-  <div role="tabpanel" class="tab-pane active" id="url">
+  <% if @digital_object.errors.any? %>
+    <div id="error_explanation" class="alert alert-danger">
+      <h2><%= pluralize(@digital_object.errors.count, "error") %> prohibited this digital_object from being saved:</h2>
 
-    <%= form_for([@project, @digital_object]) do |f| %>
-      <% if @digital_object.errors.any? %>
-        <div id="error_explanation" class="alert alert-danger">
-          <h2><%= pluralize(@digital_object.errors.count, "error") %> prohibited this digital_object from being saved:</h2>
-          <ul>
-          <% @digital_object.errors.full_messages.each do |msg| %>
-            <li><%= msg %></li>
-          <% end %>
-          </ul>
-        </div>
+      <ul>
+      <% @digital_object.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
       <% end %>
+      </ul>
+    </div>
+  <% end %>
 
-      <div class="form-group">
-        <%= f.label :location, "Enter the Object's URL, or multiple URLs on separate lines:" %>
-        <%= f.text_area :location, class: "form-control", rows: 10, autofocus: true %>
-        <br>
+  <div class="field form-group">
+    <%= f.label :location, "Object URL:" %><br>
 
-        <div class="actions">
-          <%= f.submit "Done", class: "btn btn-primary" %>
-        </div>
-      </div>
-    <% end %>
-  </div>
-
-  <div role="tabpanel" class="tab-pane" id="drive">
-
-    <% if @have_google_authorisation %>
-
-      <%= form_tag "/projects/#{@project.id}/digital_objects/import_drive_folder",
-        class: "form" do %>
-        <div class="form-group">
-          <label for="drive_folder"> Google Drive folder's link: </label>
-          <%= text_field_tag "drive_folder", nil, class: "form-control" %>
-        </div>
-        <%= submit_tag "Done", class: "btn btn-primary" %>
-        <em style="margin-left: 2em"> Note that this may take a while (20 seconds or so) for very large folders. </em>
-      <% end %>
-
+    <% if @digital_object.new_record? %>
+      <em>Enter the object's URL, or enter multiple URLs on separate lines.</em>
+      <%= f.text_area :location, class: "form-control", rows: 10, autofocus: true %>
     <% else %>
-
-      <p>
-        In order to import a public folder, you need to grant SAGE permission
-        to access your Google Drive™ account. This permission will last until
-        you log out of your SAGE account. You can grant permission using the
-        button below.
-      </p>
-      <br>
-      <div class="text-center">
-        <%= link_to @google_authorisation_uri do %>
-          <div class="btn btn-primary">Authorise SAGE</div>
-        <% end %>
-      </div>
-
+      <em>Update the object's URL.</em>
+      <%= f.text_field :location, class: "form-control", autofocus: true %>
     <% end %>
   </div>
-</div>
+
+  <div class="actions form-group">
+    <%= link_to project_digital_objects_path(@project) do %><div class="btn btn-default">
+      <span class="glyphicon glyphicon-arrow-left"></span> Back
+    </div><% end %>
+
+    <%= f.submit "Done", class: "btn btn-primary" %>
+  </div>
+
+<% end %>

@@ -1,0 +1,48 @@
+<ul class="nav nav-tabs" role="tablist">
+  <li role="presentation" class="active"><a href="#url" role="tab" data-toggle="tab">
+    Add URLs <span class="glyphicon glyphicon-globe"></span>
+  </a></li>
+  <li role="presentation"><a href="#drive" role="tab" data-toggle="tab">
+    Google Drive Import <%= image_tag "drive_icon.png", size: "16" %>
+  </a></li>
+</ul>
+
+<div class="tab-content">
+  <div role="tabpanel" class="tab-pane active" id="url">
+
+    <%= render 'form' %>
+
+  </div>
+
+  <div role="tabpanel" class="tab-pane" id="drive">
+
+    <% if @have_google_authorisation %>
+
+      <%= form_tag "/projects/#{@project.id}/digital_objects/import_drive_folder",
+        class: "form" do %>
+        <div class="form-group">
+          <label for="drive_folder"> Google Drive folder's link: </label>
+          <%= text_field_tag "drive_folder", nil, class: "form-control" %>
+        </div>
+        <%= submit_tag "Done", class: "btn btn-primary" %>
+        <em style="margin-left: 2em"> Note that this may take a while (20 seconds or so) for very large folders. </em>
+      <% end %>
+
+    <% else %>
+
+      <p>
+        In order to import a public folder, you need to grant SAGE permission
+        to access your Google Drive™ account. This permission will last until
+        you log out of your SAGE account. You can grant permission using the
+        button below.
+      </p>
+      <br>
+      <div class="text-center">
+        <%= link_to @google_authorisation_uri do %>
+          <div class="btn btn-primary">Authorise SAGE</div>
+        <% end %>
+      </div>
+
+    <% end %>
+  </div>
+</div>

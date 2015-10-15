@@ -1,4 +1,5 @@
 <%= form_for([@project, @concept]) do |f| %>
+
   <% if @concept.errors.any? %>
     <div id="error_explanation" class="alert alert-danger">
       <h2><%= pluralize(@concept.errors.count, "error") %> prohibited this concept from being saved:</h2>
@@ -11,18 +12,17 @@
     </div>
   <% end %>
 
-  <div class="form-group">
-    <%= f.label :description, "Concept description:" %>
+  <div class="field form-group">
+    <%= f.label :description, "Concept Description:" %><br>
+    <em>Describe the concept using keywords, a short description, or longer text.</em>
     <%= f.text_area :description, class: "form-control", rows: 6, autofocus: true %>
+  </div>
 
-    <br>
+  <div class="actions form-group">
+    <%= link_to project_concepts_path(@project) do %><div class="btn btn-default">
+      <span class="glyphicon glyphicon-arrow-left"></span> Back
+    </div><% end %>
 
-    <div class="actions">
-      <%= link_to project_concepts_path(@project), title: "Back" do %><div class="btn btn-default">
-          <span class="glyphicon glyphicon-arrow-left"></span> Back
-      </div><% end %>
-      
-      <%= f.submit "Done", class: "btn btn-primary" %>
-    </div>
+    <%= f.submit "Done", class: "btn btn-primary" %>
   </div>
 <% end %>

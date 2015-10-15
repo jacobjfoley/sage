@@ -59,6 +59,12 @@ class ConceptsController < ApplicationController
     if index < (items.count - 1)
       @next_item = items[index + 1].id
     end
+
+    # Check valid algorithm.
+    if !@concept.valid_algorithm?
+      flash.now[:notice] = "The project's algorithm (#{@project.algorithm})"\
+        " doesn't support concepts. Using the default algorithm instead."
+    end
   end
 
   # GET /concepts/new
@@ -171,7 +177,7 @@ class ConceptsController < ApplicationController
 
     # Get the project that the concept belongs to.
     def set_project
-      
+
       # Check if the project exists.
       if Project.exists?(params[:project_id])
 

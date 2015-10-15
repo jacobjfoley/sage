@@ -40,6 +40,7 @@ class DigitalObjectsController < ApplicationController
   # GET /digital_objects/1
   # GET /digital_objects/1.json
   def show
+
     # New concept for quick create.
     @concept = Concept.new
 
@@ -63,6 +64,12 @@ class DigitalObjectsController < ApplicationController
     # Find next item.
     if index < (items.count - 1)
       @next_item = items[index + 1].id
+    end
+
+    # Check valid algorithm.
+    if !@digital_object.valid_algorithm?
+      flash.now[:notice] = "The project's algorithm (#{@project.algorithm})"\
+        " doesn't support objects. Using the default algorithm instead."
     end
   end
 
@@ -253,7 +260,7 @@ class DigitalObjectsController < ApplicationController
     end
 
     def set_project
-      
+
       # Check if the project exists.
       if Project.exists?(params[:project_id])
 

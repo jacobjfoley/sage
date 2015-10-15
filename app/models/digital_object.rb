@@ -12,6 +12,18 @@ class DigitalObject < ActiveRecord::Base
   before_save :set_filename, if: :location_changed?
   after_create :create_thumbnails
 
+  # Map algorithms to names.
+  ALGORITHMS = {
+    'Default' => SAGA::Object,
+    'SAGA' => SAGA::Object,
+    'SAGA-Refined' => SAGA::Object_Refined,
+    'Baseline' => Baseline::Object,
+    'Vote' => Rank::Vote,
+    'VotePlus' => Rank::VotePlus,
+    'Sum' => Rank::Sum,
+    'SumPlus' => Rank::SumPlus
+  }
+
   # Find entities by annotation.
   def related
 
@@ -22,22 +34,23 @@ class DigitalObject < ActiveRecord::Base
   # Wrap self in an algorithm.
   def algorithm(specific = nil)
 
-    # Get algorithm name. Check specific, then project, then default to SAGA.
-    name = specific || project.algorithm || 'SAGA'
+    # Get algorithm name. Check specific for overrides, then project.
+    name = specific || project.algorithm
 
-    # Map algorithms to names.
-    algorithms = {
-      'SAGA' => SAGA::Object,
-      'SAGA-Refined' => SAGA::Object_Refined,
-      'Baseline' => Baseline::Object,
-      'Vote' => Rank::Vote,
-      'VotePlus' => Rank::VotePlus,
-      'Sum' => Rank::Sum,
-      'SumPlus' => Rank::SumPlus
-    }
+    # If a valid algorithm name wasn't provided, use default.
+    if !ALGORITHMS.key? name
+      name = "Default"
+    end
 
     # Return object.
-    return algorithms[name].new(self)
+    return ALGORITHMS[name].new(self)
+  end
+
+  # Check if valid algorithm has been provided.
+  def valid_algorithm?(algorithm = project.algorithm)
+
+    # True if blank or registered algorithm.
+    return (!algorithm || (ALGORITHMS.key? algorithm))
   end
 
   # Get a thumbnail for the specified size and object.

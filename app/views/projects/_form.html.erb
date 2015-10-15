@@ -1,4 +1,5 @@
 <%= form_for @project do |f| %>
+
   <% if @project.errors.any? %>
     <div id="error_explanation" class="alert alert-danger">
       <h2><%= pluralize(@project.errors.count, "error") %> prohibited this project from being saved:</h2>
@@ -12,13 +13,20 @@
   <% end %>
 
   <div class="field form-group">
-    <%= f.label :name, "Project name:" %><br>
+    <%= f.label :name, "Project Name:" %><br>
     <%= f.text_field :name, class: "form-control", autofocus: true %>
   </div>
 
   <div class="field form-group">
-    <%= f.label :notes, "Additional information about the project:" %><br>
+    <%= f.label :notes, "Notes:" %><br>
+    <em>Additional information you want to share with other users contributing to this project.</em>
     <%= f.text_area :notes, class: "form-control", rows: 10 %>
+  </div>
+
+  <div class="field form-group">
+    <%= f.label :algorithm, "Algorithm:" %><br>
+    <em>Leave blank to use the default algorithm (SAGA), or choose a specific, enabled algorithm to use in this project.</em>
+    <%= f.text_field :algorithm, class: "form-control" %>
   </div>
 
   <div class="actions form-group">
