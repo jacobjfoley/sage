@@ -1,115 +1,5 @@
 class Evaluation
 
-  # Evaluate samples produced from a sample collection.
-  def evaluate_samples(project_id)
-
-    # Find all samples.
-    samples = Project.where(parent_id: project_id)
-
-    # Define measurements.
-    measurements = {}
-
-    # Run through each sample.
-    samples.each do |sample|
-
-      # Create new analytics device.
-      analytics = Analytics.new(sample)
-
-      # Get the algorithm.
-      algorithm = sample.algorithm
-
-      # Determine if this algorithm is new.
-      if !measurements.key? algorithm
-
-        # Introduce algorithm.
-        measurements[algorithm] = {
-          annotation_count: 0,
-          annotation_period: 0.0,
-          annotation_rate: 0.0,
-          annotation_count_total: 0,
-          one: 0,
-          many: 0,
-          reuse: 0.0,
-          count: 0,
-          accepted: 0,
-          concept_count: 0,
-          to_many: 0,
-          created: 0
-        }
-      end
-
-      # Add to measurements.
-      measurements[algorithm][:count] += 1
-      measurements[algorithm][:annotation_count] += analytics.cluster_annotation_count
-      measurements[algorithm][:annotation_count_total] += analytics.annotation_count
-      measurements[algorithm][:annotation_period] += analytics.cluster_annotation_period
-      measurements[algorithm][:annotation_rate] += analytics.cluster_annotation_rate
-      measurements[algorithm][:one] += analytics.one_rate
-      measurements[algorithm][:many] += analytics.many_rate
-      measurements[algorithm][:reuse] += analytics.reuse_rate
-      measurements[algorithm][:accepted] += analytics.accepted
-      measurements[algorithm][:created] += analytics.created
-      measurements[algorithm][:concept_count] += analytics.concept_count
-      measurements[algorithm][:to_many] += analytics.to_many_rate
-    end
-
-    # For each algorithm:
-    measurements.keys.each do |algorithm|
-
-      # Fetch hash for this algoritm.
-      m = measurements[algorithm]
-
-      # Calculate averages.
-      avg_annotation_count_total = m[:annotation_count_total].to_f / m[:count]
-      avg_annotation_count = m[:annotation_count].to_f / m[:count]
-      avg_annotation_period = m[:annotation_period] / (60 * m[:count])
-      avg_annotation_rate = m[:annotation_rate] / m[:count]
-      avg_one = m[:one].to_f / m[:count]
-      avg_many = m[:many].to_f / m[:count]
-      avg_reuse = m[:reuse] / m[:count]
-      avg_accepted = m[:accepted].to_f / m[:count]
-      avg_created = m[:created].to_f / m[:count]
-      avg_concepts = m[:concept_count].to_f / m[:count]
-      avg_to_many = m[:to_many].to_f / m[:count]
-
-      # Calculate proportion.
-      if (avg_accepted > 0 || avg_created > 0)
-        proportion = avg_accepted * 100.0 / (avg_accepted + avg_created)
-      else
-        proportion = 0.0
-      end
-
-      # Calculate hub rate.
-      if (avg_to_many > 0 || avg_one > 0)
-        avg_to_hub_rate = avg_to_many * 100.0 / (avg_to_many + avg_one)
-      else
-        avg_to_hub_rate = 0.0
-      end
-
-      # Print results.
-      puts "Algorithm: #{algorithm}"
-      puts "\n"
-      puts "-- Averages #{avg_annotation_count_total} annotations per sample."
-      puts "-- Averages #{avg_annotation_count} annotations in clusters per sample."
-      puts "\n"
-      puts "-- Averages #{avg_annotation_period.round(2)} minutes per sample."
-      puts "-- Averages #{avg_annotation_rate.round(2)} annotations/minute."
-      puts "\n"
-      puts "-- Annotations to one-off concepts: #{avg_one}"
-      puts "-- Annotations to hub concepts: #{avg_to_many}."
-      puts "-- Hub annotation proportion: #{avg_to_hub_rate}%."
-      puts "\n"
-      puts "-- Averages #{avg_concepts} concepts."
-      puts "-- One-off concept: #{avg_one}"
-      puts "-- Hub concepts: #{avg_many}."
-      puts "-- Hub concept proportion: #{avg_reuse.round(0)}%."
-      puts "\n"
-      puts "-- Accepted: #{avg_accepted}, Created: #{avg_created}."
-      puts "-- Proportion (Accepted/All): #{proportion.round(2)}%."
-      puts "\n"
-    end
-  end
-
   # Process project and report scores.
   # Training proportion is a value between 0.0 and 1.0. For instance, 0.4 means
   # that the first 40% is training data and remaining 60% is testing data.
@@ -135,7 +25,7 @@ class Evaluation
     training = training_project(clone, training_proportion)
 
     # List algorithm names.
-    algorithm_names = ["VotePlus", "SAGA"]
+    algorithm_names = ["VotePlus", "SAGA", "SAGA-Refined"]
 
     # Initialise algorithm records.
     algorithms = {}
