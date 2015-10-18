@@ -72,35 +72,39 @@ class Analytics
     statistics[:object_std_deviation] = 0.0
     statistics[:concept_std_deviation] = 0.0
 
-    # Calculate object variance.
-    @digital_objects.each do |object|
+    # If more than one object:
+    if statistics[:objects_count] > 0
 
-      # Calculate summed variance.
-      statistics[:total_object_variance] += (object_counts[object.id] -
-        statistics[:avg_objects]) ** 2
-    end
+      # Calculate object variance.
+      @digital_objects.each do |object|
 
-    # Calculate concept variance.
-    @concepts.each do |concept|
+        # Calculate summed variance.
+        statistics[:total_object_variance] += (object_counts[object.id] -
+            statistics[:avg_objects]) ** 2
+      end
+      statistics[:total_object_variance] /= @digital_objects.count
 
-      # Calculate summed variance.
-      statistics[:total_concept_variance] += (concept_counts[concept.id] -
-        statistics[:avg_concepts]) ** 2
-    end
-
-    # Determine object standard deviation.
-    if statistics[:objects_count] > 1
+      # Determine object standard deviation.
       statistics[:object_std_deviation] = Math.sqrt(
-        statistics[:total_object_variance] /
-        (statistics[:objects_count] - 1.0)
+        statistics[:total_object_variance]
       )
     end
 
-    # Determine concept standard deviation.
-    if statistics[:concepts_count] > 1
+    # If more than one concept:
+    if statistics[:concepts_count] > 0
+
+      # Calculate concept variance.
+      @concepts.each do |concept|
+
+        # Calculate summed variance.
+        statistics[:total_concept_variance] += (concept_counts[concept.id] -
+            statistics[:avg_concepts]) ** 2
+      end
+      statistics[:total_concept_variance] /= @concepts.count
+
+      # Determine concept standard deviation.
       statistics[:concept_std_deviation] = Math.sqrt(
-        statistics[:total_concept_variance] /
-        (statistics[:concepts_count] - 1.0)
+        statistics[:total_concept_variance]
       )
     end
 

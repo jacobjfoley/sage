@@ -1,3 +1,9 @@
+# Acceptance
+# Calculates metrics for a project that has been used to create samples. This
+# allows multiple algorithms to be compared against one another in terms of
+# user acceptance/performance.
+# Data available in the following format:
+# @records[:algorithm][:measurement][:count|:min|:max|:mean|:std_dev]
 class Acceptance
 
   # Constructor.
@@ -7,29 +13,40 @@ class Acceptance
     @project = project
 
     # Storage for each algorithm's measurements.
-    @measurements = {}
+    @records = {}
+
+    # Evaluate samples.
+    evaluate_samples
+
+    # Summarise results.
+    summarise_results
   end
 
   # Introduce an algorithm to the measurements.
   def introduce(algorithm)
 
-    # Introduce algorithm.
-    @measurements[algorithm] = {
-      annotation_count_total: 0,
-      concept_count: 0,
-      object_count: 0,
+    # Create new record.
+    @records[algorithm] = {
 
-      annotation_count: 0,
-      annotation_period: 0.0,
-      annotation_rate: 0.0,
+      # Entity counts.
+      object_count: [],
 
-      one: 0,
-      many: 0,
-      reuse: 0.0,
+      # Information complexity.
+      concept_count: [],
+      leaf_count: [],
+      branch_count: [],
+      branch_ratio: [],
 
-      accepted: 0,
-      created: 0,
-      to_many: 0,
+      # Work performance.
+      annotation_count: [],
+      cluster_count: [],
+      cluster_period: [],
+      cluster_rate: [],
+
+      # Suggestion acceptance.
+      accepted: [],
+      created: [],
+      accepted_ratio: [],
     }
   end
 
@@ -42,99 +59,93 @@ class Acceptance
     # Run through each sample.
     samples.each do |sample|
 
-      # Get the algorithm.
-      algorithm = sample.algorithm
-
       # Determine if this algorithm is new.
-      if !@measurements.key? algorithm
+      if !@records.key? sample.algorithm
 
         # Introduce the algorithm to the measurements.
-        introduce(algorithm)
+        introduce(sample.algorithm)
       end
 
-      # Record overall details.
-      @measurements[algorithm][:annotation_count_total] += @project.annotations.count
-      @measurements[algorithm][:concept_count] += @project.concepts.count
-      @measurements[algorithm][:object_count] += @project.digital_objects.count
+      # Fetch algorithm's record.
+      record = @records[sample.algorithm]
 
-      # Record cluster details.
-      @measurements[algorithm][:annotation_count] += cluster_annotation_count
-      @measurements[algorithm][:annotation_period] += cluster_annotation_period
-      @measurements[algorithm][:annotation_rate] += cluster_annotation_rate
+      # Entity counts.
+      record[:object_count] << sample.digital_objects.count
 
-      # Record structural details.
-      @measurements[algorithm][:one] += one_rate
-      @measurements[algorithm][:many] += many_rate
-      @measurements[algorithm][:reuse] += reuse_rate
+      # Information complexity.
+      record[:concept_count] << sample.concepts.count
+      record[:leaf_count] << leaf_count
+      record[:branch_count] << branch_count
+      record[:branch_ratio] << branch_ratio
 
-      # Record acceptance details.
-      @measurements[algorithm][:accepted] += accepted
-      @measurements[algorithm][:created] += created
-      @measurements[algorithm][:to_many] += to_many_rate
+      # Work performance.
+      record[:annotation_count] << sample.annotations.count
+      record[:cluster_count] << cluster_annotation_count
+      record[:cluster_period] << cluster_annotation_period
+      record[:cluster_rate] << cluster_annotation_rate
+
+      # Suggestion acceptance.
+      record[:accepted] << accepted
+      record[:created] << created
+      record[:accepted_ratio] << accepted_ratio
     end
   end
 
-  # Display results of analysis.
-  def display_results
+  # Calculate count, min, max, mean, and standard deviation of each measurement.
+  def summarise_results
 
-    # For each algorithm:
-    @measurements.keys.each do |algorithm|
+    # For each algorithm record:
+    @records.keys.each do |algorithm|
 
-      # Fetch hash for this algoritm.
-      m = @measurements[algorithm]
+      # Get the record.
+      record = @records[algorithm]
 
-      # Calculate averages.
-      avg_annotation_count_total = m[:annotation_count_total].to_f / m[:count]
-      avg_annotation_count = m[:annotation_count].to_f / m[:count]
-      avg_annotation_period = m[:annotation_period] / (60 * m[:count])
-      avg_annotation_rate = m[:annotation_rate] / m[:count]
-      avg_one = m[:one].to_f / m[:count]
-      avg_many = m[:many].to_f / m[:count]
-      avg_reuse = m[:reuse] / m[:count]
-      avg_accepted = m[:accepted].to_f / m[:count]
-      avg_created = m[:created].to_f / m[:count]
-      avg_concepts = m[:concept_count].to_f / m[:count]
-      avg_to_many = m[:to_many].to_f / m[:count]
+      # Find the number of samples for this algorithm.
+      samples = record[:object_count].count
 
-      # Calculate proportion.
-      if (avg_accepted > 0 || avg_created > 0)
-        proportion = avg_accepted * 100.0 / (avg_accepted + avg_created)
-      else
-        proportion = 0.0
+      # For each measurement:
+      record.keys.each do |measurement|
+
+        # Summarise this measurement.
+        record[measurement] = summarise(record[measurement])
       end
 
-      # Calculate hub rate.
-      if (avg_to_many > 0 || avg_one > 0)
-        avg_to_hub_rate = avg_to_many * 100.0 / (avg_to_many + avg_one)
-      else
-        avg_to_hub_rate = 0.0
-      end
-
-      # Print results.
-      puts "Algorithm: #{algorithm}"
-      puts "\n"
-      puts "-- Averages #{avg_annotation_count_total} annotations per sample."
-      puts "-- Averages #{avg_annotation_count} annotations in clusters per sample."
-      puts "\n"
-      puts "-- Averages #{avg_annotation_period.round(2)} minutes per sample."
-      puts "-- Averages #{avg_annotation_rate.round(2)} annotations/minute."
-      puts "\n"
-      puts "-- Annotations to one-off concepts: #{avg_one}"
-      puts "-- Annotations to hub concepts: #{avg_to_many}."
-      puts "-- Hub annotation proportion: #{avg_to_hub_rate}%."
-      puts "\n"
-      puts "-- Averages #{avg_concepts} concepts."
-      puts "-- One-off concept: #{avg_one}"
-      puts "-- Hub concepts: #{avg_many}."
-      puts "-- Hub concept proportion: #{avg_reuse.round(0)}%."
-      puts "\n"
-      puts "-- Accepted: #{avg_accepted}, Created: #{avg_created}."
-      puts "-- Proportion (Accepted/All): #{proportion.round(2)}%."
-      puts "\n"
+      # Record the number of samples.
+      record[:sample_count] = samples
     end
   end
 
-  ### Clustering ###
+  # Summarise an array of measurements.
+  def summarise(raw)
+
+    # Create empty summary hash.
+    summary = {}
+
+    #Calculate count.
+    count = raw.count
+
+    # For non-empty measurements hashes:
+    if count > 0
+
+      # Calculate min and max.
+      summary[:min] = raw.min
+      summary[:max] = raw.max
+
+      # Calculate mean average.
+      summary[:mean] = raw.reduce(:+).to_f / count
+
+      # Calculate variance.
+      variance = raw.reduce(0.0) {
+        |total, value| total + (value - summary[:mean]) ** 2
+      } / count
+
+      # Calculate standard deviation.
+      summary[:std_dev] = Math.sqrt(variance)
+    end
+
+    # Return result.
+    return summary
+  end
 
   # Returns an array of annotation clusters.
   def cluster_annotations
@@ -172,6 +183,13 @@ class Acceptance
 
     # Return results.
     return clusters
+  end
+
+  # Finds the average annotation rate in annotations/minute.
+  def cluster_annotation_rate
+
+    # Return average annotations/minute.
+    return cluster_annotation_count * 60 / cluster_annotation_period
   end
 
   # Finds the number of annotations in clusters.
@@ -214,14 +232,30 @@ class Acceptance
     return time
   end
 
-  # Finds the average annotation rate in annotations/minute.
-  def cluster_annotation_rate
+  # Find the number of concepts with one annotation.
+  def leaf_count
 
-    # Return average annotations/minute.
-    return cluster_annotation_count * 60 / cluster_annotation_period
+    # Return the number.
+    return @project.concepts.select { |concept| concept.annotations.count == 1 }.count
   end
 
-  ### Accepted ###
+  # Find the number of concepts with many annotations.
+  def branch_count
+
+    # Return the number.
+    return @project.concepts.select { |concept| concept.annotations.count > 1 }.count
+  end
+
+  # Find the proportion of branch concepts.
+  def branch_ratio
+
+    # Return the percentage, or 0 if no concepts.
+    if @project.concepts.count > 0
+      return branch_rate.to_f / @project.concepts.count
+    else
+      return 0.0
+    end
+  end
 
   # Find the number of annotations created via the add button.
   def accepted
@@ -237,46 +271,10 @@ class Acceptance
     return @project.annotations.where(provenance: "New").count
   end
 
-  ### Link Analysis ###
+  # Find the acceptance ratio.
+  def accepted_ratio
 
-  # Find the number of annotations which link to a well-annotated concept.
-  def to_many_rate
-
-    # Find the "hub" concepts with > 1 annotation.
-    hubs = @project.concepts.select { |concept| concept.annotations.count > 1 }
-
-    # Accumulate annotation count within these hubs.
-    count = 0
-    hubs.each do |hub|
-      count += hub.annotations.count
-    end
-
-    # Return the number.
-    return count
-  end
-
-  # Find the number of concepts with one annotation.
-  def one_rate
-
-    # Return the number.
-    return @project.concepts.select { |concept| concept.annotations.count == 1 }.count
-  end
-
-  # Find the number of concepts with many annotations.
-  def many_rate
-
-    # Return the number.
-    return @project.concepts.select { |concept| concept.annotations.count > 1 }.count
-  end
-
-  # Find the proportion of reused concepts vs single concepts.
-  def reuse_rate
-
-    # Return the percentage, or 0 if no concepts.
-    if @project.concepts.count > 0
-      return many_rate.to_f * 100 / @project.concepts.count
-    else
-      return 0.0
-    end
+    # Return the proportion of accepted to total annotations.
+    return accepted.to_f / accepted + created
   end
 end
