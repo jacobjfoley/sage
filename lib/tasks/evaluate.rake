@@ -1,5 +1,6 @@
 namespace :evaluate do
-desc "Investigate user metrics in samples created from a source project."
+
+  desc "Investigate user metrics in samples created from a source project."
   task :acceptance, [:project] => :environment do |task, args|
 
     # Run the acceptance utility class on the specified project.
@@ -34,4 +35,5 @@ desc "Investigate user metrics in samples created from a source project."
       end
     end
   end
+  
 end

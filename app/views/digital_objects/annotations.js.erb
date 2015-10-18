@@ -1,0 +1,9 @@
+$('#annotations').empty();
+
+$('#annotations').append(" <%= escape_javascript(
+    render partial: 'concepts/concepttable',
+      locals: {
+        digital_object: @digital_object,
+        project: @project,
+      }
+) %> ");

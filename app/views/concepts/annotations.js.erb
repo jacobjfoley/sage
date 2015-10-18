@@ -1,0 +1,15 @@
+$('#annotations').empty();
+
+<% relevant = @concept.algorithm.suggestions %>
+
+<% relevant.keys.each do |object| %>
+  $('#annotations').append(" <%= escape_javascript(
+      render partial: 'digital_objects/objectcontrols', locals: {
+        object: object,
+        score: relevant[object],
+        size: '150px',
+        controls: false,
+        gallery: true
+      }
+    ) %> ");
+<% end %>

@@ -159,7 +159,10 @@ class DigitalObjectsController < ApplicationController
       )
     end
 
-    redirect_to project_digital_object_path(@project, @digital_object)
+    respond_to do |format|
+      format.html { redirect_to project_digital_object_path(@project, @digital_object) }
+      format.js { render 'annotations.js.erb' }
+    end
   end
 
   # POST /objects/1/add_created_concept
@@ -203,7 +206,10 @@ class DigitalObjectsController < ApplicationController
       @digital_object.concepts.destroy @concept
     end
 
-    redirect_to project_digital_object_path(@project, @digital_object)
+    respond_to do |format|
+      format.html { redirect_to project_digital_object_path(@project, @digital_object) }
+      format.js { render 'annotations.js.erb' }
+    end
   end
 
   # POST /objects/1/import_drive_folder

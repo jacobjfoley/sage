@@ -50,33 +50,14 @@
 
     <br>
 
-    <table class="table table-hover">
-      <% relevant = @digital_object.algorithm.suggestions %>
-      <% relevant.keys.each do |concept| %>
-      <tr>
+    <div id="annotations">
+      <%= render partial: "concepts/concepttable",
+        locals: {
+          digital_object: @digital_object,
+          project: @project,
+        }
+      %>
+    </div>
 
-        <td>
-          <%= link_to truncate(concept.description, length: 40), [@project, concept] %>
-
-          <% if !@user_role.position.eql? "Viewer" %>
-            <% if !@digital_object.concepts.include? concept %>
-              <%= link_to add_concept_project_digital_object_path(@project, @digital_object, concept_id: concept.id), method: :post, title: "Add" do %>
-                <div class="btn btn-default pull-right">
-                  <%= relevant[concept].round(2) %> <i class="glyphicon glyphicon-ok fade"></i>
-                </div>
-              <% end %>
-            <% else %>
-              <%= link_to remove_concept_project_digital_object_path(@project, @digital_object, concept_id: concept.id), method: :post, title: "Remove" do %>
-                <div class="btn btn-primary pull-right">
-                  <%= relevant[concept].round(2) %> <i class="glyphicon glyphicon-ok"></i>
-                </div>
-              <% end %>
-            <% end %>
-          <% end %>
-        </td>
-
-      </tr>
-      <% end %>
-    </table>
   </div>
 </div>

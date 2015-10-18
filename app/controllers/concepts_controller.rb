@@ -135,7 +135,10 @@ class ConceptsController < ApplicationController
       )
     end
 
-    redirect_to project_concept_path(@project, @concept)
+    respond_to do |format|
+      format.html { redirect_to project_concept_path(@project, @concept) }
+      format.js { render "annotations.js.erb" }
+    end
   end
 
   # POST /concepts/1/remove_object
@@ -146,7 +149,10 @@ class ConceptsController < ApplicationController
       @concept.digital_objects.destroy @object
     end
 
-    redirect_to project_concept_path(@project, @concept)
+    respond_to do |format|
+      format.html { redirect_to project_concept_path(@project, @concept) }
+      format.js { render "annotations.js.erb"}
+    end
   end
 
   private

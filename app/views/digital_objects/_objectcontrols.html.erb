@@ -1,0 +1,30 @@
+<div class="col-sm-3 col-xs-6" style="height: 240px">
+
+  <%= render partial: "digital_objects/object",
+    locals: {
+      object: object,
+      size: '150px',
+      controls: false,
+      gallery: true
+    }
+  %>
+
+  <% if !@user_role.position.eql? "Viewer" %>
+    <div class="text-center">
+      <% if @concept.digital_objects.include? object %>
+        <%= link_to remove_object_project_concept_path(@project, @concept, object_id: object.id), method: :post, remote: true, title: "Remove" do %>
+          <div class="btn btn-primary">
+            <%= score.round(2) %> <i class="glyphicon glyphicon-ok"></i>
+          </div>
+        <% end %>
+      <% else %>
+        <%= link_to add_object_project_concept_path(@project, @concept, object_id: object.id), method: :post, remote: true, title: "Add" do %>
+          <div class="btn btn-default">
+            <%= score.round(2) %> <i class="glyphicon glyphicon-ok fade"></i>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+
+</div>
