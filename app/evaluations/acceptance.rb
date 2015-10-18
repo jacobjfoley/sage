@@ -6,11 +6,14 @@
 # @records[:algorithm][:measurement][:count|:min|:max|:mean|:std_dev]
 class Acceptance
 
+  attr_reader :project
+  attr_reader :records
+
   # Constructor.
   def initialize(project)
 
     # Capture the parent project, whose samples are being analysed.
-    @project = project
+    @project = Project.find(project)
 
     # Storage for each algorithm's measurements.
     @records = {}
@@ -54,7 +57,7 @@ class Acceptance
   def evaluate_samples
 
     # Find all samples.
-    samples = Project.where(parent: project)
+    samples = Project.where(parent: @project)
 
     # Run through each sample.
     samples.each do |sample|
