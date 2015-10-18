@@ -254,7 +254,7 @@ class Acceptance
 
     # Return the percentage, or 0 if no concepts.
     if @project.concepts.count > 0
-      return branch_rate.to_f / @project.concepts.count
+      return branch_count.to_f / @project.concepts.count
     else
       return 0.0
     end
