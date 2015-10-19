@@ -35,5 +35,29 @@ namespace :evaluate do
       end
     end
   end
-  
+
+  desc "Investigate algorithm performance metrics using a test project."
+  task :performance, [:project, :partition] => :environment do |task, args|
+
+    # Run evaluation.
+    results = Evaluation.new.evaluate_performance(:project, :partition, 30)
+
+    # Display results.
+    results.keys.each do |algorithm|
+
+      # Print algorithm name.
+      puts algorithm
+
+      # For each metric:
+      results[algorithm].keys.each do |metric|
+
+        # Print metric.
+        puts "#{metric}: #{results[algorithm][metric]}"
+      end
+
+      # Print separator.
+      puts "\n-----\n"
+    end
+  end
+
 end
