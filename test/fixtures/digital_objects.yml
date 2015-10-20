@@ -1,2 +1,5 @@
-one: {}
-two: {}
+one:
+  location: http://www.example.com/operahouse.jpg
+  thumbnail_url: http://www.example.com/operahouse.jpg
+  filename: operahouse.jpg
+  project: one

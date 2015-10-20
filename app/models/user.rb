@@ -20,7 +20,7 @@ class User < ActiveRecord::Base
 
   # Orphan all annotations created by this user.
   def orphan_annotations
-    Annotations.where(user_id: id).each do |annotation|
+    Annotation.where(user_id: id).each do |annotation|
 
       # Orphan annotation, but allow it to continue to exist.
       annotation.update(user_id: nil)
