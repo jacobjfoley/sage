@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ChangeThumbnailBaseJobTest < ActiveJob::TestCase
+class ConceptTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

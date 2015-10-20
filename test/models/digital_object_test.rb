@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class CreateThumbnailsJobTest < ActiveJob::TestCase
+class DigitalObjectTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end
