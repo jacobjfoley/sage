@@ -6,13 +6,13 @@ class DigitalObjectsControllerTest < ActionController::TestCase
   end
 
   test "should get index" do
-    get :index
+    get :index, { project_id: projects(:one) }
     assert_response :success
     assert_not_nil assigns(:digital_objects)
   end
 
   test "should get new" do
-    get :new
+    get :new, { project_id: projects(:one) }
     assert_response :success
   end
 
@@ -21,16 +21,16 @@ class DigitalObjectsControllerTest < ActionController::TestCase
       post :create, digital_object: {  }
     end
 
-    assert_redirected_to digital_object_path(assigns(:digital_object))
+    assert_redirected_to project_digital_object_path(assigns(:project), assigns(:digital_object))
   end
 
   test "should show digital_object" do
-    get :show, id: @digital_object
+    get :show, { id: @digital_object, project_id: projects(:one) }
     assert_response :success
   end
 
   test "should get edit" do
-    get :edit, id: @digital_object
+    get :edit, { id: @digital_object, project_id: projects(:one) }
     assert_response :success
   end
 
@@ -41,7 +41,7 @@ class DigitalObjectsControllerTest < ActionController::TestCase
 
   test "should destroy digital_object" do
     assert_difference('DigitalObject.count', -1) do
-      delete :destroy, id: @digital_object
+      delete :destroy, { id: @digital_object, project_id: projects(:one) }
     end
 
     assert_redirected_to digital_objects_path

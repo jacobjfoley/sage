@@ -21,7 +21,7 @@ class ConceptsControllerTest < ActionController::TestCase
       post :create, concept: {  }
     end
 
-    assert_redirected_to concept_path(assigns(:concept))
+    assert_redirected_to project_concept_path(assigns(:project), assigns(:concept))
   end
 
   test "should show concept" do
