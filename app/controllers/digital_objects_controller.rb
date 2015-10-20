@@ -173,7 +173,7 @@ class DigitalObjectsController < ApplicationController
     details[:project_id] = @project.id
 
     # Create new concept.
-    @concept = Concept.find_or_create_by(details)
+    @concept = Concept.match_or_create(details)
 
     # Attempt to save.
     if @concept

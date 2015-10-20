@@ -279,7 +279,7 @@ class Project < ActiveRecord::Base
     elsif (mode == :complete) || object
 
       # Find or create concept.
-      concept = Concept.find_or_create_by(
+      concept = Concept.match_or_create(
         project_id: id,
         description: line[1]
       )
@@ -327,7 +327,7 @@ class Project < ActiveRecord::Base
     other_project.concepts.each do |other_concept|
 
       # Create a copy of the concept.
-      my_concept = Concept.find_or_create_by(
+      my_concept = Concept.match_or_create(
         project_id: id,
         description: other_concept.description
       )

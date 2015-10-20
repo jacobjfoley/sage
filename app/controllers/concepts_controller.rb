@@ -85,10 +85,10 @@ class ConceptsController < ApplicationController
     details[:project_id] = @project.id
 
     # Find or create concept.
-    @concept = Concept.find_or_create_by(details)
+    @concept = Concept.match_or_create(details)
 
     respond_to do |format|
-      if @concept
+      if @concept.persisted?
         format.html { redirect_to new_project_concept_path(@project), notice: 'Concept was successfully created.' }
         format.json { render action: 'show', status: :created, location: @concept }
       else

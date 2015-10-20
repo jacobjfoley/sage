@@ -20,6 +20,56 @@ class Concept < ActiveRecord::Base
     'SumPlus' => Rank::SumPlus
   }
 
+  # Find a concept that matches the provided details hash, or create a new one.
+  def self.match_or_create(details)
+
+    # Create a new concept using details.
+    candidate = Concept.new(details)
+
+    # See if there are any matching concepts.
+    matching_concepts = candidate.matching
+
+    # Check if matching or unique.
+    if matching_concepts.empty?
+
+      # Preserve candidate.
+      candidate.save
+    else
+
+      # Swap out for matching concept instead.
+      candidate = matching_concepts.first
+    end
+
+    # Return new/existing candidate.
+    return candidate
+  end
+
+  # Find all matching concepts.
+  def matching
+
+    # Find all concepts with the same project id.
+    concepts = Concept.where(project: project).to_a
+
+    # Remove self.
+    concepts.delete(self)
+
+    # Specify the target description to be matched.
+    target = matchable_description
+
+    # Create list of matching concepts.
+    matching_concepts = []
+    concepts.each do |concept|
+
+      # If a duplicate matchable description, add to list.
+      if concept.matchable_description.eql? target
+        matching_concepts << concept
+      end
+    end
+
+    # Return list.
+    return matching_concepts
+  end
+
   # Find entities by annotation.
   def related
 
@@ -52,33 +102,17 @@ class Concept < ActiveRecord::Base
   # Check if two or more concepts shall be flattened:
   def check_flatten
 
-    # Find all concepts with the same project id.
-    same_project_concepts = project.concepts.to_a
-
-    # Remove self.
-    same_project_concepts.delete(self)
-
-    # Specify the target description to be matched.
-    target_matchable_description = matchable_description
-
-    # Create list of matching concepts.
-    same_concepts = []
-    same_project_concepts.each do |concept|
-
-      # If a duplicate matchable description, add to list.
-      if concept.matchable_description.eql? target_matchable_description
-        same_concepts << concept
-      end
-    end
+    # Find all matching concepts.
+    matching_concepts = matching
 
     #If there are other concepts with the same details:
-    if same_concepts.count > 0
+    if matching_concepts.count > 0
 
       # For each concept:
-      same_concepts.each do |same_concept|
+      matching_concepts.each do |concept|
 
         # Flatten that concept into this concept.
-        flatten(same_concept)
+        flatten(concept)
       end
     end
 
@@ -89,8 +123,23 @@ class Concept < ActiveRecord::Base
   # Returns the most matchable description of a concept.
   def matchable_description
 
+    # Get description.
+    processing = String.new(description)
+
+    # Downcase.
+    processing.downcase!
+
+    # Strip all non-alphanumeric characters.
+    processing.gsub!(/[^a-z0-9\s]/, '')
+
+    # Strip excess whitespace.
+    processing.gsub!(/\s+/, ' ')
+
+    # Chomp trailing whitespace.
+    processing.chomp!(" ")
+
     # Lower case, punctuation stripped.
-    return description.downcase.chomp.gsub(/[^a-z0-9\s]/i, '')
+    return processing
   end
 
   # Merge with other concepts.
