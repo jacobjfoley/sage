@@ -18,6 +18,65 @@ class Project < ActiveRecord::Base
 
   SAMPLE_SIZE = 25
 
+  # Check an access key.
+  def self.check_key(key, user)
+
+    # Create global mapping of keys.
+    all_keys = {}
+    Project.all.each do |project|
+      all_keys[project.viewer_key] = {project: project, position: "Viewer"}
+      all_keys[project.contributor_key] = {project: project, position: "Contributor"}
+      all_keys[project.annotator_key] = {project: project, position: "Annotator"}
+      all_keys[project.administrator_key] = {project: project, position: "Administrator"}
+    end
+
+    # Check if provided key is present.
+    if (all_keys.key?(key) && !(key.nil?))
+
+      # Check for annotator key.
+      if all_keys[key][:position].eql? "Annotator"
+
+        # Generate a sample and adjust details to direct to the sample.
+        all_keys[key][:project] = all_keys[key][:project].sample(user)
+        all_keys[key][:position] = "Contributor"
+      end
+
+      # Get details.
+      project = all_keys[key][:project]
+      position = all_keys[key][:position]
+
+      # Check for prior role.
+      prior = UserRole.where(user_id: user.id, project_id: project.id)
+
+      # Assign user role within project if the user has none already.
+      if prior.count == 0
+
+        # Create new role.
+        UserRole.create(user_id: user.id, project_id: project.id, position: position)
+
+        # Return success.
+        return "You have successfully been added to the project."
+      else
+
+        # Check for upgrade.
+        if position.eql? "Administrator"
+          prior.first.update(position: "Administrator")
+        elsif (prior.first.position.eql?("Viewer") && position.eql?("Contributor"))
+          prior.first.update(position: "Contributor")
+        else
+          return "You already have an equal or better role in the project."
+        end
+
+        # Return success.
+        return "You have successfully been promoted in the project."
+      end
+    else
+
+      # Return error.
+      return "Your key does not exist, or no longer exists, in any project."
+    end
+  end
+
   # Retrieve objects, reverse creation order.
   def object_index
     return digital_objects.order(:created_at).to_a.reverse
@@ -133,65 +192,6 @@ class Project < ActiveRecord::Base
     end
   end
 
-  # Check an access key.
-  def self.check_key(key, user)
-
-    # Create global mapping of keys.
-    all_keys = {}
-    Project.all.each do |project|
-      all_keys[project.viewer_key] = {project: project, position: "Viewer"}
-      all_keys[project.contributor_key] = {project: project, position: "Contributor"}
-      all_keys[project.annotator_key] = {project: project, position: "Annotator"}
-      all_keys[project.administrator_key] = {project: project, position: "Administrator"}
-    end
-
-    # Check if provided key is present.
-    if (all_keys.key?(key) && !(key.nil?))
-
-      # Check for annotator key.
-      if all_keys[key][:position].eql? "Annotator"
-
-        # Generate a sample and adjust details to direct to the sample.
-        all_keys[key][:project] = all_keys[key][:project].sample(user)
-        all_keys[key][:position] = "Contributor"
-      end
-
-      # Get details.
-      project = all_keys[key][:project]
-      position = all_keys[key][:position]
-
-      # Check for prior role.
-      prior = UserRole.where(user_id: user.id, project_id: project.id)
-
-      # Assign user role within project if the user has none already.
-      if prior.count == 0
-
-        # Create new role.
-        UserRole.create(user_id: user.id, project_id: project.id, position: position)
-
-        # Return success.
-        return "You have successfully been added to the project."
-      else
-
-        # Check for upgrade.
-        if position.eql? "Administrator"
-          prior.first.update(position: "Administrator")
-        elsif (prior.first.position.eql?("Viewer") && position.eql?("Contributor"))
-          prior.first.update(position: "Contributor")
-        else
-          return "You already have an equal or better role in the project."
-        end
-
-        # Return success.
-        return "You have successfully been promoted in the project."
-      end
-    else
-
-      # Return error.
-      return "Your key does not exist, or no longer exists, in any project."
-    end
-  end
-
   # Clone a project.
   def clone(creator)
 
@@ -199,6 +199,7 @@ class Project < ActiveRecord::Base
     clone = Project.create(
       notes: notes,
       name: "Clone of #{name}"
+      algorithm: algorithm
     )
 
     # Have the clone pull content from this project.

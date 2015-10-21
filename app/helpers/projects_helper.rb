@@ -20,4 +20,18 @@ module ProjectsHelper
       return true
     end
   end
+
+  # Determine algorithm name to present.
+  def project_algorithm(algorithm)
+
+    if !algorithm || algorithm.eql?("")
+
+      # No algorithm set.
+      return "Default (SAGA)"
+    else
+
+      # Return algorithm name.
+      return algorithm
+    end
+  end
 end

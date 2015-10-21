@@ -1,5 +1,5 @@
 <h1 class="text-center"><%= @project.name %></h1>
-<h4 class="text-center">Algorithm: <%= @project.algorithm || "Default (SAGA)" %></h4>
+<h4 class="text-center">Algorithm: <%= project_algorithm @project.algorithm %></h4>
 
 <div class="well" style="white-space: pre-wrap"><%= @project.notes %></div>
 

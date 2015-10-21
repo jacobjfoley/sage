@@ -10,7 +10,7 @@ class Concept < ActiveRecord::Base
 
   # Map algorithms to names.
   ALGORITHMS = {
-    'Default' => SAGA::Concept,
+    '' => SAGA::Concept,
     'SAGA' => SAGA::Concept,
     'SAGA-Refined' => SAGA::Concept_Refined,
     'Baseline' => Baseline::Concept,
@@ -85,7 +85,7 @@ class Concept < ActiveRecord::Base
 
     # If a valid algorithm name wasn't provided, use default.
     if !ALGORITHMS.key? name
-      name = "Default"
+      name = ""
     end
 
     # Return object.

@@ -14,7 +14,7 @@ class DigitalObject < ActiveRecord::Base
 
   # Map algorithms to names.
   ALGORITHMS = {
-    'Default' => SAGA::Object,
+    '' => SAGA::Object,
     'SAGA' => SAGA::Object,
     'SAGA-Refined' => SAGA::Object_Refined,
     'Baseline' => Baseline::Object,
@@ -39,7 +39,7 @@ class DigitalObject < ActiveRecord::Base
 
     # If a valid algorithm name wasn't provided, use default.
     if !ALGORITHMS.key? name
-      name = "Default"
+      name = ""
     end
 
     # Return object.
