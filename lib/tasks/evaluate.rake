@@ -3,6 +3,16 @@ namespace :evaluate do
   desc "Investigate user metrics in samples created from a source project."
   task :acceptance, [:project] => :environment do |task, args|
 
+    # Check for missing arguments.
+    if !args[:project]
+      abort("Usage: rake evaluate:acceptance[source_project]")
+    end
+
+    # Check for non-existant project.
+    if !Project.exists?(args[:project])
+      abort("That project does not exist.")
+    end
+
     # Run the acceptance utility class on the specified project.
     acceptance = Acceptance.new(args.project)
 
@@ -38,12 +48,27 @@ namespace :evaluate do
       end
 
       # Print separator.
-      puts "\n-----\n"
+      puts "\n\n"
     end
   end
 
   desc "Investigate algorithm performance metrics using a test project."
   task :performance, [:project, :training] => :environment do |task, args|
+
+    # Check for missing arguments.
+    if !args[:project] || !args[:training]
+      abort("Usage: rake evaluate:performance[project,partition]")
+    end
+
+    # Check for non-existant project.
+    if !Project.exists?(args[:project])
+      abort("That project does not exist.")
+    end
+
+    # Check for bad training partition.
+    if (args[:training].to_f < 0.0) || (args[:training].to_f > 1.0)
+      abort("Provide a training partition between 0.0 (nothing) and 1.0 (all).")
+    end
 
     # Run evaluation.
     results = Evaluation.new.evaluate_performance(args.project.to_i, args.training.to_f, 30)
@@ -62,7 +87,7 @@ namespace :evaluate do
       end
 
       # Print separator.
-      puts "\n-----\n"
+      puts "\n\n"
     end
   end
 
