@@ -43,10 +43,10 @@ namespace :evaluate do
   end
 
   desc "Investigate algorithm performance metrics using a test project."
-  task :performance, [:project, :partition] => :environment do |task, args|
+  task :performance, [:project, :training] => :environment do |task, args|
 
     # Run evaluation.
-    results = Evaluation.new.evaluate_performance(:project, :partition, 30)
+    results = Evaluation.new.evaluate_performance(args.project.to_i, args.training.to_f, 30)
 
     # Display results.
     results.keys.each do |algorithm|

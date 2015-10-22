@@ -62,8 +62,10 @@ class Evaluation
         score = binary_classification(suggestions, truth_hash[item], range)
 
         # Record scores.
-        record[:precision] << precision(score)
-        record[:recall] << recall(score)
+        precision_score = precision(score)
+        recall_score = recall(score)
+        record[:precision] << precision_score
+        record[:recall] << recall_score
         record[:phi] << phi_coefficient(score)
         record[:f05] << f_score(precision_score, recall_score, 0.5)
         record[:f1] << f_score(precision_score, recall_score, 1.0)
@@ -123,6 +125,9 @@ class Evaluation
 
   # Find the reciprocal rank.
   def reciprocal_rank(suggestions, truth)
+
+    # Initialise rank.
+    rank = nil
 
     # Run through all suggestions.
     suggestions.each do |suggestion|
