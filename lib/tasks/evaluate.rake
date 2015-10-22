@@ -16,23 +16,29 @@ namespace :evaluate do
       puts "Algorithm: #{algorithm}"
 
       # Get record.
-      record = records[algorithm]
+      record = acceptance.records[algorithm]
 
       # Output sample count.
-      puts "#{record[:count]} samples."
+      puts "#{record[:sample_count]} samples."
 
-      # For each measurement:
-      record.keys.each do |measurement|
+      # Get record's summary.
+      summary = record[:summary]
+
+      # For each measurement summary:
+      summary.keys.each do |measurement|
 
         # Unpack measurement summary.
-        min = summary[:min]
-        max = summary[:max]
-        mean = summary[:mean]
-        std_dev = summary[:std_dev]
+        min = summary[measurement][:min].round(2)
+        max = summary[measurement][:max].round(2)
+        mean = summary[measurement][:mean].round(2)
+        std_dev = summary[measurement][:std_dev].round(2)
 
         # Output measurement.
         puts "#{measurement}: #{mean} (#{min} - #{max}, std dev: #{std_dev})"
       end
+
+      # Print separator.
+      puts "\n-----\n"
     end
   end
 

@@ -10,10 +10,10 @@ class Acceptance
   attr_reader :records
 
   # Constructor.
-  def initialize(project)
+  def initialize(project_id)
 
     # Capture the parent project, whose samples are being analysed.
-    @project = Project.find(project)
+    @project = Project.find(project_id)
 
     # Storage for each algorithm's measurements.
     @records = {}
@@ -77,20 +77,27 @@ class Acceptance
 
       # Information complexity.
       record[:concept_count] << sample.concepts.count
-      record[:leaf_count] << leaf_count
-      record[:branch_count] << branch_count
-      record[:branch_ratio] << branch_ratio
+      lc = leaf_count(sample)
+      bc = branch_count(sample)
+      record[:leaf_count] << lc
+      record[:branch_count] << bc
+      record[:branch_ratio] << branch_ratio(lc, bc)
 
       # Work performance.
       record[:annotation_count] << sample.annotations.count
-      record[:cluster_count] << cluster_annotation_count
-      record[:cluster_period] << cluster_annotation_period
-      record[:cluster_rate] << cluster_annotation_rate
+      clusters = cluster_annotations(sample)
+      cac = cluster_annotation_count(clusters)
+      cap =  cluster_annotation_period(clusters)
+      record[:cluster_count] << cac
+      record[:cluster_period] << cap
+      record[:cluster_rate] << cluster_annotation_rate(cac, cap)
 
       # Suggestion acceptance.
-      record[:accepted] << accepted
-      record[:created] << created
-      record[:accepted_ratio] << accepted_ratio
+      a = accepted(sample)
+      c = created(sample)
+      record[:accepted] << a
+      record[:created] << c
+      record[:accepted_ratio] << accepted_ratio(a, c)
     end
   end
 
@@ -103,18 +110,19 @@ class Acceptance
       # Get the record.
       record = @records[algorithm]
 
-      # Find the number of samples for this algorithm.
-      samples = record[:object_count].count
+      # Initialise the summary hash.
+      summary = {}
 
       # For each measurement:
       record.keys.each do |measurement|
 
         # Summarise this measurement.
-        record[measurement] = summarise(record[measurement])
+        summary[measurement] = summarise(record[measurement])
       end
 
-      # Record the number of samples.
-      record[:sample_count] = samples
+      # Add the summary details to the record.
+      record[:sample_count] = record[:object_count].count
+      record[:summary] = summary
     end
   end
 
@@ -144,6 +152,13 @@ class Acceptance
 
       # Calculate standard deviation.
       summary[:std_dev] = Math.sqrt(variance)
+    else
+
+      # Default to zero.
+      summary[:min] = 0
+      summary[:max] = 0
+      summary[:mean] = 0
+      summary[:std_dev] = 0
     end
 
     # Return result.
@@ -151,10 +166,10 @@ class Acceptance
   end
 
   # Returns an array of annotation clusters.
-  def cluster_annotations
+  def cluster_annotations(sample)
 
     # Get annotations.
-    annotations = @project.annotations.order(:created_at)
+    annotations = sample.annotations.order(:created_at)
 
     # Initialise results array.
     clusters = []
@@ -189,17 +204,22 @@ class Acceptance
   end
 
   # Finds the average annotation rate in annotations/minute.
-  def cluster_annotation_rate
+  def cluster_annotation_rate(cac, cap)
 
-    # Return average annotations/minute.
-    return cluster_annotation_count * 60 / cluster_annotation_period
+    # If the cluster annotation period is greater than zero:
+    if cap > 0
+
+      # Return average annotations/minute.
+      return cac * 60.0 / cap
+    else
+
+      # Return zero.
+      return 0.0
+    end
   end
 
   # Finds the number of annotations in clusters.
-  def cluster_annotation_count
-
-    # Get clusters.
-    clusters = cluster_annotations
+  def cluster_annotation_count(clusters)
 
     # Define values.
     count = 0
@@ -216,10 +236,7 @@ class Acceptance
   end
 
   # Finds the length of time spent annotating.
-  def cluster_annotation_period
-
-    # Get clusters.
-    clusters = cluster_annotations
+  def cluster_annotation_period(clusters)
 
     # Define values.
     time = 0.0
@@ -236,48 +253,62 @@ class Acceptance
   end
 
   # Find the number of concepts with one annotation.
-  def leaf_count
+  def leaf_count(sample)
 
     # Return the number.
-    return @project.concepts.select { |concept| concept.annotations.count == 1 }.count
+    return sample.concepts.select { |concept| concept.annotations.count == 1 }.count
   end
 
   # Find the number of concepts with many annotations.
-  def branch_count
+  def branch_count(sample)
 
     # Return the number.
-    return @project.concepts.select { |concept| concept.annotations.count > 1 }.count
+    return sample.concepts.select { |concept| concept.annotations.count > 1 }.count
   end
 
   # Find the proportion of branch concepts.
-  def branch_ratio
+  def branch_ratio(lc, bc)
+
+    # Find total.
+    total = lc + bc
 
     # Return the percentage, or 0 if no concepts.
-    if @project.concepts.count > 0
-      return branch_count.to_f / @project.concepts.count
+    if total > 0
+      return bc.to_f / total
     else
       return 0.0
     end
   end
 
   # Find the number of annotations created via the add button.
-  def accepted
+  def accepted(sample)
 
     # Return the number of annotations created via this provenance.
-    return @project.annotations.where(provenance: "Existing").count
+    return sample.annotations.where(provenance: "Existing").count
   end
 
   # Find the number of annotations created via the quick create button.
-  def created
+  def created(sample)
 
     # Return the number of annotations created via this provenance.
-    return @project.annotations.where(provenance: "New").count
+    return sample.annotations.where(provenance: "New").count
   end
 
   # Find the acceptance ratio.
-  def accepted_ratio
+  def accepted_ratio(accepted_count, created_count)
+
+    # Find the total annotation count.
+    total = accepted_count + created_count
 
     # Return the proportion of accepted to total annotations.
-    return accepted.to_f / accepted + created
+    if total > 0
+
+      # Return proportion.
+      return accepted_count.to_f / total
+    else
+
+      # Return zero, Avoid divide-by-zero error.
+      return 0.0
+    end
   end
 end
