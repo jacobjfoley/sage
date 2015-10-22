@@ -198,8 +198,8 @@ class Project < ActiveRecord::Base
     # Create an identical project.
     clone = Project.create(
       notes: notes,
-      name: "Clone of #{name}"
-      algorithm: algorithm
+      name: "Clone of #{name}",
+      algorithm: algorithm,
     )
 
     # Have the clone pull content from this project.
@@ -209,7 +209,7 @@ class Project < ActiveRecord::Base
     UserRole.create(
       user_id: creator,
       project_id: clone.id,
-      position: "Administrator"
+      position: "Administrator",
     )
 
     # Return the clone to caller.

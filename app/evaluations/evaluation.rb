@@ -69,7 +69,7 @@ class Evaluation
         record[:f1] << f_score(precision_score, recall_score, 1.0)
         record[:f2] << f_score(precision_score, recall_score, 2.0)
         record[:success1] << success_at(suggestions, 1, truth_hash[item])
-        record[:success1] << success_at(suggestions, 5, truth_hash[item])
+        record[:success5] << success_at(suggestions, 5, truth_hash[item])
         record[:precision5] << precision_at(suggestions, 5, truth_hash[item])
         record[:mrr] << reciprocal_rank(suggestions, truth_hash[item])
       end
