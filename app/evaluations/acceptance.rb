@@ -95,9 +95,13 @@ class Acceptance
       # Suggestion acceptance.
       a = accepted(sample)
       c = created(sample)
-      record[:accepted] << a
-      record[:created] << c
-      record[:accepted_ratio] << accepted_ratio(a, c)
+
+      # If the results contain suggestion acceptance data:
+      if (a + c) > 0.0
+        record[:accepted] << a
+        record[:created] << c
+        record[:accepted_ratio] << accepted_ratio(a, c)
+      end
     end
   end
 
