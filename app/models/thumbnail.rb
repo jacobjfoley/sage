@@ -60,7 +60,7 @@ class Thumbnail < ActiveRecord::Base
         response = RestClient.head(url)
 
       # Rescue on exception.
-      rescue RestClient::ResourceNotFound
+    rescue RestClient::Forbidden
 
         # Re-generate thumbnail.
         generate
