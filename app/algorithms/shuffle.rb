@@ -1,4 +1,4 @@
-module Baseline
+module Shuffle
 
   class Base < SimilarityAlgorithm
 
