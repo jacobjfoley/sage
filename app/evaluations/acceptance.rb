@@ -48,8 +48,20 @@ class Acceptance
 
       # Suggestion acceptance.
       accepted: [],
+      accepted_0: [],
+      accepted_1: [],
+      accepted_2: [],
+      accepted_3: [],
       created: [],
+      created_0: [],
+      created_1: [],
+      created_2: [],
+      created_3: [],
       accepted_ratio: [],
+      accepted_ratio_0: [],
+      accepted_ratio_1: [],
+      accepted_ratio_2: [],
+      accepted_ratio_3: [],
     }
   end
 
@@ -93,14 +105,31 @@ class Acceptance
       record[:cluster_rate] << cluster_annotation_rate(cac, cap)
 
       # Suggestion acceptance.
-      a = accepted(sample)
-      c = created(sample)
+      sample_all = partition_sample(sample, 1)
+      a = accepted(sample_all[0])
+      c = created(sample_all[0])
 
       # If the results contain suggestion acceptance data:
       if (a + c) > 0.0
-        record[:accepted] << a
-        record[:created] << c
-        record[:accepted_ratio] << accepted_ratio(a, c)
+
+        # Record total sample results.
+        record[:accepted] << a.round(2)
+        record[:created] << c.round(2)
+        record[:accepted_ratio] << accepted_ratio(a, c).round(2)
+
+        # Record part sample results.
+        sample_parts = partition_sample(sample, 4)
+        sample_parts.each_with_index do |part, index|
+
+          # Calculate.
+          a = accepted(part)
+          c = created(part)
+
+          # Record
+          record[:"accepted_#{index}"] << a.round(2)
+          record[:"created_#{index}"] << c.round(2)
+          record[:"accepted_ratio_#{index}"] << accepted_ratio(a, c).round(2)
+        end
       end
     end
   end
@@ -284,18 +313,28 @@ class Acceptance
     end
   end
 
-  # Find the number of annotations created via the add button.
-  def accepted(sample)
+  # Partition a sample's annotations into n groups.
+  def partition_sample(sample, partitions = 1)
+
+    # Get the annotations from this sample.
+    annotations = sample.annotations.order(:created_at)
 
     # Return the number of annotations created via this provenance.
-    return sample.annotations.where(provenance: "Existing").count
+    return annotations.in_groups(partitions, false)
+  end
+
+  # Find the number of annotations created via the add button.
+  def accepted(annotations)
+
+    # Return the number of annotations created via this provenance.
+    return annotations.select { |a| a.provenance.eql? "Existing" }.count
   end
 
   # Find the number of annotations created via the quick create button.
-  def created(sample)
+  def created(annotations)
 
     # Return the number of annotations created via this provenance.
-    return sample.annotations.where(provenance: "New").count
+    return annotations.select { |a| a.provenance.eql? "New" }.count
   end
 
   # Find the acceptance ratio.
