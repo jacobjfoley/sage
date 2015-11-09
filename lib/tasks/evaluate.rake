@@ -83,7 +83,7 @@ namespace :evaluate do
       results[algorithm].keys.each do |metric|
 
         # Print metric.
-        puts "#{metric}: #{results[algorithm][metric]}"
+        puts "#{metric}: #{results[algorithm][metric].round(2)}"
       end
 
       # Print separator.

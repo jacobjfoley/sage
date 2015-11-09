@@ -25,7 +25,7 @@ class Evaluation
     training = training_project(clone, training_proportion)
 
     # List algorithm names.
-    algorithm_names = ["VotePlus", "SAGA", "SAGA-Refined"]
+    algorithm_names = ["VotePlus", "SAGA-Refined"]
 
     # Initialise algorithm records.
     algorithms = {}
