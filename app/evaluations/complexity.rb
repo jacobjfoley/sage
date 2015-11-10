@@ -23,7 +23,7 @@ class Complexity
     if @project.digital_objects.empty?
       return 0.0
     else
-      return annotated_objects / @project.digital_objects.count
+      return (annotated_objects.to_f / @project.digital_objects.count).round(2)
     end
   end
 
@@ -45,10 +45,10 @@ class Complexity
   def object_branches_ratio
 
     # Return annotated ratio.
-    if @project.annotated_objects == 0
+    if @project.digital_objects == 0
       return 0.0
     else
-      return object_branches / annotated_objects
+      return (object_branches.to_f / annotated_objects).round(2)
     end
   end
 
