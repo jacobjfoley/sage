@@ -1,4 +1,4 @@
-require "securerandom"
+require 'securerandom'
 require 'csv'
 
 class Project < ActiveRecord::Base
