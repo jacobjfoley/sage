@@ -16,6 +16,7 @@ class Concept < ActiveRecord::Base
     'Shuffle' => Shuffle::Concept,
     'Annotated' => Annotated::Concept,
     'None' => None::Concept,
+    'All' => All::Concept,
     'Vote' => Rank::Vote,
     'VotePlus' => Rank::VotePlus,
     'Sum' => Rank::Sum,

@@ -20,6 +20,7 @@ class DigitalObject < ActiveRecord::Base
     'Shuffle' => Shuffle::Object,
     'Annotated' => Annotated::Object,
     'None' => None::Object,
+    'All' => All::Object,
     'Vote' => Rank::Vote,
     'VotePlus' => Rank::VotePlus,
     'Sum' => Rank::Sum,
