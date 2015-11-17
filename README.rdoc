@@ -1,7 +1,7 @@
 == README
 
 == About
-SAGE (Semantic Annotation by Group Exploration) is a web application that allows the hidden relationships between items in a collection of resources to be discovered, captured and explored. SAGE uses the SAGA algorithm (Semantically Annotated Graph Analysis) to detect these similarities, but can also be easily customised to use a different similarity measure in other research projects. The analytics and evaluation suites included in SAGE can then be used for comparisons between similarity measures.
+SAGE (Semantic Annotation by Group Exploration) is a web application that allows the hidden relationships between items in a collection of resources to be discovered, captured and explored. SAGE uses the SAGA algorithm (Semantically Annotated Graph Analysis) to detect these similarities, but can also be easily customised to use a different similarity measure in other research projects. The statistics and evaluation suites included in SAGE can then be used for comparisons between similarity measures.
 
 SAGE was developed as part of the PhD candidature of Jacob Foley at the University of New England in New South Wales, Australia. This project was supervised by Associate Professor Paul Kwan and Dr. Mitchell Welch, and was conducted in collaboration with William Oates of the UNE Heritage Centre.
 

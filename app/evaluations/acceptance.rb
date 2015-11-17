@@ -1,357 +1,62 @@
-# Acceptance
-# Calculates metrics for a project that has been used to create samples. This
-# allows multiple algorithms to be compared against one another in terms of
-# user acceptance/performance.
-# Data available in the following format:
-# @records[:algorithm][:measurement][:count|:min|:max|:mean|:std_dev]
 class Acceptance
-
-  attr_reader :project
-  attr_reader :records
 
   # Constructor.
   def initialize(project_id)
 
     # Capture the parent project, whose samples are being analysed.
     @project = Project.find(project_id)
-
-    # Storage for each algorithm's measurements.
-    @records = {}
-
-    # Evaluate samples.
-    evaluate_samples
-
-    # Summarise results.
-    summarise_results
-  end
-
-  # Introduce an algorithm to the measurements.
-  def introduce(algorithm)
-
-    # Create new record.
-    @records[algorithm] = {
-
-      # Entity counts.
-      object_count: [],
-
-      # Information complexity.
-      concept_count: [],
-      leaf_count: [],
-      branch_count: [],
-      branch_ratio: [],
-
-      # Work performance.
-      annotation_count: [],
-      cluster_count: [],
-      cluster_period: [],
-      cluster_rate: [],
-
-      # Suggestion acceptance.
-      accepted: [],
-      accepted_0: [],
-      accepted_1: [],
-      accepted_2: [],
-      accepted_3: [],
-      created: [],
-      created_0: [],
-      created_1: [],
-      created_2: [],
-      created_3: [],
-      accepted_ratio: [],
-      accepted_ratio_0: [],
-      accepted_ratio_1: [],
-      accepted_ratio_2: [],
-      accepted_ratio_3: [],
-    }
-  end
-
-  # Evaluate samples produced from a parent project.
-  def evaluate_samples
-
-    # Find all samples.
-    samples = Project.where(parent: @project)
-
-    # Run through each sample.
-    samples.each do |sample|
-
-      # Determine if this algorithm is new.
-      if !@records.key? sample.algorithm
-
-        # Introduce the algorithm to the measurements.
-        introduce(sample.algorithm)
-      end
-
-      # Fetch algorithm's record.
-      record = @records[sample.algorithm]
-
-      # Entity counts.
-      record[:object_count] << sample.digital_objects.count
-
-      # Information complexity.
-      record[:concept_count] << sample.concepts.count
-      lc = leaf_count(sample)
-      bc = branch_count(sample)
-      record[:leaf_count] << lc
-      record[:branch_count] << bc
-      record[:branch_ratio] << branch_ratio(lc, bc)
-
-      # Work performance.
-      record[:annotation_count] << sample.annotations.count
-      clusters = cluster_annotations(sample)
-      cac = cluster_annotation_count(clusters)
-      cap =  cluster_annotation_period(clusters)
-      record[:cluster_count] << cac
-      record[:cluster_period] << cap
-      record[:cluster_rate] << cluster_annotation_rate(cac, cap)
-
-      # Suggestion acceptance.
-      sample_all = partition_sample(sample, 1)
-      a = accepted(sample_all[0])
-      c = created(sample_all[0])
-
-      # If the results contain suggestion acceptance data:
-      if (a + c) > 0.0
-
-        # Record total sample results.
-        record[:accepted] << a.round(2)
-        record[:created] << c.round(2)
-        record[:accepted_ratio] << accepted_ratio(a, c).round(2)
-
-        # Record part sample results.
-        sample_parts = partition_sample(sample, 4)
-        sample_parts.each_with_index do |part, index|
-
-          # Calculate.
-          a = accepted(part)
-          c = created(part)
-
-          # Record
-          record[:"accepted_#{index}"] << a.round(2)
-          record[:"created_#{index}"] << c.round(2)
-          record[:"accepted_ratio_#{index}"] << accepted_ratio(a, c).round(2)
-        end
-      end
-    end
-  end
-
-  # Calculate count, min, max, mean, and standard deviation of each measurement.
-  def summarise_results
-
-    # For each algorithm record:
-    @records.keys.each do |algorithm|
-
-      # Get the record.
-      record = @records[algorithm]
-
-      # Initialise the summary hash.
-      summary = {}
-
-      # For each measurement:
-      record.keys.each do |measurement|
-
-        # Summarise this measurement.
-        summary[measurement] = summarise(record[measurement])
-      end
-
-      # Add the summary details to the record.
-      record[:sample_count] = record[:object_count].count
-      record[:summary] = summary
-    end
-  end
-
-  # Summarise an array of measurements.
-  def summarise(raw)
-
-    # Create empty summary hash.
-    summary = {}
-
-    #Calculate count.
-    count = raw.count
-
-    # For non-empty measurements hashes:
-    if count > 0
-
-      # Calculate min and max.
-      summary[:min] = raw.min
-      summary[:max] = raw.max
-
-      # Calculate mean average.
-      summary[:mean] = raw.reduce(:+).to_f / count
-
-      # Calculate variance.
-      variance = raw.reduce(0.0) {
-        |total, value| total + (value - summary[:mean]) ** 2
-      } / count
-
-      # Calculate standard deviation.
-      summary[:std_dev] = Math.sqrt(variance)
-    else
-
-      # Default to zero.
-      summary[:min] = 0
-      summary[:max] = 0
-      summary[:mean] = 0
-      summary[:std_dev] = 0
-    end
-
-    # Return result.
-    return summary
-  end
-
-  # Returns an array of annotation clusters.
-  def cluster_annotations(sample)
-
-    # Get annotations.
-    annotations = sample.annotations.order(:created_at)
-
-    # Initialise results array.
-    clusters = []
-
-    # Pass through annotations.
-    annotations.each do |annotation|
-
-      # If a new cluster:
-      if clusters.empty? || (annotation.created_at > (clusters.last[:end_time] + 2.minutes))
-
-        # Create new in-progress hash.
-        clusters << {
-          start_time: annotation.created_at,
-          end_time: annotation.created_at,
-          count: 1
-        }
-
-      # Use existing.
-      else
-
-        # Append to cluster.
-        clusters.last[:end_time] = annotation.created_at
-        clusters.last[:count] += 1
-      end
-    end
-
-    # Filter clusters with only one annotation.
-    clusters.delete_if { |cluster| cluster[:count] == 1 }
-
-    # Return results.
-    return clusters
-  end
-
-  # Finds the average annotation rate in annotations/minute.
-  def cluster_annotation_rate(cac, cap)
-
-    # If the cluster annotation period is greater than zero:
-    if cap > 0
-
-      # Return average annotations/minute.
-      return cac * 60.0 / cap
-    else
-
-      # Return zero.
-      return 0.0
-    end
-  end
-
-  # Finds the number of annotations in clusters.
-  def cluster_annotation_count(clusters)
-
-    # Define values.
-    count = 0
-
-    # Pass through clusters.
-    clusters.each do |cluster|
-
-      # Increment totals.
-      count += cluster[:count]
-    end
-
-    # Return total.
-    return count
-  end
-
-  # Finds the length of time spent annotating.
-  def cluster_annotation_period(clusters)
-
-    # Define values.
-    time = 0.0
-
-    # Pass through clusters.
-    clusters.each do |cluster|
-
-      # Increment totals.
-      time += (cluster[:end_time] - cluster[:start_time]).abs
-    end
-
-    # Return total.
-    return time
-  end
-
-  # Find the number of concepts with one annotation.
-  def leaf_count(sample)
-
-    # Return the number.
-    return sample.concepts.select { |concept| concept.annotations.count == 1 }.count
-  end
-
-  # Find the number of concepts with many annotations.
-  def branch_count(sample)
-
-    # Return the number.
-    return sample.concepts.select { |concept| concept.annotations.count > 1 }.count
-  end
-
-  # Find the proportion of branch concepts.
-  def branch_ratio(lc, bc)
-
-    # Find total.
-    total = lc + bc
-
-    # Return the percentage, or 0 if no concepts.
-    if total > 0
-      return bc.to_f / total
-    else
-      return 0.0
-    end
-  end
-
-  # Partition a sample's annotations into n groups.
-  def partition_sample(sample, partitions = 1)
-
-    # Get the annotations from this sample.
-    annotations = sample.annotations.order(:created_at)
-
-    # Return the number of annotations created via this provenance.
-    return annotations.in_groups(partitions, false)
   end
 
   # Find the number of annotations created via the add button.
-  def accepted(annotations)
+  def accepted(annotations = @project.annotations)
 
     # Return the number of annotations created via this provenance.
     return annotations.select { |a| a.provenance.eql? "Existing" }.count
   end
 
   # Find the number of annotations created via the quick create button.
-  def created(annotations)
+  def created(annotations = @project.annotations)
 
     # Return the number of annotations created via this provenance.
     return annotations.select { |a| a.provenance.eql? "New" }.count
   end
 
   # Find the acceptance ratio.
-  def accepted_ratio(accepted_count, created_count)
+  def acceptance_ratio(annotations = @project.annotations)
+
+    # Find accepted and created.
+    accepted_count = accepted(annotations)
+    created_count = created(annotations)
 
     # Find the total annotation count.
     total = accepted_count + created_count
 
     # Return the proportion of accepted to total annotations.
     if total > 0
-
-      # Return proportion.
-      return accepted_count.to_f / total
+      return (accepted_count.to_f / total).round(2)
     else
-
-      # Return zero, Avoid divide-by-zero error.
       return 0.0
     end
+  end
+
+  # Partition a sample's annotations into n groups.
+  def partition_acceptance_ratio(partitions = 1)
+
+    # Get the annotations from this sample.
+    annotations = @project.annotations.order(:created_at)
+
+    # Split these annotations into partitions.
+    partitions = annotations.in_groups(partitions, false)
+
+    # Create a results array.
+    results = []
+
+    # For each partition, calculate accepted ratio.
+    partitions.each do |partition|
+      results << acceptance_ratio(partition)
+    end
+
+    # Return the number of annotations created via this provenance.
+    return results
   end
 end

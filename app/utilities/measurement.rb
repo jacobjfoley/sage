@@ -14,18 +14,25 @@ class Measurement
     return @values.count
   end
 
+  # Sum the values.
+  def sum
+
+    # Return the sum of all values.
+    return @values.reduce(:+).round(2)
+  end
+
   # Find the minimum value.
   def min
 
     # Return min.
-    return @values.min
+    return @values.min || 0.0
   end
 
   # Find the maximum value.
   def max
 
     # Return max.
-    return @values.max
+    return @values.max || 0.0
   end
 
   # Find mean.
@@ -33,7 +40,7 @@ class Measurement
 
     # Return the mean average.
     if count > 0
-      return (@values.reduce(:+).to_f / count).round(2)
+      return (sum / count).round(2)
     else
       return 0.0
     end
@@ -64,7 +71,7 @@ class Measurement
   end
 
   # Output for displays.
-  def display_terminal
+  def to_s
 
     # Define average string.
     averages = "#{mean} (#{min}-#{max}, σ: #{std_dev})"
