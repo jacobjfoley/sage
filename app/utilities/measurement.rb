@@ -32,7 +32,11 @@ class Measurement
   def mean
 
     # Return the mean average.
-    return (@values.reduce(:+).to_f / count).round(2)
+    if count > 0
+      return (@values.reduce(:+).to_f / count).round(2)
+    else
+      return 0.0
+    end
   end
 
   # Find variance.
@@ -42,7 +46,11 @@ class Measurement
     m = mean
 
     # Calculate variance.
-    amount = @values.reduce(0.0) { |total, x| total + (x - m) ** 2 } / count
+    if count > 0
+      amount = @values.reduce(0.0) { |total, x| total + (x - m) ** 2 } / count
+    else
+      amount = 0.0
+    end
 
     # Return variance.
     return amount.round(2)
