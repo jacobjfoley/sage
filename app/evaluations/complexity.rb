@@ -27,6 +27,40 @@ class Complexity
     end
   end
 
+  # Find the distribution of objects with varying annotation levels.
+  def object_annotation_distribution
+
+    # Get the project's digital objects annotation count mapping.
+    mapping = Hash[@project.digital_objects.map {|o|
+      [o, o.annotations.count]
+    }]
+
+    # Find the object with the highest number of annotations.
+    max = mapping.values.max
+
+    # Print counts from 1 to max.
+    (1..max).each do |index|
+      puts "#{index}: #{mapping.select { |k,v| v == index }.count}"
+    end
+  end
+
+  # Find the distribution of concepts with varying annotation levels.
+  def concept_annotation_distribution
+
+    # Get the project's digital objects annotation count mapping.
+    mapping = Hash[@project.concepts.map {|c|
+      [c, c.annotations.count]
+    }]
+
+    # Find the concept with the highest number of annotations.
+    max = mapping.values.max
+
+    # Print counts from 1 to max.
+    (1..max).each do |index|
+      puts "#{index}: #{mapping.select { |k,v| v == index }.count}"
+    end
+  end
+
   # Find the number of objects that have only a single annotation.
   def object_leaves
 
