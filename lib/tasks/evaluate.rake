@@ -71,7 +71,7 @@ namespace :evaluate do
     end
 
     # Run evaluation.
-    results = Evaluation.new.evaluate_performance(args.project.to_i, args.training.to_f, 30)
+    results = Performance.new.evaluate(args.project.to_i, args.training.to_f, 30)
 
     # Display results.
     results.keys.each do |algorithm|

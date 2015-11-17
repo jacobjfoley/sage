@@ -1,9 +1,9 @@
-class Evaluation
+class Performance
 
   # Process project and report scores.
   # Training proportion is a value between 0.0 and 1.0. For instance, 0.4 means
   # that the first 40% is training data and remaining 60% is testing data.
-  def evaluate_performance(project_id, training_proportion, testing_number)
+  def evaluate(project_id, training_proportion, testing_number)
 
     # Retrieve the desired project.
     project = Project.find(project_id)

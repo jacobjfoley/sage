@@ -223,11 +223,11 @@ class ProjectsController < ApplicationController
     redirect_to redeem_key_projects_path
   end
 
-  # GET /projects/1/analytics
-  def analytics
+  # GET /projects/1/statistics
+  def statistics
 
     # Get the project's statistics hash.
-    @statistics = Analytics.new(@project).analyse
+    @statistics = Statistics.new(@project).analyse
   end
 
   private
@@ -293,7 +293,7 @@ class ProjectsController < ApplicationController
       end
 
       # Define priviledges.
-      view = ["show", "destroy", "analytics"]
+      view = ["show", "destroy", "statistics"]
       admin = ["update", "edit", "generate_key", "reset_key", "remove_user",
       "import_annotations"]
 

@@ -25,7 +25,7 @@ Sage::Application.routes.draw do
     end
 
     member do
-      get 'analytics'
+      get 'statistics'
       get 'import_annotations'
       post 'import_annotations'
       post 'generate_key'

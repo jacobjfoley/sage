@@ -1,4 +1,4 @@
-class Analytics
+class Statistics
 
   # Capture a project to analyse.
   def initialize(project)
