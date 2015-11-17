@@ -1,9 +1,6 @@
 class WordTable
 
-  ##
   # Find all related concepts in a project by text similarity.
-  # @return [Hash]
-  #   Concept ids paired with their similarity score.
   def self.text_similarity(concept_id)
 
     # Find the project this concept is associated with.
@@ -37,7 +34,6 @@ class WordTable
 
   private
 
-  ##
   # Find the cosine similarity between two vectors.
   def self.cosine_similarity(vector1, vector2)
 
@@ -51,7 +47,6 @@ class WordTable
     return product / distance
   end
 
-  ##
   # Provide a mapping of all words in the concept table.
   def self.create_word_table(project_id)
 
@@ -72,7 +67,6 @@ class WordTable
     return table
   end
 
-  ##
   # Add a concept to the word table.
   def self.develop_word_table(concept_id, table)
 
@@ -104,7 +98,6 @@ class WordTable
     end
   end
 
-  ##
   # Find the dot product between two vectors.
   def self.dot_product(vector1, vector2)
 
@@ -133,7 +126,6 @@ class WordTable
     return result
   end
 
-  ##
   # Find the euclidean distance between a vector's components.
   def self.euclidean_distance(vector)
 
@@ -154,7 +146,6 @@ class WordTable
     return result
   end
 
-  ##
   # Find all partial or complete matches to the given concept.
   def self.partial_matches(concept_id, table)
 
@@ -178,7 +169,6 @@ class WordTable
     return matching
   end
 
-  ##
   # Get the tf-idf score for the given token.
   def self.tf_idf(token, table, concept_id)
 
@@ -205,7 +195,6 @@ class WordTable
     return result
   end
 
-  ##
   # Provide an array of tokens based on a concept's description.
   def self.tokenise(concept_id)
 
@@ -216,7 +205,6 @@ class WordTable
     return concept.matchable_description.split
   end
 
-  ##
   # Find the vector for a given concept.
   def self.vector_for(concept_id, table)
 
