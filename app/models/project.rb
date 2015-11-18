@@ -299,6 +299,51 @@ class Project < ActiveRecord::Base
     end
   end
 
+  # Export annotations
+  def export_annotations(export_mode, export_format)
+
+    # Initialise data.
+    data = []
+
+    # If adding unlinked objects:
+    if (export_mode.eql? "complete") || (export_mode.eql? "objects")
+
+      # Find unlinked objects.
+      unlinked = digital_objects.select { |o| o.annotations.count == 0 }
+
+      # Add to data.
+      if export_format.eql? "url"
+        @data += unlinked.map { |u| [u.location, ""] }
+      else
+        @data += unlinked.map { |u| [u.filename, ""] }
+      end
+    end
+
+    # All modes; add annotations.
+    if export_format.eql? "url"
+      data += annotations.map { |a|
+        [a.digital_object.location, a.concept.description]
+      }
+    else
+      data += annotations.map { |a|
+        [a.digital_object.filename, a.concept.description]
+      }
+    end
+
+    # If adding unlinked concepts:
+    if export_mode.eql? "complete"
+
+      # Find unlinked concepts.
+      unlinked = concepts.select { |c| c.annotations.count == 0 }
+
+      # Add to data.
+      @data += unlinked.map { |u| ["", u.description] }
+    end
+
+    # Return data.
+    return data
+  end
+
   # Merge a copy of the contents of another project with this one.
   def pull(other_project_id)
 

@@ -1,0 +1,57 @@
+<h1> Export Annotations </h1>
+
+<em> This feature allows you to export the information contained in this SAGE
+  project. The data will be made available in a CSV file, which can be opened
+  by any spreadsheet application. Exported projects can be re-imported in
+  another SAGE project to create copies and share data.</em>
+
+<%= form_tag export_annotations_project_path(@project, format: :csv) do %>
+
+  <h3> Data </h3>
+  <em>Select the data to export from this project.</em>
+
+  <div class="radio">
+    <label>
+      <%= radio_button_tag "export_mode", "complete", class:"active" %>
+      Complete: All objects, concepts, and their annotations.
+    </label>
+  </div>
+
+  <div class="radio">
+    <label>
+      <%= radio_button_tag "export_mode", "objects" %>
+      All Objects: All objects and their annotations. Excludes concepts that aren't used in annotations.
+    </label>
+  </div>
+
+  <div class="radio">
+    <label>
+      <%= radio_button_tag "export_mode", "annotations" %>
+      Annotated Objects: Only annotated objects and their annotations. Excludes objects and concepts that aren't annotated.
+    </label>
+  </div>
+
+  <h3> Format </h3>
+  <em>Select how objects are represented in the exported file.</em>
+
+  <div class="radio">
+    <label>
+      <%= radio_button_tag "export_format", "url", class: "active" %>
+      URL: Export the complete URL of objects in the project. Recommended for web applications.
+    </label>
+  </div>
+
+  <div class="radio">
+    <label>
+      <%= radio_button_tag "export_format", "filename" %>
+      Filename: Export the filename of objects in the project. Recommended for desktop applications.
+    </label>
+  </div>
+
+  <%= link_to project_path(@project) do %><div class="btn btn-default">
+    <span class="glyphicon glyphicon-arrow-left"></span> Back
+  </div><% end %>
+
+  <%= submit_tag "Export", class: "btn btn-primary" %>
+
+<% end %>

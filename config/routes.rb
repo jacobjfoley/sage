@@ -28,6 +28,8 @@ Sage::Application.routes.draw do
       get 'statistics'
       get 'import_annotations'
       post 'import_annotations'
+      get 'export_annotations'
+      post 'export_annotations'
       post 'generate_key'
       post 'reset_key'
       post 'remove_user'

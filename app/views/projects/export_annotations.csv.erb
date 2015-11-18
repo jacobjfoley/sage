@@ -1,0 +1,1 @@
+<% @data.each do |line| %><%= CSV.generate_line(line).html_safe %><% end %>

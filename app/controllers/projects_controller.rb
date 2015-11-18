@@ -1,3 +1,5 @@
+require 'csv'
+
 class ProjectsController < ApplicationController
   before_action :set_project
   before_action :check_access
@@ -46,6 +48,7 @@ class ProjectsController < ApplicationController
   end
 
   # GET /projects/1/import_annotations
+  # POST /projects/1/import_annotations
   def import_annotations
 
     # If receiving data:
@@ -73,6 +76,21 @@ class ProjectsController < ApplicationController
         flash.alert = e.message
         redirect_to import_annotations_project_path(@project)
       end
+    end
+  end
+
+  # GET /projects/1/export_annotations
+  # POST /projects/1/export_annotations
+  def export_annotations
+
+    # If receiving data:
+    if request.post?
+
+      # Fetch the complete array of rows of data to export.
+      @data = @project.export_annotations(
+        params[:export_mode],
+        params[:export_format]
+      )
     end
   end
 
@@ -296,7 +314,7 @@ class ProjectsController < ApplicationController
       end
 
       # Define priviledges.
-      view = ["show", "destroy", "statistics"]
+      view = ["show", "destroy", "statistics", "export_annotations"]
       admin = ["update", "edit", "generate_key", "reset_key", "remove_user",
       "import_annotations"]
 
