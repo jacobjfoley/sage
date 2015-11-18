@@ -18,6 +18,36 @@ class SampleProductivity
     end
   end
 
+  # Create a string that represents this object.
+  def to_s
+
+    # Initialise string.
+    s = ""
+
+    # Print header.
+    s << "Sample Productivity using samples of #{@project.id} - #{@project.name}\n"
+
+    # Get data.
+    car = cluster_annotation_rate
+    cac = cluster_annotation_count
+    cap = cluster_annotation_period
+
+    # For each algorithm:
+    @algorithms.each do |algorithm|
+
+      # Print algorithm name.
+      s << "\n#{algortihm}:\n"
+
+      # Print data.
+      s << "Cluster annotation count: #{cac[algorithm]} annotations.\n"
+      s << "Cluster annotation period: #{cap[algorithm]} seconds.\n"
+      s << "Cluster annotation rate: #{car[algorithm]} seconds/annotation.\n"
+    end
+
+    # Return string.
+    return s
+  end
+
   # Finds the average annotation rate in annotations/minute of samples.
   def cluster_annotation_rate
 

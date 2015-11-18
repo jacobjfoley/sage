@@ -7,6 +7,22 @@ class Acceptance
     @project = Project.find(project_id)
   end
 
+  # Create a string that represents this object.
+  def to_s
+
+    # Initialise string.
+    s = ""
+
+    # Print header.
+    s << "Acceptance test on #{@project.id} - #{@project.name}\n"
+
+    # Print results
+    s << "Accepted: #{accepted}, Created: #{created}, Ratio: #{acceptance_ratio}"
+
+    # Return string.
+    return s
+  end
+
   # Find the number of annotations created via the add button.
   def accepted(annotations = @project.annotations)
 

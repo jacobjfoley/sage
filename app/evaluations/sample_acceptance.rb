@@ -27,6 +27,40 @@ class SampleAcceptance
     end
   end
 
+  # Create a string that represents this object.
+  def to_s
+
+    # Initialise string.
+    s = ""
+
+    # Print header.
+    s << "Sample Acceptance using samples of #{@project.id} - #{@project.name}\n"
+
+    # Get data.
+    ar = acceptance_ratio
+    par = partition_acceptance_ratio
+
+    # For each algorithm:
+    @algorithms.each do |algorithm|
+
+      # Print algorithm name.
+      s << "\n#{algortihm}:\n"
+
+      # Print overall acceptance data.
+      s << "Overall:\n"
+      s << "Acceptance ratio: #{ar[algorithm]}\n"
+
+      # Print partition acceptance data.
+      s << "Partitions:\n"
+      par[algorithm].each do |measurement|
+        s << "#{measurement}\n"
+      end
+    end
+
+    # Return string.
+    return s
+  end
+
   # Find the acceptance ratio of all samples.
   def acceptance_ratio
 

@@ -15,6 +15,35 @@ class Performance
     @algorithms = ["VotePlus", "SAGA-Refined"]
   end
 
+  # Create a string that represents this object.
+  def to_s
+
+    # Initialise string.
+    s = ""
+
+    # Print header.
+    s << "Performance test on #{@project.id} - #{@project.name}\n"
+    s << "Settings: #{@tests} tests @ #{@proportion} training proportion.\n"
+
+    # Get results
+    algorithm_results = results
+
+    # For each algorithm:
+    @algorithms.each do |algorithm_name|
+
+      # Print algorithm name.
+      s << "\n#{algorithm_name}:\n"
+
+      # For each algorithm's results:
+      algorithm_results[algorithm_name].values.each do |measurement|
+        s << "#{measurement}\n"
+      end
+    end
+
+    # Return string.
+    return s
+  end
+
   # Process project and report scores.
   def results
 
@@ -25,7 +54,7 @@ class Performance
     clone = Project.find(clone_id)
 
     # Find the domain (the tests to run).
-    domain = clone.digital_objects.shuffle[0..@tests]
+    domain = clone.digital_objects.shuffle[0...@tests]
 
     # Find the range (potential suggestions for each test).
     range = clone.concepts

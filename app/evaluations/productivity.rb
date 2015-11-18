@@ -10,6 +10,24 @@ class Productivity
     @clusters = cluster_annotations
   end
 
+  # Create a string that represents this object.
+  def to_s
+
+    # Initialise string.
+    s = ""
+
+    # Print header.
+    s << "Productivty test on #{@project.id} - #{@project.name}\n"
+
+    # Print data.
+    s << "Count: #{cluster_annotation_count} annotations.\n"
+    s << "Period: #{cluster_annotation_period} seconds.\n"
+    s << "Rate: #{cluster_annotation_rate} seconds per annotation.\n"
+
+    # Return string.
+    return s
+  end
+
   # Returns an array of annotation clusters.
   def cluster_annotations
 

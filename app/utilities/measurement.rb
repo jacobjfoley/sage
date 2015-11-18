@@ -27,14 +27,14 @@ class Measurement
   def min
 
     # Return min.
-    return @values.min || 0.0
+    return @values.min.round(2) || 0.0
   end
 
   # Find the maximum value.
   def max
 
     # Return max.
-    return @values.max || 0.0
+    return @values.max.round(2) || 0.0
   end
 
   # Find mean.

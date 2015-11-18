@@ -9,6 +9,22 @@ class Subgraphs
     @project = Project.find(project)
   end
 
+  # Create a string that represents this object.
+  def to_s
+
+    # Initialise string.
+    s = ""
+
+    # Print header.
+    s << "Subgraph test on #{@project.id} - #{@project.name}\n"
+
+    # Print data.
+    s << "There are #{object_subgraphs} object subgraphs in this project.\n"
+
+    # Return string.
+    return s
+  end
+
   # Find the number of subgraphs in this project.
   def object_subgraphs
 

@@ -7,6 +7,41 @@ class Complexity
     @project = Project.find(project_id)
   end
 
+  # Create a string that represents this object.
+  def to_s
+
+    # Initialise string.
+    s = ""
+
+    # Print header.
+    s << "Complexity test on #{@project.id} - #{@project.name}\n"
+
+    # Completeness.
+    s << "Completeness:\n"
+    s << "#{annotated_objects} (#{annotated_objects_ratio}) are annotated.\n"
+
+    # Complexity.
+    s << "\nComplexity:\n"
+    s << "Leaves: #{object_leaves},"
+    s << "Branches: #{object_branches},"
+    s << "Ratio: #{object_branches_ratio}\n"
+
+    # Object distributions.
+    s << "\nObject Annotation Count Distributions:\n"
+    object_annotation_distribution.each do |k, v|
+      s << "#{k}: #{v}\n"
+    end
+
+    # Concept distributions.
+    s << "\nConcept Annotation Count Distributions:\n"
+    concept_annotation_distribution.each do |k, v|
+      s << "#{k}: #{v}\n"
+    end
+
+    # Return string.
+    return s
+  end
+
   # Find the number of objects that have been annotated.
   def annotated_objects
 

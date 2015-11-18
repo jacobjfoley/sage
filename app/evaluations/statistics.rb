@@ -7,6 +7,26 @@ class Statistics
     @project = Project.find(project_id)
   end
 
+  # Create a string that represents this object.
+  def to_s
+
+    # Initialise string.
+    s = ""
+
+    # Print header.
+    s << "Statistics about #{@project.id} - #{@project.name}\n"
+
+    # Print data.
+    s << "Users: #{user_count}\n"
+    s << "Annotations: #{annotation_count}\n"
+    s << "Objects: #{object_statistics}\n"
+    s << "Concepts: #{concept_statistics}\n"
+    s << "Words: #{word_statistics}\n"
+
+    # Return string.
+    return s
+  end
+
   # Get the number of users.
   def user_count
 
