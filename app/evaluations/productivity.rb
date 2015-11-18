@@ -77,7 +77,7 @@ class Productivity
     if cap > 0
 
       # Return average annotations/minute.
-      return cac * 60.0 / cap
+      return (cac * 60.0 / cap).round(2)
     else
 
       # Return zero.
@@ -99,7 +99,7 @@ class Productivity
     end
 
     # Return total.
-    return count
+    return count.round(2)
   end
 
   # Finds the length of time spent annotating.
@@ -116,6 +116,6 @@ class Productivity
     end
 
     # Return total.
-    return time
+    return time.round(2)
   end
 end

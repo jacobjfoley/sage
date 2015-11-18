@@ -19,9 +19,9 @@ class Statistics
     # Print data.
     s << "Users: #{user_count}\n"
     s << "Annotations: #{annotation_count}\n"
-    s << "Objects: #{object_statistics}\n"
-    s << "Concepts: #{concept_statistics}\n"
-    s << "Words: #{word_statistics}\n"
+    s << "#{object_statistics}\n"
+    s << "#{concept_statistics}\n"
+    s << "#{word_statistics}\n"
 
     # Return string.
     return s

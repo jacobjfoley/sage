@@ -76,7 +76,7 @@ class Complexity
 
     # Define counts from 1 to max.
     (1..max).each do |index|
-      results[index] = mapping.select { |k,v| v == index }.count}
+      results[index] = mapping.select { |k,v| v == index }.count
     end
 
     # Return results.
@@ -87,7 +87,7 @@ class Complexity
   def concept_annotation_distribution
 
     # Get the project's digital objects annotation count mapping.
-    mapping = Hash[@project.concepts.map {|c|
+    mapping = Hash[@project.concepts.map { |c|
       [c, c.annotations.count]
     }]
 
@@ -99,7 +99,7 @@ class Complexity
 
     # Define counts from 1 to max.
     (1..max).each do |index|
-      results[index] = mapping.select { |k,v| v == index }.count}
+      results[index] = mapping.select { |k,v| v == index }.count
     end
 
     # Return results.
