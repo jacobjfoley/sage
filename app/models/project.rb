@@ -313,9 +313,9 @@ class Project < ActiveRecord::Base
 
       # Add to data.
       if export_format.eql? "url"
-        @data += unlinked.map { |u| [u.location, ""] }
+        data += unlinked.map { |u| [u.location, ""] }
       else
-        @data += unlinked.map { |u| [u.filename, ""] }
+        data += unlinked.map { |u| [u.filename, ""] }
       end
     end
 
@@ -337,7 +337,7 @@ class Project < ActiveRecord::Base
       unlinked = concepts.select { |c| c.annotations.count == 0 }
 
       # Add to data.
-      @data += unlinked.map { |u| ["", u.description] }
+      data += unlinked.map { |u| ["", u.description] }
     end
 
     # Return data.
