@@ -9,7 +9,7 @@ class SampleAcceptance
     # Check each sample for correct data.
     unchecked.each do |sample|
 
-      # Add sample if it has provenance data.
+      # Add sample if all annotations have provenance data.
       if sample.annotations.select { |a| a.provenance.nil? }.count == 0
         samples << sample
       end
@@ -18,33 +18,35 @@ class SampleAcceptance
     # Find all the algorithms used by the samples.
     @algorithms = samples.map { |s| s.algorithm }.uniq
 
-    # Divide samples into groups based on algortihm.
+    # Create groups hash.
     @groups = {}
+
+    # Divide samples into groups based on algortihm.
     @algorithms.each do |algorithm|
       @groups[algorithm] = samples.select { |s| s.algorithm.eql? algorithm }
     end
   end
 
-  # Evaluate all children of this project.
+  # Find the acceptance ratio of all samples.
   def acceptance_ratio
 
-    # Create an algorithm results hash.
+    # Create an overall algorithm results hash.
     algorithm_results = {}
 
     # For each algorithm:
     @algorithms.each do |algorithm|
 
-      # Create results array.
+      # Create an ongoing results array.
       results = []
 
-      # Run through each child.
+      # Run through each sample.
       @groups[algorithm].each do |sample|
 
-        # Create a new evaluation.
+        # Store evaluation.
         results << Acceptance.new(sample.id).acceptance_ratio
       end
 
-      # Return the results.
+      # Store the algorithm's results as a new measurement.
       algorithm_results[algorithm] = Measurement.new("Acceptance Ratio", results)
     end
 
@@ -52,35 +54,36 @@ class SampleAcceptance
     return algorithm_results
   end
 
-  # Evaluate all children of this project.
+  # Find the partitioned acceptance average of all samples.
   def partition_acceptance_ratio(partitions = 4)
 
-    # Create an algorithm results hash.
+    # Create an overall algorithm results hash.
     algorithm_results = {}
 
     # For each algorithm:
     @algorithms.each do |algorithm|
 
-      # Create results array.
+      # Create an ongoing results array.
       results = []
 
       # Run through each sample.
       @groups[algorithm].each do |sample|
 
-        # Create a new evaluation.
+        # Store evaluation.
         results << Acceptance.new(sample.id).partition_acceptance_ratio(partitions)
       end
 
       # Create measurements array.
       measurements = []
 
-      # Transpose results.
+      # Transpose results -- group by partition number instead of sample.
       results.transpose.each_with_index do |transposition, index|
 
+        # Store new measurement.
         measurements << Measurement.new("Partition #{index}", transposition)
       end
 
-      # Return the results.
+      # Store the algorithm's results. Each element in array is a partition.
       algorithm_results[algorithm] = measurements
     end
 

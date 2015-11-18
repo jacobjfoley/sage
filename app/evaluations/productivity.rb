@@ -1,10 +1,20 @@
 class Productivity
 
+  # Constructor.
+  def initialize(project_id)
+
+    # Capture provided project.
+    @project = Project.find(project_id)
+
+    # Find this project's clusters.
+    @clusters = cluster_annotations
+  end
+
   # Returns an array of annotation clusters.
-  def cluster_annotations(sample)
+  def cluster_annotations
 
     # Get annotations.
-    annotations = sample.annotations.order(:created_at)
+    annotations = @project.annotations.order(:created_at)
 
     # Initialise results array.
     clusters = []
@@ -39,7 +49,11 @@ class Productivity
   end
 
   # Finds the average annotation rate in annotations/minute.
-  def cluster_annotation_rate(cac, cap)
+  def cluster_annotation_rate
+
+    # Find count and period.
+    cac = cluster_annotation_count
+    cap = cluster_annotation_period
 
     # If the cluster annotation period is greater than zero:
     if cap > 0
@@ -54,13 +68,13 @@ class Productivity
   end
 
   # Finds the number of annotations in clusters.
-  def cluster_annotation_count(clusters)
+  def cluster_annotation_count
 
     # Define values.
     count = 0
 
     # Pass through clusters.
-    clusters.each do |cluster|
+    @clusters.each do |cluster|
 
       # Increment totals.
       count += cluster[:count]
@@ -71,13 +85,13 @@ class Productivity
   end
 
   # Finds the length of time spent annotating.
-  def cluster_annotation_period(clusters)
+  def cluster_annotation_period
 
     # Define values.
     time = 0.0
 
     # Pass through clusters.
-    clusters.each do |cluster|
+    @clusters.each do |cluster|
 
       # Increment totals.
       time += (cluster[:end_time] - cluster[:start_time]).abs

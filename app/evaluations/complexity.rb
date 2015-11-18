@@ -1,10 +1,10 @@
 class Complexity
 
   # Constructor.
-  def initialize(project)
+  def initialize(project_id)
 
     # Store the provided project.
-    @project = Project.find(project)
+    @project = Project.find(project_id)
   end
 
   # Find the number of objects that have been annotated.
@@ -36,10 +36,16 @@ class Complexity
     # Find the object with the highest number of annotations.
     max = mapping.values.max
 
-    # Print counts from 1 to max.
+    # Create results hash.
+    results = {}
+
+    # Define counts from 1 to max.
     (1..max).each do |index|
-      puts "#{index}: #{mapping.select { |k,v| v == index }.count}"
+      results[index] = mapping.select { |k,v| v == index }.count}
     end
+
+    # Return results.
+    return results
   end
 
   # Find the distribution of concepts with varying annotation levels.
@@ -53,10 +59,16 @@ class Complexity
     # Find the concept with the highest number of annotations.
     max = mapping.values.max
 
-    # Print counts from 1 to max.
+    # Create results hash.
+    results = {}
+
+    # Define counts from 1 to max.
     (1..max).each do |index|
-      puts "#{index}: #{mapping.select { |k,v| v == index }.count}"
+      results[index] = mapping.select { |k,v| v == index }.count}
     end
+
+    # Return results.
+    return results
   end
 
   # Find the number of objects that have only a single annotation.

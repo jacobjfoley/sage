@@ -1,114 +1,63 @@
 class Statistics
 
   # Capture a project to analyse.
-  def initialize(project)
+  def initialize(project_id)
 
     # Store the provided project.
-    @project = project
-
-    # Capture information from the project.
-    @users = @project.users
-    @digital_objects = @project.digital_objects
-    @concepts = @project.concepts
-    @annotations = @project.annotations
+    @project = Project.find(project_id)
   end
 
-  # Generate project statistics.
-  def analyse
+  # Get the number of users.
+  def user_count
 
-    # Create a hash to store individual statistics.
-    statistics = {}
+    return @project.users.count
+  end
 
-    # Get objects, concepts, annotations and user counts.
-    statistics[:user_count] = @users.count
-    statistics[:objects_count] = @digital_objects.count
-    statistics[:concepts_count] = @concepts.count
-    statistics[:annotations_count] = @annotations.count
+  # Get the number of objects.
+  def object_count
 
-    # Create hashes for object and concept annotation counts.
-    object_counts = @digital_objects.map {|k| [k.id, 0]}.to_h
-    concept_counts = @concepts.map {|k| [k.id, 0]}.to_h
+    return @project.digital_objects.count
+  end
 
-    # Explore annotation distribution.
-    @annotations.each do |annotation|
+  # Get the number of concpets.
+  def concept_count
 
-      # Increment counts.
-      object_counts[annotation.digital_object_id] += 1
-      concept_counts[annotation.concept_id] += 1
-    end
+    return @project.concepts.count
+  end
 
-    # Find max and min values.
-    statistics[:min_objects] = object_counts.values.min
-    statistics[:max_objects] = object_counts.values.max
-    statistics[:min_concepts] = concept_counts.values.min
-    statistics[:max_concepts] = concept_counts.values.max
+  # Get the number of annoations.
+  def annotation_count
 
-    # Create word count array.
-    word_counts = @concepts.map {|k| k.description.split.size}
+    return @project.annotations.count
+  end
 
-    # Find total, max and min values.
-    statistics[:word_count] = word_counts.reduce(:+)
-    statistics[:min_words] = word_counts.min
-    statistics[:max_words] = word_counts.max
+  # Find the concept word count statistics.
+  def word_statistics
 
-    # Determine averages.
-    if statistics[:objects_count] > 0
-      statistics[:avg_objects] = statistics[:annotations_count].to_f / statistics[:objects_count]
-    else
-      statistics[:avg_objects] = 0.0
-    end
+    # Find the word count data.
+    data = @project.concepts.map { |c| c.description.split.size }
 
-    if statistics[:concepts_count] > 0
-      statistics[:avg_concepts] = statistics[:annotations_count].to_f / statistics[:concepts_count]
-      statistics[:avg_words] = statistics[:word_count].to_f / statistics[:concepts_count]
-    else
-      statistics[:avg_concepts] = 0.0
-      statistics[:avg_words] = 0.0
-    end
+    # Create and return new measurement.
+    return Measurement.new("Word Count", data)
+  end
 
-    # Define initial statistics.
-    statistics[:total_object_variance] = 0.0
-    statistics[:total_concept_variance] = 0.0
-    statistics[:object_std_deviation] = 0.0
-    statistics[:concept_std_deviation] = 0.0
+  # Find the object statistics.
+  def object_statistics
 
-    # If more than one object:
-    if statistics[:objects_count] > 0
+    # Find the object data.
+    data = @project.digital_objects.map { |o| o.annotations.count }
 
-      # Calculate object variance.
-      @digital_objects.each do |object|
+    # Create and return new measurement.
+    return Measurement.new("Object Annotations Count", data)
+  end
 
-        # Calculate summed variance.
-        statistics[:total_object_variance] += (object_counts[object.id] -
-            statistics[:avg_objects]) ** 2
-      end
-      statistics[:total_object_variance] /= @digital_objects.count
+  # Find the concept statistics.
+  def concept_statistics
 
-      # Determine object standard deviation.
-      statistics[:object_std_deviation] = Math.sqrt(
-        statistics[:total_object_variance]
-      )
-    end
+    # Find the concept data.
+    data = @project.concepts.map { |c| c.annotations.count }
 
-    # If more than one concept:
-    if statistics[:concepts_count] > 0
-
-      # Calculate concept variance.
-      @concepts.each do |concept|
-
-        # Calculate summed variance.
-        statistics[:total_concept_variance] += (concept_counts[concept.id] -
-            statistics[:avg_concepts]) ** 2
-      end
-      statistics[:total_concept_variance] /= @concepts.count
-
-      # Determine concept standard deviation.
-      statistics[:concept_std_deviation] = Math.sqrt(
-        statistics[:total_concept_variance]
-      )
-    end
-
-    # Return statistics.
-    return statistics
+    # Create and return new measurement.
+    return Measurement.new("Concept Annotations Count", data)
   end
 end

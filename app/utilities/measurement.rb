@@ -1,5 +1,7 @@
 class Measurement
 
+  attr_accessor :values
+
   # Constructor, given the measurement's name and an array of values.
   def initialize(name, values)
 
@@ -78,6 +80,13 @@ class Measurement
 
     # Neatly display values.
     return "#{@name}: #{count} items, averaging #{averages}"
+  end
+
+  # Append new data.
+  def <<(value)
+
+    # Append value to values array.
+    @values << value
   end
 
   # Output for tables.

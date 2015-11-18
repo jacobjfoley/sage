@@ -226,8 +226,11 @@ class ProjectsController < ApplicationController
   # GET /projects/1/statistics
   def statistics
 
-    # Get the project's statistics hash.
-    @statistics = Statistics.new(@project).analyse
+    # Get the project's statistics.
+    @statistics = Statistics.new(@project.id)
+    @object_statistics = @statistics.object_statistics
+    @concept_statistics = @statistics.concept_statistics
+    @word_statistics = @statistics.word_statistics
   end
 
   private

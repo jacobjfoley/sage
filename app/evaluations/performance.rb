@@ -1,59 +1,70 @@
 class Performance
 
-  # Process project and report scores.
-  # Training proportion is a value between 0.0 and 1.0. For instance, 0.4 means
+  # Constructor
+  # Proportion is a value between 0.0 and 1.0. For instance, 0.4 means
   # that the first 40% is training data and remaining 60% is testing data.
-  def evaluate(project_id, training_proportion, testing_number)
+  # Tests is the number of times to run each test.
+  def initialize(project_id, proportion = 0.4, tests = 30)
 
-    # Retrieve the desired project.
-    project = Project.find(project_id)
+    # Capture the provided project and settings.
+    @project = Project.find(project_id)
+    @proportion = proportion
+    @tests = tests
+
+    # Define the algorithms used.
+    @algorithms = ["VotePlus", "SAGA-Refined"]
+  end
+
+  # Process project and report scores.
+  def results
 
     # Clone the project and capture the clone's ID.
-    clone_id = project.clone(1)
+    clone_id = @project.clone(1)
 
     # Retrieve the clone of the provided project.
     clone = Project.find(clone_id)
 
-    # Get the items to evaluate.
+    # Find the domain (the tests to run).
+    domain = clone.digital_objects.shuffle[0..@tests]
+
+    # Find the range (potential suggestions for each test).
     range = clone.concepts
-    domain = clone.digital_objects.shuffle[0..testing_number]
 
     # Get the truth hash for the project.
     truth_hash = create_truth_hash(clone, domain)
 
-    # Create a training project based on the clone project.
-    training = training_project(clone, training_proportion)
+    # Transform the clone project into the training data project.
+    training = training_project(clone, @proportion)
 
-    # List algorithm names.
-    algorithm_names = ["VotePlus", "SAGA-Refined"]
+    # Create algorithm results hash.
+    algorithm_results = {}
 
-    # Initialise algorithm records.
-    algorithms = {}
-    algorithm_names.each do |algorithm|
+    # For each algorithm:
+    @algorithms.each do |algorithm|
 
-      # Create the algorithm's record.
-      algorithms[algorithm] = {
-        precision: [],
-        recall: [],
-        f05: [],
-        f1: [],
-        f2: [],
-        phi: [],
-        precision5: [],
-        success1: [],
-        success5: [],
-        mrr: [],
+      # Initialise the algorithm's measurements.
+      algorithm_results[algorithm] = {
+        precision: Measurement.new("Precision", []),
+        recall: Measurement.new("Recall", []),
+        f05: Measurement.new("F-0.5", []),
+        f1: Measurement.new("F-1.0", []),
+        f2: Measurement.new("F-2.0", []),
+        phi: Measurement.new("Phi Coefficient", []),
+        precision5: Measurement.new("Precision@5", []),
+        success1: Measurement.new("Success@1", []),
+        success5: Measurement.new("Success@5", []),
+        mrr: Measurement.new("MRR", []),
       }
     end
 
-    # For each item in the project:
+    # For each item to be tested:
     domain.each do |item|
 
-      # Cycle through each algorithm.
-      algorithms.keys.each do |algorithm_name|
+      # Use each algorithm and capture results.
+      @algorithms.each do |algorithm_name|
 
-        # Retrieve the algorithm's record.
-        record = algorithms[algorithm_name]
+        # Retrieve the algorithm's measurements.
+        measurements = algorithm_results[algorithm_name]
 
         # Use the algorithm to fetch suggestions.
         suggestions = item.algorithm(algorithm_name).suggestions.keys
@@ -61,93 +72,31 @@ class Performance
         # Get the scores of these suggestions
         score = binary_classification(suggestions, truth_hash[item], range)
 
-        # Record scores.
+        # Record measurements.
         precision_score = precision(score)
         recall_score = recall(score)
-        record[:precision] << precision_score
-        record[:recall] << recall_score
-        record[:phi] << phi_coefficient(score)
-        record[:f05] << f_score(precision_score, recall_score, 0.5)
-        record[:f1] << f_score(precision_score, recall_score, 1.0)
-        record[:f2] << f_score(precision_score, recall_score, 2.0)
-        record[:success1] << success_at(suggestions, 1, truth_hash[item])
-        record[:success5] << success_at(suggestions, 5, truth_hash[item])
-        record[:precision5] << precision_at(suggestions, 5, truth_hash[item])
-        record[:mrr] << reciprocal_rank(suggestions, truth_hash[item])
+        measurements[:precision] << precision_score
+        measurements[:recall] << recall_score
+        measurements[:phi] << phi_coefficient(score)
+        measurements[:f05] << f_score(precision_score, recall_score, 0.5)
+        measurements[:f1] << f_score(precision_score, recall_score, 1.0)
+        measurements[:f2] << f_score(precision_score, recall_score, 2.0)
+        measurements[:success1] << success_at(suggestions, 1, truth_hash[item])
+        measurements[:success5] << success_at(suggestions, 5, truth_hash[item])
+        measurements[:precision5] << precision_at(suggestions, 5, truth_hash[item])
+        measurements[:mrr] << reciprocal_rank(suggestions, truth_hash[item])
       end
     end
 
-    # Cycle through each algorithm.
-    algorithms.keys.each do |algorithm_name|
-
-      # Retrieve the algorithm's record.
-      record = algorithms[algorithm_name]
-
-      # For each score in the record:
-      record.keys.each do |score|
-
-        # Replace the scores array with the average.
-        record[score] = record[score].reduce(:+) / record[score].count
-      end
-    end
-
-    # Remove training project.
+    # Destroy the training data project, cleaning up.
     training.destroy
 
     # Return results hash.
-    return algorithms
+    return algorithm_results
   end
 
-  # Find the success at a given interval.
-  def success_at(suggestions, interval, truth)
-
-    # Determine if any precision at the given interval.
-    if precision_at(suggestions, interval, truth) > 0
-      return 1.0
-    else
-      return 0.0
-    end
-  end
-
-  # Find the precision at a given interval.
-  def precision_at(suggestions, interval, truth)
-
-    # Determine set.
-    set = suggestions[0...interval]
-
-    # Find precision.
-    if set.empty?
-      return 0.0
-    else
-      return (set & truth).count.to_f / set.count
-    end
-  end
-
-  # Find the reciprocal rank.
-  def reciprocal_rank(suggestions, truth)
-
-    # Initialise rank.
-    rank = nil
-
-    # Run through all suggestions.
-    suggestions.each do |suggestion|
-
-      # Check if this is a hit.
-      if truth.include? suggestion
-
-        # Found. Set rank and break.
-        rank = suggestions.index(suggestion) + 1.0
-        break
-      end
-    end
-
-    # Return result.
-    if rank.nil?
-      return 0.0
-    else
-      return 1.0 / rank
-    end
-  end
+  # Private methods used exclusively by the results method.
+  private
 
   # Create a hash of each item mapped to its associated entities.
   def create_truth_hash(project, items)
@@ -277,4 +226,54 @@ class Performance
     end
   end
 
+  # Find the success at a given interval.
+  def success_at(suggestions, interval, truth)
+
+    # Determine if any precision at the given interval.
+    if precision_at(suggestions, interval, truth) > 0
+      return 1.0
+    else
+      return 0.0
+    end
+  end
+
+  # Find the precision at a given interval.
+  def precision_at(suggestions, interval, truth)
+
+    # Determine set.
+    set = suggestions[0...interval]
+
+    # Find precision.
+    if set.empty?
+      return 0.0
+    else
+      return (set & truth).count.to_f / set.count
+    end
+  end
+
+  # Find the reciprocal rank.
+  def reciprocal_rank(suggestions, truth)
+
+    # Initialise rank.
+    rank = nil
+
+    # Run through all suggestions.
+    suggestions.each do |suggestion|
+
+      # Check if this is a hit.
+      if truth.include? suggestion
+
+        # Found. Set rank and break.
+        rank = suggestions.index(suggestion) + 1.0
+        break
+      end
+    end
+
+    # Return result.
+    if rank.nil?
+      return 0.0
+    else
+      return 1.0 / rank
+    end
+  end
 end

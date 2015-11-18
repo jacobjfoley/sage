@@ -10,75 +10,75 @@
   <tr>
   <tr>
     <td>Number of Users</td>
-    <td><%= @statistics[:user_count] || 0 %> </td>
+    <td><%= @statistics.user_count %> </td>
   </tr>
   <tr>
     <td>Number of Objects</td>
-    <td><%= @statistics[:objects_count] || 0 %> </td>
+    <td><%= @statistics.object_count %> </td>
   </tr>
   <tr>
     <td>Number of Concepts</td>
-    <td><%= @statistics[:concepts_count] || 0 %> </td>
+    <td><%= @statistics.concept_count %> </td>
   </tr>
   <tr>
     <td>Number of Annotations</td>
-    <td><%= @statistics[:annotations_count] || 0 %> </td>
+    <td><%= @statistics.annotation_count %> </td>
   </tr>
   <tr>
     <td colspan="2"> <strong>Objects</strong> </td>
   <tr>
   <tr>
     <td>Objects - Minimum Annotations</td>
-    <td><%= @statistics[:min_objects] || 0 %> </td>
+    <td><%= @object_statistics.min %> </td>
   </tr>
   <tr>
     <td>Objects - Average Annotations</td>
-    <td><%= @statistics[:avg_objects].round(2) || 0 %> </td>
+    <td><%= @object_statistics.mean %> </td>
   </tr>
   <tr>
     <td>Objects - Maximum Annotations</td>
-    <td><%= @statistics[:max_objects] || 0 %> </td>
+    <td><%= @object_statistics.max %> </td>
   </tr>
   <tr>
     <td>Objects - Standard Deviation</td>
-    <td><%= @statistics[:object_std_deviation].round(2) %> </td>
+    <td><%= @object_statistics.std_dev %> </td>
   </tr>
   <tr>
     <td colspan="2"> <strong>Concepts</strong> </td>
   <tr>
   <tr>
     <td>Concepts - Minimum Annotations</td>
-    <td><%= @statistics[:min_concepts] || 0 %> </td>
+    <td><%= @concept_statistics.min %> </td>
   </tr>
   <tr>
     <td>Concepts - Average Annotations</td>
-    <td><%= @statistics[:avg_concepts].round(2) || 0 %> </td>
+    <td><%= @concept_statistics.mean %> </td>
   </tr>
   <tr>
     <td>Concepts - Maximum Annotations</td>
-    <td><%= @statistics[:max_concepts] || 0 %> </td>
+    <td><%= @concept_statistics.max %> </td>
   </tr>
   <tr>
     <td>Concepts - Standard Deviation</td>
-    <td><%= @statistics[:concept_std_deviation].round(2) %> </td>
+    <td><%= @concept_statistics.std_dev %> </td>
   </tr>
   <tr>
     <td colspan="2"> <strong>Words</strong> </td>
   <tr>
   <tr>
     <td>Words - Minimum Concept Word Count</td>
-    <td><%= @statistics[:min_words] || 0 %> </td>
+    <td><%= @word_statistics.min %> </td>
   </tr>
   <tr>
     <td>Words - Average Concept Word Count</td>
-    <td><%= @statistics[:avg_words].round(2) || 0 %> </td>
+    <td><%= @word_statistics.mean %> </td>
   </tr>
   <tr>
     <td>Words - Maximum Concept Word Count</td>
-    <td><%= @statistics[:max_words] || 0 %> </td>
+    <td><%= @word_statistics.max %> </td>
   </tr>
   <tr>
     <td>Words - Total Concept Word Count</td>
-    <td><%= @statistics[:word_count] || 0 %> </td>
+    <td><%= @word_statistics.std_dev %> </td>
   </tr>
 </table>
