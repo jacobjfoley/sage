@@ -99,10 +99,10 @@ class Subgraphs
       last = current
 
       # Get the set of concepts linked to objects in the last set.
-      concepts = Set.new(last.inject([]) { |all, o| all + o.concepts })
+      concepts = Set.new(last.reduce([]) { |all, o| all + o.concepts })
 
       # Get the set of objects linked to the concept set.
-      current = Set.new(concepts.inject([]) {|all, c| all + c.digital_objects })
+      current = Set.new(concepts.reduce([]) {|all, c| all + c.digital_objects })
     end
 
     # Return the current set.
