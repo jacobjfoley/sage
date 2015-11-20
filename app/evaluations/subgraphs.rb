@@ -7,6 +7,9 @@ class Subgraphs
 
     # Store the provided project.
     @project = Project.find(project)
+
+    # Find all subgraphs.
+    @subgraphs = object_subgraphs
   end
 
   # Create a string that represents this object.
@@ -19,13 +22,42 @@ class Subgraphs
     s << "Subgraph test on #{@project.id} - #{@project.name}\n"
 
     # Print data.
-    s << "There are #{object_subgraphs} object subgraphs in this project.\n"
+    s << "There are #{object_subgraph_count} subgraphs in this project.\n"
+
+    # Print summary.
+    s << "#{object_subgraph_summary}\n"
+
+    # Print individual details
+    object_subgraph_details.each_with_index do |detail, index|
+      s << "Subgraph #{index}: #{detail} objects.\n"
+    end
 
     # Return string.
     return s
   end
 
   # Find the number of subgraphs in this project.
+  def object_subgraph_count
+
+    # Return the number of subgraphs.
+    return @subgraphs.count
+  end
+
+  # Display details about each subgraph.
+  def object_subgraph_details
+
+    # Return the counts per subgraph.
+    return @subgraphs.map { |s| s.count }
+  end
+
+  # Find the number of objects in each subgraph.
+  def object_subgraph_summary
+
+    # Return counts summary.
+    return Measurement.new("Subgraph Object Counts", object_subgraph_details)
+  end
+
+  # Find the object subgraphs in this project.
   def object_subgraphs
 
     # Array of subgraphs.
@@ -49,8 +81,8 @@ class Subgraphs
         subgraphs << set
     end
 
-    # Return the number of subgraphs found.
-    return subgraphs.count
+    # Return the subgraphs found.
+    return subgraphs
   end
 
   # Find the set of objects associated to the given object via concepts.
