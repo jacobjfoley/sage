@@ -11,6 +11,8 @@ class Thumbnail < ActiveRecord::Base
   TEXT_THUMBNAIL = "text.svg"
   ERROR_THUMBNAIL = "bug.svg"
   MISSING_THUMBNAIL = "missing.svg"
+  EXPIRY = 90.days
+  EXPIRY_CHECK = 1.day
 
   # Retrieve a thumbnail for a given resource.
   def self.find_for(source, x, y)
