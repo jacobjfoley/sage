@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class SetThumbnailUrlJobTest < ActiveJob::TestCase
+class CreateThumbnailJobTest < ActiveJob::TestCase
   # test "the truth" do
   #   assert true
   # end

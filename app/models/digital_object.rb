@@ -242,8 +242,9 @@ class DigitalObject < ActiveRecord::Base
   # Schedule for common thumbnail sizes to be created.
   def create_thumbnails
 
-    # Create the two common thumbnail sizes.
-    thumbnail(150,150)
-    thumbnail(400,400)
+    # Create the common thumbnail sizes.
+    Thumbnail::COMMON_SIZES.each do |size|
+      thumbnail(size,size)
+    end
   end
 end

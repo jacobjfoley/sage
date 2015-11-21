@@ -12,7 +12,8 @@ class Thumbnail < ActiveRecord::Base
   ERROR_THUMBNAIL = "bug.svg"
   MISSING_THUMBNAIL = "missing.svg"
   EXPIRY = 90.days
-  EXPIRY_CHECK = 1.day
+  EXPIRY_CHECK_INTERVAL = 1.day
+  COMMON_SIZES = [150,400]
 
   # Retrieve a thumbnail for a given resource.
   def self.find_for(source, x, y)
@@ -25,10 +26,6 @@ class Thumbnail < ActiveRecord::Base
 
       # Create a thumbnail.
       thumbnail.generate
-    else
-
-      # Check thumbnail later.
-      thumbnail.delay.check_thumbnail
     end
 
     # Return the thumbnail.
@@ -46,28 +43,7 @@ class Thumbnail < ActiveRecord::Base
     )
 
     # Generate the thumbnail details.
-    SetThumbnailURLJob.perform_later(id)
-  end
-
-  # Check that the thumbnail image still exists.
-  def check_thumbnail
-
-    # Unless a local file or not a URI:
-    unless local || (url !~ GoogleDriveUtils::URI_REGEXP)
-
-      # Begin attempt.
-      begin
-
-        # Fetch the resource's metadata.
-        response = RestClient.head(url)
-
-      # Rescue on exception.
-    rescue RestClient::Forbidden
-
-        # Re-generate thumbnail.
-        generate
-      end
-    end
+    CreateThumbnailJob.perform_later(id)
   end
 
   # Detect if the image is in portrait orientation.
@@ -77,8 +53,15 @@ class Thumbnail < ActiveRecord::Base
     return actual_x < actual_y
   end
 
+  # Detect if the image is in landscape orientation. Complements portrait.
+  def landscape?
+
+    # If not portrait, it's landscape.
+    return !portrait?
+  end
+
   # Sets a thumbnail url for this thumbnail object.
-  def set_url
+  def create_thumbnail
 
     # If the source is not a URI:
     if source !~ GoogleDriveUtils::URI_REGEXP
@@ -109,7 +92,7 @@ class Thumbnail < ActiveRecord::Base
         if response.headers[:content_type] =~ /\Aimage/
 
           # The location is an image file. Use it for the thumbnail.
-          create_image_thumbnail()
+          create_thumbnail_image()
 
         # Otherwise, unknown filetype.
         else
@@ -131,7 +114,7 @@ class Thumbnail < ActiveRecord::Base
   private
 
   # Create a new thumbnail for an image.
-  def create_image_thumbnail
+  def create_thumbnail_image
 
     # Create the thumbnail image.
     begin

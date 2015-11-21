@@ -1,4 +1,4 @@
-class SetThumbnailURLJob < ActiveJob::Base
+class CreateThumbnailJob < ActiveJob::Base
   queue_as :default
 
   def perform(thumbnail_id)
@@ -13,7 +13,7 @@ class SetThumbnailURLJob < ActiveJob::Base
       if thumbnail.url.nil?
 
         # Set the thumbnail's URL.
-        thumbnail.set_url
+        thumbnail.create_thumbnail
       end
     end
   end
