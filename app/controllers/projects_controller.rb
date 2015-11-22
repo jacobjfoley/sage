@@ -321,6 +321,7 @@ class ProjectsController < ApplicationController
       # Allocate priviledges to roles.
       priviledges = {
         "Viewer" => view,
+        "Annotator" => view,
         "Contributor" => view,
         "Administrator" => view + admin
       }

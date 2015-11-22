@@ -13,6 +13,7 @@ class Project < ActiveRecord::Base
 
   validates :name, presence: true, length: { minimum: 1 }
   validates :viewer_key, uniqueness: true, allow_nil: true
+  validates :annotator_key, uniqueness: true, allow_nil: true
   validates :contributor_key, uniqueness: true, allow_nil: true
   validates :administrator_key, uniqueness: true, allow_nil: true
 
@@ -38,7 +39,6 @@ class Project < ActiveRecord::Base
 
         # Generate a sample and adjust details to direct to the sample.
         all_keys[key][:project] = all_keys[key][:project].sample(user)
-        all_keys[key][:position] = "Contributor"
       end
 
       # Get details.
@@ -430,11 +430,15 @@ class Project < ActiveRecord::Base
     count = assigned.count + 1
     sample_name = "[#{user.name}] Sample #{count} of " + name
 
+    # Find algorithms being used by samples of this project.
+    algorithm_choices = Project.where(parent: self).map {|p| p.algorithm}.uniq
+
     # Determine algorithm to use in sample.
-    algorithms = ["SAGA", "VotePlus"].shuffle!.sort_by { |algorithm|
+    algorithms = algorithm_choices.shuffle!.sort_by { |algorithm|
 
       # Count how often this algorithm has been assigned to samples given to
-      # this user.
+      # this user. Assign the least frequently assigned to encourage usage to
+      # even out.
       user.projects.where(parent: self, algorithm: algorithm).count
     }
 

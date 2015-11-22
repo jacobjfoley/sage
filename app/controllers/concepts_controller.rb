@@ -231,6 +231,7 @@ class ConceptsController < ApplicationController
       priviledges = {
         "Viewer" => view,
         "Contributor" => view + edit,
+        "Annotator" => view + edit,
         "Administrator" => view + edit
       }
 

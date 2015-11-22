@@ -320,15 +320,16 @@ class DigitalObjectsController < ApplicationController
 
       # Define priviledges.
       view = ["show", "index"]
-      edit = ["new", "create", "update", "edit", "destroy", "add_concept",
-        "remove_concept", "repair_thumbnails", "add_created_concept",
+      annotate = ["add_concept", "remove_concept", "add_created_concept"]
+      edit = ["new", "create", "update", "edit", "destroy",
         "import_drive_folder"]
 
       # Allocate priviledges to roles.
       priviledges = {
         "Viewer" => view,
-        "Contributor" => view + edit,
-        "Administrator" => view + edit
+        "Annotator" => view + annotate,
+        "Contributor" => view + annotate + edit,
+        "Administrator" => view + annotate + edit
       }
 
       # Allow requests with correct permissions.

@@ -112,20 +112,6 @@ class DigitalObject < ActiveRecord::Base
     end
   end
 
-  # Repair thumbnails.
-  def repair_thumbnails
-
-    # Fetch all thumbnails sharing the broken source.
-    thumbnails = Thumbnail.where(source: location)
-
-    # Generate new thumbnail images for each.
-    thumbnails.each do |thumbnail|
-
-      # Generate thumbnail image.
-      thumbnail.generate
-    end
-  end
-
   # Check if the object's location is likely to be a link.
   def has_uri?
 

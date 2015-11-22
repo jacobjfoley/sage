@@ -44,6 +44,10 @@
   %>
 
   <%= render partial: "key",
+    locals: { position: "Annotator", key: @project.annotator_key }
+  %>
+
+  <%= render partial: "key",
     locals: { position: "Viewer", key: @project.viewer_key }
   %>
 
