@@ -291,6 +291,7 @@ class ProjectsController < ApplicationController
       if !@user
         flash[:notice] = "You are not logged in. Please log in to continue."
         redirect_to login_users_path
+        return false
       end
 
       # Define public (for logged in users) pages.
@@ -311,6 +312,7 @@ class ProjectsController < ApplicationController
         # User doesn't have a role in this project.
         flash[:notice] = "You don't have access to this project."
         redirect_to projects_path
+        return false
       end
 
       # Define priviledges.

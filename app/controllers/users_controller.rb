@@ -134,6 +134,7 @@ class UsersController < ApplicationController
       if !@user
         flash[:notice] = "You are not logged in. Please log in to continue."
         redirect_to login_users_path
+        return false
       end
 
       # Define private pages.

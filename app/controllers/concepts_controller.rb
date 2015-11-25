@@ -209,6 +209,7 @@ class ConceptsController < ApplicationController
       if !@user
         flash[:notice] = "You are not logged in. Please log in to continue."
         redirect_to login_users_path
+        return false
       end
 
       # Get the user's role in this project.
@@ -220,6 +221,7 @@ class ConceptsController < ApplicationController
         # User doesn't have a role in this project.
         flash[:notice] = "You don't have access to this project."
         redirect_to projects_path
+        return false
       end
 
       # Define priviledges.
