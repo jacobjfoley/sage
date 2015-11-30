@@ -6,10 +6,7 @@ class DigitalObject < ActiveRecord::Base
 
   validates :location, presence: true
 
-  before_save :check_conversions, if: :location_changed?
-  before_save :reset_thumbnail_url, if: :location_changed?
-  before_save :check_flatten, if: :location_changed?
-  before_save :set_filename, if: :location_changed?
+  before_save :update_details, if: :location_changed?
   after_create :create_thumbnails
 
   # Map algorithms to names.
@@ -70,53 +67,30 @@ class DigitalObject < ActiveRecord::Base
     Thumbnail.find_for(thumbnail_url, x, y)
   end
 
-  # Set the filename for the object.
-  def set_filename
-
-    # If the source is not a URI:
-    if location !~ GoogleDriveUtils::URI_REGEXP
-
-      # Filename should be text.
-      self.filename = location
-
-    # The source is a URI.
-    else
-
-      # Attempt to fetch resource data.
-      begin
-
-        # Check if Google resource.
-        if location =~ GoogleDriveUtils::GOOGLE_REGEXP
-
-          # Fetch resource's information using key.
-          information = RestClient.get(
-            location, { params: { key: ENV["GOOGLE_API_KEY"] } }
-          )
-
-          # Update filename based on resource information.
-          self.filename = JSON.parse(information)["title"]
-
-        # Otherwise, does not need an access key.
-        else
-
-          # Update filename based on resource information.
-          self.filename = File.basename(location)
-        end
-
-      # Rescue in the event of an error.
-      rescue RestClient::Exception
-
-        # Use a missing filename.
-        self.filename = "Missing"
-      end
-    end
-  end
-
   # Check if the object's location is likely to be a link.
   def has_uri?
 
     # Compare location with a valid URI's regexp.
-    return location =~ GoogleDriveUtils::URI_REGEXP
+    return location =~ %r{\A#{URI::regexp}\z}
+  end
+
+  # Update the object's details when changing locations.
+  def update_details
+
+    # Check new location for needed conversions.
+    check_conversions
+
+    # Check for flattening.
+    check_flatten
+
+    # Update filename.
+    set_filename
+
+    # Update thumbnail.
+    reset_thumbnail_url
+
+    # Indicate save can continue.
+    return true
   end
 
   # Private methods.
@@ -126,11 +100,19 @@ class DigitalObject < ActiveRecord::Base
   # when using other services as content providers.
   def check_conversions
 
-    # Check Google Drive conversions.
-    check_google_drive_conversion
+    # Define locations with ID captures.
+    google_drive = %r{\Ahttps://drive.google.com/open\?id=(?<file_id>\w+)\z}
+    google_apis = %r{\Ahttps://www.googleapis.com/drive/v2/files/(?<file_id>\w+)\z}
 
-    # Allow save to continue.
-    return true
+    # Check Google Drive locations.
+    if (data = google_drive.match location)
+      self.location = "https://docs.google.com/uc?id=#{data[:file_id]}"
+    end
+
+    # Check Google APIs locations.
+    if (data = google_apis.match location)
+      self.location = "https://docs.google.com/uc?id=#{data[:file_id]}"
+    end
   end
 
   # Check if two or more objects shall be flattened:
@@ -157,20 +139,72 @@ class DigitalObject < ActiveRecord::Base
     end
   end
 
-  # Check if the location should be converted.
-  def check_google_drive_conversion
+  # Set the filename for the object.
+  def set_filename
 
-    # Define locations with ID captures.
-    drive_location = %r{\Ahttps://drive.google.com/open\?id=(?<file_id>\w+)\z}
+    # If the source is not a URI:
+    if location !~ %r{\A#{URI::regexp}\z}
 
-    # Check Google locations.
-    if (data = drive_location.match location)
-      self.location = "https://docs.google.com/uc?id=#{data[:file_id]}"
+      # Filename should be text.
+      self.filename = location
+
+    # The source is a URI.
+    else
+
+      # Attempt to fetch resource data.
+      begin
+
+        # Check if Google resource.
+        if location =~ GoogleDriveUtils::GOOGLE_DOCS_REGEXP
+
+          # Define regular expression.
+          google_docs = %r{\Ahttps://docs.google.com/uc\?id=(?<file_id>\w+)\z}
+
+          # Capture filename.
+          data = google_docs.match location
+
+          # Form APIs URL.
+          apis_location = "https://www.googleapis.com/drive/v2/files/#{data[:file_id]}"
+
+          # Fetch resource's information using key.
+          information = RestClient.get(
+            apis_location, { params: { key: ENV["GOOGLE_API_KEY"] } }
+          )
+
+          # Update filename based on resource information.
+          self.filename = JSON.parse(information)["title"]
+
+        # Otherwise, does not need an access key.
+        else
+
+          # Update filename based on resource information.
+          self.filename = File.basename(location)
+        end
+
+      # Rescue in the event of an error.
+      rescue RestClient::Exception
+
+        # Use a missing filename.
+        self.filename = "Missing"
+      end
     end
   end
 
-  # Check if the location is a WebContentLink and set thumbnail_url accordingly.
-  def check_google_wcl_thumbnail
+  # Resets the thumbnail url every time the location changes.
+  def reset_thumbnail_url
+
+    # Set thumbnail url to nil.
+    self.thumbnail_url = nil
+
+    # Allow save to continue.
+    return true
+  end
+
+  # Generates this object's thumbnail URL.
+  def generate_thumbnail_url
+
+    # Initialise to default.
+    self.thumbnail_url = location
 
     # Define locations with ID captures.
     wcl_location = %r{\Ahttps://docs.google.com/uc\?id=(?<file_id>\w+)\z}
@@ -178,6 +212,18 @@ class DigitalObject < ActiveRecord::Base
     # Check Google locations.
     if (data = wcl_location.match location)
       self.thumbnail_url = "https://www.googleapis.com/drive/v2/files/#{data[:file_id]}"
+    end
+
+    # Commit changes.
+    self.save
+  end
+
+  # Schedule for common thumbnail sizes to be created.
+  def create_thumbnails
+
+    # Create the common thumbnail sizes.
+    Thumbnail::COMMON_SIZES.each do |size|
+      thumbnail(size,size)
     end
   end
 
@@ -200,37 +246,5 @@ class DigitalObject < ActiveRecord::Base
 
     # Destroy the flattened object.
     other_object.destroy
-  end
-
-  # Generates this object's thumbnail URL.
-  def generate_thumbnail_url
-
-    # Initialise to default.
-    self.thumbnail_url = location
-
-    # Check if a Google WebContentLink.
-    check_google_wcl_thumbnail
-
-    # Commit changes.
-    self.save
-  end
-
-  # Resets the thumbnail url every time the location changes.
-  def reset_thumbnail_url
-
-    # Set thumbnail url to nil.
-    self.thumbnail_url = nil
-
-    # Allow save to continue.
-    return true
-  end
-
-  # Schedule for common thumbnail sizes to be created.
-  def create_thumbnails
-
-    # Create the common thumbnail sizes.
-    Thumbnail::COMMON_SIZES.each do |size|
-      thumbnail(size,size)
-    end
   end
 end

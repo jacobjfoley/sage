@@ -14,8 +14,8 @@ class GoogleDriveUtils
       'https://www.googleapis.com/auth/drive.metadata.readonly',
   ]
 
-  URI_REGEXP = %r{\A#{URI::regexp}\z}
-  GOOGLE_REGEXP = %r{\Ahttps://www.googleapis.com/drive/v2/files/}
+  GOOGLE_APIS_REGEXP = %r{\Ahttps://www.googleapis.com/drive/v2/files/}
+  GOOGLE_DOCS_REGEXP = %r{\Ahttps://docs.google.com/}
 
   ##
   # Create a new API Client.

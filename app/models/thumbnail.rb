@@ -76,7 +76,7 @@ class Thumbnail < ActiveRecord::Base
       begin
 
         # Check if Google resource.
-        if source =~ GoogleDriveUtils::GOOGLE_REGEXP
+        if source =~ GoogleDriveUtils::GOOGLE_APIS_REGEXP
 
           # Fetch the resource's metadata using key.
           response = RestClient.head source, {params: {key: ENV["GOOGLE_API_KEY"], alt: "media"}}
@@ -120,7 +120,7 @@ class Thumbnail < ActiveRecord::Base
     begin
 
       # Check if Google resource.
-      if source =~ GoogleDriveUtils::GOOGLE_REGEXP
+      if source =~ GoogleDriveUtils::GOOGLE_APIS_REGEXP
 
         # Fetch blob using key.
         blob = RestClient.get source, {params: {key: ENV["GOOGLE_API_KEY"], alt: "media"}}
