@@ -19,22 +19,31 @@ class Measurement
   # Sum the values.
   def sum
 
+    # Find result.
+    result = @values.reduce(:+) || 0.0
+
     # Return the sum of all values.
-    return @values.reduce(:+).round(2)
+    return result.round(2)
   end
 
   # Find the minimum value.
   def min
 
+    # Find result.
+    result = @values.min || 0.0
+
     # Return min.
-    return @values.min.round(2) || 0.0
+    return result.round(2)
   end
 
   # Find the maximum value.
   def max
 
+    # Find result.
+    result = @values.max || 0.0
+
     # Return max.
-    return @values.max.round(2) || 0.0
+    return result.round(2)
   end
 
   # Find mean.
