@@ -64,7 +64,7 @@ class Thumbnail < ActiveRecord::Base
   def create_thumbnail
 
     # If the source is not a URI:
-    if source !~ GoogleDriveUtils::URI_REGEXP
+    if source !~ %r{\A#{URI::regexp}\z}
 
       # Thumbnail refers to plain text.
       update(url: TEXT_THUMBNAIL)
