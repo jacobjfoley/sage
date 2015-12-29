@@ -88,7 +88,7 @@ class Project < ActiveRecord::Base
   end
 
   # Find most popular concepts.
-  def popular_concepts(influence)
+  def popular_concepts
 
     # Declare results hash.
     results = {}
@@ -98,23 +98,12 @@ class Project < ActiveRecord::Base
       results[concept] = concept.digital_objects.count + 1.0
     end
 
-    # Determine count total.
-    total = 0.0
-    results.values.each do |value|
-      total += value
-    end
-
-    # Distribute influence accordingly.
-    results.keys.each do |key|
-      results[key] *= (influence / total)
-    end
-
     # Return results.
     return results
   end
 
   # Find most popular objects.
-  def popular_objects(influence)
+  def popular_objects
 
     # Declare results hash.
     results = {}
@@ -122,17 +111,6 @@ class Project < ActiveRecord::Base
     # Determine count of each object.
     digital_objects.each do |object|
       results[object] = object.concepts.count + 1.0
-    end
-
-    # Determine count total.
-    total = 0.0
-    results.values.each do |value|
-      total += value
-    end
-
-    # Distribute influence accordingly.
-    results.keys.each do |key|
-      results[key] *= influence / total
     end
 
     # Return results.

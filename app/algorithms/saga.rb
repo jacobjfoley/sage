@@ -111,6 +111,24 @@ module SAGA
       # Aggregate them into results.
       aggregate(results, popular_results)
     end
+
+    # Allocate influence by popularity.
+    def allocate_popular(popular, influence)
+
+      # Determine count total.
+      total = 0.0
+      popular.values.each do |value|
+        total += value
+      end
+
+      # Distribute influence accordingly.
+      popular.keys.each do |key|
+        popular[key] *= (influence / total)
+      end
+
+      # Return results.
+      return popular
+    end
   end
 
   class Object < Base
@@ -128,7 +146,7 @@ module SAGA
     def popular(influence)
 
       # Return popular concepts in the project.
-      return @element.project.popular_concepts(influence)
+      return allocate_popular(@element.project.popular_concepts, influence)
     end
 
     # Find all annotations to this entity.
@@ -165,7 +183,7 @@ module SAGA
     def popular(influence)
 
       # Return popular concepts in the project.
-      return @element.project.popular_objects(influence)
+      return allocate_popular(@element.project.popular_objects, influence)
     end
 
     # Find all annotations to this entity.
