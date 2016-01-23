@@ -12,7 +12,7 @@ class Performance
     @tests = tests
 
     # Define the algorithms used.
-    @algorithms = ["VotePlus", "SAGA-Refined"]
+    @algorithms = ["Vote", "VotePlus", "Rank", "RankPlus", "SAGA-Refined"]
   end
 
   # Create a string that represents this object.
