@@ -17,10 +17,10 @@ class Concept < ActiveRecord::Base
     'Annotated' => Annotated::Concept,
     'None' => None::Concept,
     'All' => All::Concept,
-    'Vote' => Rank::Vote,
-    'VotePlus' => Rank::VotePlus,
-    'Sum' => Rank::Sum,
-    'SumPlus' => Rank::SumPlus
+    'Vote' => TagRecommendationStrategies::Vote,
+    'VotePlus' => TagRecommendationStrategies::VotePlus,
+    'Sum' => TagRecommendationStrategies::Sum,
+    'SumPlus' => TagRecommendationStrategies::SumPlus
   }
 
   # Find a concept that matches the provided details hash, or create a new one.

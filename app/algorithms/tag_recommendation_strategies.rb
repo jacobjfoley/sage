@@ -1,4 +1,4 @@
-module Rank
+module TagRecommendationStrategies
 
   class Base < SimilarityAlgorithm
 

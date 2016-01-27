@@ -18,10 +18,10 @@ class DigitalObject < ActiveRecord::Base
     'Annotated' => Annotated::Object,
     'None' => None::Object,
     'All' => All::Object,
-    'Vote' => Rank::Vote,
-    'VotePlus' => Rank::VotePlus,
-    'Sum' => Rank::Sum,
-    'SumPlus' => Rank::SumPlus
+    'Vote' => TagRecommendationStrategies::Vote,
+    'VotePlus' => TagRecommendationStrategies::VotePlus,
+    'Sum' => TagRecommendationStrategies::Sum,
+    'SumPlus' => TagRecommendationStrategies::SumPlus
   }
 
   # Find entities by annotation.
