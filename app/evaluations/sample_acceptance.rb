@@ -44,7 +44,7 @@ class SampleAcceptance
     @algorithms.each do |algorithm|
 
       # Print algorithm name.
-      s << "\n#{algortihm}:\n"
+      s << "\n#{algorithm}:\n"
 
       # Print overall acceptance data.
       s << "Overall:\n"
