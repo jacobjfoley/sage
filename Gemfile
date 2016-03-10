@@ -47,7 +47,7 @@ gem 'rest-client'
 gem 'aws-sdk'
 
 # Use the Google API Client for Drive support.
-gem 'google-api-client'
+gem 'google-api-client', '<0.9'
 
 # Use Unicorn as the app server
 # gem 'unicorn'
