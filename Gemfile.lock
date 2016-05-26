@@ -128,11 +128,13 @@ GEM
       mime-types (>= 1.16, < 4)
     memoist (0.14.0)
     mime-types (2.99.2)
+    mini_portile2 (2.0.0)
     minitest (5.9.0)
     multi_json (1.12.1)
     multipart-post (2.0.0)
     netrc (0.11.0)
     nokogiri (1.6.7.2)
+      mini_portile2 (~> 2.0.0.rc2)
     os (0.9.6)
     pg (0.18.4)
     rack (1.6.4)
@@ -234,6 +236,7 @@ DEPENDENCIES
   google-api-client (< 0.9)
   jbuilder (~> 2.0)
   jquery-rails
+  mini_portile2
   pg
   rails (= 4.2.6)
   rails_12factor
