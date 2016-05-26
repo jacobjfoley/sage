@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby "2.2.4"
+ruby "2.2.5"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.1'
@@ -77,7 +77,7 @@ end
 group :production do
 
   # Use Rollbar for error logging.
-  gem 'rollbar', '~> 2.1.0'
+  gem 'rollbar'
 
   # Heroku's gem.
   gem 'rails_12factor'
