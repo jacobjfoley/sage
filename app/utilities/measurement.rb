@@ -85,7 +85,7 @@ class Measurement
   def to_s
 
     # Define average string.
-    averages = "#{mean} (#{min}-#{max}, σ: #{std_dev})"
+    averages = "#{mean} (#{min}-#{max}, s: #{std_dev})"
 
     # Neatly display values.
     return "#{@name}: #{count} items, averaging #{averages}"
