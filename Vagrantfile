@@ -22,7 +22,7 @@ Vagrant.configure(2) do |config|
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
-  # config.vm.network "forwarded_port", guest: 80, host: 8080
+  config.vm.network "forwarded_port", guest: 3000, host: 3000
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -86,7 +86,10 @@ Vagrant.configure(2) do |config|
     bundle exec rake db:setup
     
     # Reminder.
-    echo "Done. Remember to configure enviroment variables for the user vagrant!"
+    echo "Done. Remember to configure enviroment variables for the user vagrant! Refer to the wiki."
+    echo "(Variables are for Google Drive integration and Amazon S3 storage of thumbnails.)" 
+    echo "Usage: vagrant ssh; cd /vagrant; rails server -b 0.0.0.0"
+    echo "Access: Navigate to http://localhost:3000 on your computer."
   
   SHELL
 
