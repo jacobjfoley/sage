@@ -88,7 +88,15 @@ module SAGA
       # Find cumulative influence held by the candidates.
       influence = candidates.values.reduce(:+)
 
-      # Find candidates who are to be deleted:
+      # Find candidates who are to be deleted. The base algorithm will
+      # show n suggestions below the normal cutoff point, where n is the number
+      # of points of influence that were allocated to the filtered candidates.
+      # This is intended to provide additional insight into what SAGA will and
+      # will not filter, while still removing the very low-probability
+      # suggestions which (cumulatively) have less than 1.0 point of influence.
+      # SAGE uses this base algorithm by default, and also shows influence.
+      # To remove all candidates below the cutoff (e.g. for evaluations),
+      # use SAGA Refined instead (Concept_Refined and Object_Refined).
       weak_candidates = candidates.keys[influence.ceil..-1]
 
       # Delete those results which didn't make it.
