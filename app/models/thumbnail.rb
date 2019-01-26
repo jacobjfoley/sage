@@ -76,17 +76,17 @@ class Thumbnail < ActiveRecord::Base
       begin
 
         # Check if Google resource.
-        if source =~ GoogleDriveUtils::GOOGLE_APIS_REGEXP
+        # if source =~ GoogleDriveUtils::GOOGLE_APIS_REGEXP
 
           # Fetch the resource's metadata using key.
-          response = RestClient.head source, {params: {key: ENV["GOOGLE_API_KEY"], alt: "media"}}
+          # response = RestClient.head source, {params: {key: ENV["GOOGLE_API_KEY"], alt: "media"}}
 
         # Otherwise, does not need an access key.
-        else
+        # else
 
           # Fetch the resource's metadata.
           response = RestClient.head(source)
-        end
+        # end
 
         # Check if an image file.
         if response.headers[:content_type] =~ /\Aimage/
@@ -120,17 +120,17 @@ class Thumbnail < ActiveRecord::Base
     begin
 
       # Check if Google resource.
-      if source =~ GoogleDriveUtils::GOOGLE_APIS_REGEXP
+      # if source =~ GoogleDriveUtils::GOOGLE_APIS_REGEXP
 
         # Fetch blob using key.
-        blob = RestClient.get source, {params: {key: ENV["GOOGLE_API_KEY"], alt: "media"}}
+        # blob = RestClient.get source, {params: {key: ENV["GOOGLE_API_KEY"], alt: "media"}}
 
       # Otherwise, does not need an access key.
-      else
+      # else
 
         # Fetch blob.
         blob = RestClient.get source
-      end
+      # end
 
       # Attempt to read resource.
       image = Magick::Image.from_blob(blob).first
