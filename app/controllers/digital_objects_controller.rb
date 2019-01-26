@@ -77,7 +77,7 @@ class DigitalObjectsController < ApplicationController
   def new
     @digital_object = DigitalObject.new
     @have_google_authorisation = session[:access_token]
-    @google_authorisation_uri = GoogleDriveUtils.get_authorization_url(@project.id)
+    # @google_authorisation_uri = GoogleDriveUtils.get_authorization_url(@project.id)
   end
 
   # GET /digital_objects/1/edit

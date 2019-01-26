@@ -13,6 +13,6 @@ class Annotation < ActiveRecord::Base
 
   # Automatically sets project based on object's project.
   def set_project
-    self.project_id = DigitalObject.find(digital_object).project.id
+    self.project_id = DigitalObject.find(digital_object.id).project.id
   end
 end
