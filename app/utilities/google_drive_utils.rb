@@ -2,7 +2,7 @@
 # which is licenced by Google under an Apache 2.0 licence.
 # This licence can be viewed at http://www.apache.org/licenses/LICENSE-2.0
 
-require 'google/api_client'
+# require 'google/api_client'
 
 class GoogleDriveUtils
 
